@@ -1,6 +1,6 @@
-// Generat per build_pwa.py. Versió 445251e154
-const CACHE='boletaire-445251e154', FONTS='boletaire-fonts';
-const FILES=["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png"];
+// Generat per build_pwa.py. Versió 204b5d2050
+const CACHE='boletaire-204b5d2050', FONTS='boletaire-fonts';
+const FILES=["./", "index.html", "privacitat.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/icon.svg"];
 self.addEventListener('install', e=>{
   e.waitUntil((async()=>{
     const c=await caches.open(CACHE); await c.addAll(FILES);
@@ -17,7 +17,8 @@ self.addEventListener('activate', e=>{
 self.addEventListener('fetch', e=>{
   const r=e.request; if(r.method!=='GET') return;
   const u=new URL(r.url);
-  if(u.host==='fonts.googleapis.com' || u.host==='fonts.gstatic.com'){
+  // tipus de lletra i el SDK de Firebase: es guarden el primer cop perquè l'app arrenqui sense connexió
+  if(u.host==='fonts.googleapis.com' || u.host==='fonts.gstatic.com' || (u.host==='www.gstatic.com' && u.pathname.startsWith('/firebasejs/'))){
     e.respondWith(caches.open(FONTS).then(async c=>{ const hit=await c.match(r); if(hit) return hit;
       const res=await fetch(r); if(res.ok||res.type==='opaque') c.put(r,res.clone()); return res; }));
     return;

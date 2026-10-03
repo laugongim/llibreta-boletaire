@@ -9,9 +9,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Boletaire">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<title>Llibreta Boletaire</title>
+<title>Boletaire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Kalam:wght@300;400;700&family=Special+Elite&display=swap">
@@ -57,7 +58,8 @@ h1,h2,h3{ text-wrap:balance; margin:0 }
 /* Capçalera */
 .top{ position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--bg); border-bottom:1px solid var(--line) }
 .top .in{ max-width:44rem; margin:0 auto; padding:.7rem 16px; display:flex; align-items:baseline; gap:.6rem; justify-content:space-between }
-.brand{ font-family:var(--f-hand); font-size:1.75rem; font-weight:700; line-height:1; color:var(--accent) }
+.brand{ font-family:var(--f-hand); font-size:1.9rem; font-weight:700; line-height:1; color:var(--accent); display:inline-flex; align-items:center; gap:.45rem }
+.brand .mono{ width:2rem; height:2rem; flex:0 0 auto }
 .where{ font-size:.82rem; color:var(--muted); letter-spacing:.04em; text-transform:uppercase }
 
 /* Barra inferior */
@@ -340,7 +342,8 @@ body[data-skin="llibreta"] .card .cph{ border-radius:0; border:5px solid #faf6ea
 .sol{ border-top:1px solid var(--line); padding-top:.55rem; font-size:.95rem }
 .sol small{ color:var(--muted) }
 .tab{ font-size:.72rem; min-width:0; white-space:nowrap }
-.tabs .in{ grid-template-columns:1fr 1.35fr 1fr 1fr 1fr }
+/* columnes simètriques: la lupa sempre al mig */
+.tabs .in{ grid-template-columns:1fr 1.3fr 1.1fr 1.3fr 1fr }
 /* Botó central d'identificar, amb la lupa */
 .tab.idf{ color:var(--accent); font-weight:700 }
 .tab.idf .fab{ width:3.5rem; height:3.5rem; margin-top:-1.7rem; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center; border:4px solid var(--surface); box-shadow:0 6px 14px -6px rgba(0,0,0,.45) }
@@ -394,6 +397,15 @@ details.know summary b{ font-size:1.08rem }
 .nb .mynb .cisrow{ background:#fbf8ef; border-color:#d8ccaa; color:#2b2b2b; font-family:var(--f-ui) }
 .settings h3{ font-size:.95rem; margin-top:.4rem }
 .seg2{ grid-template-columns:repeat(auto-fit,minmax(5.2rem,1fr)) }
+/* Compte */
+.acct{ gap:.7rem }
+.btn.gbtn{ justify-self:stretch; justify-content:center; padding:.65rem 1rem; font-size:1rem }
+.gbtn svg{ width:1.2rem; height:1.2rem }
+.orline{ display:flex; align-items:center; gap:.6rem; color:var(--muted); font-size:.85rem } .orline::before,.orline::after{ content:""; flex:1; height:1px; background:var(--line) }
+.ok-line{ background:var(--ok-bg); color:var(--fg); border-radius:10px; padding:.55rem .75rem; font-size:.93rem; margin:0 }
+.linkbtn{ background:none; border:0; padding:0; color:var(--accent); text-decoration:underline; cursor:pointer; justify-self:start; font-size:.92rem }
+.danger-zone summary b{ color:var(--tox) }
+.av.big img{ width:100%; height:100%; border-radius:50%; object-fit:cover }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -416,7 +428,7 @@ details.know summary b{ font-size:1.08rem }
   </defs>
 </svg>
 
-<header class="top"><div class="in"><span class="brand">Llibreta Boletaire</span><span class="where" id="where">Berguedà</span></div></header>
+<header class="top"><div class="in"><span class="brand"><svg class="mono" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#2e5a3a"/> <rect x="28" y="38" width="44" height="52" rx="13" fill="#f4ecd8"/> <path d="M12,47 C12,22 31,11 50,11 C69,11 88,22 88,47 Q50,40 12,47 Z" fill="#8a5530"/> <path d="M18,44 Q50,38 82,44" fill="none" stroke="#6a3f22" stroke-width="1.6" opacity=".8"/> <path d="M24,32 C30,20 42,15 52,15" fill="none" stroke="#b98456" stroke-width="4.5" stroke-linecap="round" opacity=".75"/> <path fill="#2e5a3a" fill-rule="evenodd" d="M38,51 H55 A8,8 0 0 1 55,67 H56 A9,9 0 0 1 56,85 H38 Z M46,57 H54 A2,2 0 0 1 54,61 H46 Z M46,72 H55.5 A3.5,3.5 0 0 1 55.5,79 H46 Z"/></svg>Boletaire</span><span class="where" id="where">Berguedà</span></div></header>
 <main class="wrap" id="main"></main>
 <nav class="tabs" aria-label="Seccions"><div class="in" id="tabs"></div></nav>
 <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title"></div>
@@ -1589,6 +1601,11 @@ const KNOW = [
  { id:'reactius', title:'El kit de reactius', sub:'Les ampolletes dels micòlegs', special:'reagents' }
 ];
 
+// Configuració web del projecte de Firebase (Consola › Configuració del projecte › Les teves apps › Web).
+// No és secreta: la protegeixen les regles de Firestore i els dominis autoritzats.
+// Mentre sigui null, l'app funciona sense compte (tot es guarda només al mòbil).
+const FIREBASE_CONFIG = null;
+
 </script>
 <script>
 (function(){
@@ -1611,7 +1628,8 @@ function applyPrefs(){
   else document.documentElement.dataset.theme = prefs.theme==='fosc'?'dark':'light';
 }
 function getNote(id){ try{ return localStorage.getItem(KEY+':nota:'+id)||''; }catch(e){ return ''; } }
-function setNote(id,v){ try{ localStorage.setItem(KEY+':nota:'+id,v); }catch(e){} }
+function setNote(id,v,upd){ try{ localStorage.setItem(KEY+':nota:'+id,v); localStorage.setItem(KEY+':nota-upd:'+id,String(upd||Date.now())); }catch(e){} if(!upd) notePushLater(id); }
+function getNoteUpd(id){ try{ return +(localStorage.getItem(KEY+':nota-upd:'+id)||0); }catch(e){ return 0; } }
 
 // ---------- Esbossos ----------
 function rng(seed){ let h=2166136261; for(const c of seed) h=Math.imul(h^c.charCodeAt(0),16777619); return ()=>{ h+=0x6D2B79F5; let t=h; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; }; }
@@ -2348,8 +2366,7 @@ document.addEventListener('click',e=>{
 function viewProfile(){
   const opt=(name,val,label,help)=>`<label for="${name}-${val}"><input type="radio" id="${name}-${val}" name="${name}" value="${val}" ${prefs[name]===val?'checked':''}><span><b>${label}</b>${help?`<small>${help}</small>`:''}</span></label>`;
   return `<div class="view">
-   <div class="panel me"><span class="av big" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
-     <div style="min-width:0"><h1 style="font-size:1.4rem">El teu perfil</h1><p class="muted" style="margin:.15rem 0 0">Encara no cal compte: tot el que fas es guarda només en aquest mòbil.</p></div></div>
+   <div class="panel me" id="me">${meHTML()}</div>
    ${cisPanel()}
    <div class="panel settings"><h2>Ajustos</h2>
      <h3>Estil de les fitxes</h3><div class="opt" data-pref="skin">
@@ -2358,7 +2375,7 @@ function viewProfile(){
      <h3>Mida del text</h3><div class="opt seg2" data-pref="size">${opt('size','normal','Normal')}${opt('size','gran','Gran')}</div>
      <h3>Tema</h3><div class="opt seg2" data-pref="theme">${opt('theme','sistema','Com el sistema')}${opt('theme','clar','Clar')}${opt('theme','fosc','Fosc')}</div>
      <p class="muted" style="font-size:.85rem;margin:0">La fitxa de llibreta sempre es veu sobre paper.</p></div>
-   <div class="panel"><h2>Compte</h2><p class="muted">Més endavant podràs crear un compte per tenir els apunts a tots els dispositius i, si ets expert, apuntar-te a la llista d’experts.</p></div>
+   <div class="panel acct" id="acct">${acctHTML()}</div>
    <details class="rg"><summary><span><b>Sobre les dades i les fotos</b><small>${SPECIES.length} espècies · crèdits de Wikimedia Commons</small></span></summary><div class="in">
      <p>${SPECIES.length} espècies del Berguedà i de Catalunya, comestibles i tòxiques. El grau de comestibilitat segueix el consens de la Societat Catalana de Micologia. Les fotos són de Wikimedia Commons, amb llicència lliure. Els esbossos són orientatius.</p>
      <ul class="src">${SPECIES.filter(ph).map(s=>`<li><i>${esc(s.sci)}</i>: ${by(ph(s))}, ${esc(ph(s).lic)}, <a href="${ph(s).page}" target="_blank" rel="noopener">Commons</a></li>`).join('')}</ul></div></details>
@@ -2375,7 +2392,7 @@ function cisDB(){ return new Promise((ok,ko)=>{ if(!window.indexedDB) return ko(
 async function cisTx(mode, fn){ const db=await cisDB(); return new Promise((ok,ko)=>{ const tx=db.transaction('troballes',mode); const req=fn(tx.objectStore('troballes'));
   tx.oncomplete=()=>ok(req?req.result:undefined); tx.onerror=()=>ko(tx.error); }); }
 async function cisLoad(){
-  try{ CIS.list=(await cisTx('readonly',st=>st.getAll())).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }catch(e){ CIS.off=true; }
+  try{ CIS.list=(await cisTx('readonly',st=>st.getAll())).filter(r=>!r.deleted).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }catch(e){ CIS.off=true; }
   CIS.ready=true; if(state.tab==='perfil' && $('#cis-list')){ $('#cis-list').innerHTML=cisListHTML(); $('#cis-count').textContent=cisCountText(); } if(state.tab==='bolets' && $('#grid')) cards();
   const mf=$('#sheet .mynb-finds'); if(mf && BY_ID[mf.dataset.sp]) mf.innerHTML=myFindsHTML(BY_ID[mf.dataset.sp]);
 }
@@ -2499,15 +2516,17 @@ async function cisSave(){
   const d=CIS.draft, msg=$('#f-msg');
   if(!d.sp && !d.name.trim() && !d.photos.length){ msg.textContent='Tria el bolet, posa-hi un nom o afegeix-hi una foto.'; return; }
   if(d.gps.busy) cisFixGps();
-  const rec={ id:d.id||('t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)), sp:d.sp, name:d.sp?'':d.name.trim(), date:d.date||nowLocal(), photos:d.photos, loc:d.loc, note:d.note.trim(), saved:new Date().toISOString() };
+  const rec={ id:d.id||('t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)), sp:d.sp, name:d.sp?'':d.name.trim(), date:d.date||nowLocal(), photos:d.photos, loc:d.loc, note:d.note.trim(), saved:new Date().toISOString(), upd:Date.now() };
   try{ await cisTx('readwrite',st=>st.put(rec)); }catch(e){ msg.textContent='No s’ha pogut desar. Pot ser que el mòbil no tingui espai.'; return; }
   try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
   cisForget(rec.id); await cisLoad(); openFindView(rec.id);
+  cloudSync();
 }
 async function cisDelete(id){
   if(!confirm('Vols esborrar aquesta troballa i les seves fotos? No es pot desfer.')) return;
-  try{ await cisTx('readwrite',st=>st.delete(id)); }catch(e){}
+  try{ await cisTx('readwrite',st=>st.put({id, deleted:true, upd:Date.now()})); }catch(e){}
   cisForget(id); await cisLoad(); closeSheet(); if(state.tab==='perfil') render();
+  cloudSync();
 }
 function openFindView(id){
   const e=CIS.list.find(x=>x.id===id); if(!e) return; const sp=BY_ID[e.sp], el=$('#sheet');
@@ -2523,6 +2542,174 @@ function openFindView(id){
    </article></div>`;
   el.dataset.view='findview'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
   $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='perfil') render(); });
+}
+
+
+// ---------- Compte i núvol (Firebase) ----------
+// Opcional. Sense compte, la llibreta viu només al mòbil. Amb compte, el mòbil continua sent la còpia principal
+// i es sincronitza amb Firestore: users/{uid}/troballes/{id}, users/{uid}/fotos/{id}_{i} (foto reduïda) i users/{uid}/apunts/{bolet}.
+// Quan hi ha dues versions, guanya la més recent (camp upd).
+const FBV='12.19.0', FBU=m=>`https://www.gstatic.com/firebasejs/${FBV}/firebase-${m}.js`;
+const CLOUD={ ok:false, fb:null, user:null, busy:false, again:false, last:0, err:'', msg:'', mode:'link', loading:false };
+// Només per a proves locals: una pàgina de prova pot posar un Firebase simulat a window.__FAKE_FIREBASE.
+const FAKE_FB = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && window.__FAKE_FIREBASE || null;
+const cloudConfigured = () => !!FAKE_FB || (typeof FIREBASE_CONFIG!=='undefined' && !!FIREBASE_CONFIG);
+const cloudAllowed = () => cloudConfigured() && !window.claude && /^https?:$/.test(location.protocol);
+async function cloudInit(){
+  if(!cloudAllowed()) return;
+  CLOUD.loading=true; paintAccount();
+  try{
+    const [A,U,F]=FAKE_FB || await Promise.all([import(FBU('app')),import(FBU('auth')),import(FBU('firestore'))]);
+    const app=A.initializeApp(FAKE_FB?{}:FIREBASE_CONFIG), auth=U.getAuth(app), db=F.getFirestore(app);
+    U.useDeviceLanguage(auth);
+    CLOUD.fb={U,F,auth,db}; CLOUD.ok=true;
+    if(U.isSignInWithEmailLink(auth, location.href)){
+      let email=''; try{ email=localStorage.getItem(KEY+':email-link')||''; }catch(e){}
+      if(!email) email=(prompt('Per acabar d’entrar, escriu el correu on has rebut l’enllaç:')||'').trim();
+      if(email){ try{ await U.signInWithEmailLink(auth,email,location.href); try{ localStorage.removeItem(KEY+':email-link'); }catch(e){} }catch(e){ CLOUD.err=authErr(e); } }
+      history.replaceState(null,'',location.pathname+'#perfil'); goTab('perfil'); render();
+    }
+    try{ await U.getRedirectResult(auth); }catch(e){ CLOUD.err=authErr(e); }
+    U.onAuthStateChanged(auth, u=>{ CLOUD.user=u; CLOUD.loading=false; paintAccount(); if(u) cloudSync(); });
+    addEventListener('online',()=>cloudSync());
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') cloudSync(); });
+  }catch(e){ CLOUD.ok=false; }
+  CLOUD.loading=false; paintAccount();
+}
+function authErr(e){
+  const m={ 'auth/invalid-email':'El correu no és vàlid.', 'auth/missing-email':'Escriu el correu.',
+    'auth/invalid-credential':'Correu o contrasenya incorrectes.', 'auth/wrong-password':'Correu o contrasenya incorrectes.', 'auth/user-not-found':'No hi ha cap compte amb aquest correu.',
+    'auth/email-already-in-use':'Ja hi ha un compte amb aquest correu. Entra-hi, o recupera la contrasenya.', 'auth/weak-password':'La contrasenya ha de tenir almenys 6 caràcters.',
+    'auth/missing-password':'Escriu la contrasenya.', 'auth/network-request-failed':'No hi ha connexió. Torna-ho a provar quan en tinguis.', 'auth/too-many-requests':'Massa intents seguits. Espera una mica.',
+    'auth/unauthorized-domain':'Aquest domini no està autoritzat al projecte de Firebase.', 'auth/operation-not-allowed':'Aquesta manera d’entrar no està activada al projecte de Firebase.',
+    'auth/invalid-action-code':'L’enllaç ja s’ha fet servir o ha caducat. Demana’n un de nou.', 'auth/expired-action-code':'L’enllaç ha caducat. Demana’n un de nou.',
+    'auth/requires-recent-login':'Per seguretat, surt i torna a entrar abans d’esborrar el compte.' };
+  return m[e&&e.code] || `No s’ha pogut fer (${e&&e.code||'error'}).`;
+}
+async function acctDo(a){
+  const {U,auth}=CLOUD.fb||{}; const email=($('#ac-email')?.value||'').trim(), pw=$('#ac-pass')?.value||'';
+  CLOUD.err=''; CLOUD.msg='';
+  try{
+    if(a==='google'){ const p=new U.GoogleAuthProvider();
+      try{ await U.signInWithPopup(auth,p); }
+      catch(e){ if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code)) await U.signInWithRedirect(auth,p); else if(e.code!=='auth/popup-closed-by-user' && e.code!=='auth/cancelled-popup-request') throw e; } }
+    if(a==='link'){ if(!email) throw {code:'auth/missing-email'};
+      await U.sendSignInLinkToEmail(auth,email,{url:location.origin+location.pathname, handleCodeInApp:true});
+      try{ localStorage.setItem(KEY+':email-link',email); }catch(e){}
+      CLOUD.msg=`T’hem enviat un enllaç a ${email}. Obre’l des d’aquest mateix mòbil. Si no el veus, mira el correu brossa.`; }
+    if(a==='in') await U.signInWithEmailAndPassword(auth,email,pw);
+    if(a==='new') await U.createUserWithEmailAndPassword(auth,email,pw);
+    if(a==='reset'){ if(!email) throw {code:'auth/missing-email'}; await U.sendPasswordResetEmail(auth,email); CLOUD.msg=`T’hem enviat un correu a ${email} per canviar la contrasenya.`; }
+    if(a==='out'){ await U.signOut(auth); CLOUD.msg='Has sortit. La llibreta continua en aquest mòbil.'; }
+    if(a==='sync') await cloudSync();
+    if(a==='delete') await cloudDeleteAccount();
+  }catch(e){ CLOUD.err=authErr(e); }
+  paintAccount();
+}
+function meHTML(){
+  const u=CLOUD.user, name=u&&(u.displayName||u.email);
+  return `<span class="av big" aria-hidden="true">${u&&u.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer">`:`<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`}</span>
+   <div style="min-width:0"><h1 style="font-size:1.4rem">${u?esc(name):'El teu perfil'}</h1><p class="muted" style="margin:.15rem 0 0">${u?'La teva llibreta es guarda en aquest mòbil i al teu compte.':'Sense compte, tot el que fas es guarda només en aquest mòbil.'}</p></div>`;
+}
+function acctHTML(){
+  const priv=`<a href="privacitat.html" target="_blank" rel="noopener">Política de privacitat</a>`;
+  if(window.claude) return `<h2>Compte</h2><p class="muted">El compte funciona a l’app instal·lable: <a href="https://laugongim.github.io/llibreta-boletaire/" target="_blank" rel="noopener">laugongim.github.io/llibreta-boletaire</a>.</p>`;
+  if(!cloudConfigured()) return `<h2>Compte</h2><p class="muted">Aviat podràs crear un compte per tenir la llibreta a tots els dispositius.</p>`;
+  if(CLOUD.loading && !CLOUD.ok) return `<h2>Compte</h2><p class="muted">Carregant…</p>`;
+  if(!CLOUD.ok) return `<h2>Compte</h2><p class="muted">Per entrar al compte cal connexió. Mentrestant, la llibreta continua funcionant en aquest mòbil.</p>`;
+  const note = (CLOUD.err?`<p class="warn-line" role="alert">${esc(CLOUD.err)}</p>`:'') + (CLOUD.msg?`<p class="ok-line" role="status">${esc(CLOUD.msg)}</p>`:'');
+  const u=CLOUD.user;
+  if(u){
+    const when = CLOUD.busy ? 'Sincronitzant…' : CLOUD.last ? `Sincronitzat a les ${new Date(CLOUD.last).toLocaleTimeString('ca',{hour:'2-digit',minute:'2-digit'})}.` : '';
+    return `<h2>Compte</h2><p>Has entrat com a <b>${esc(u.email||u.displayName||'')}</b>.</p>
+     <p class="muted" role="status">${when} Les fotos es guarden al núvol en mida reduïda; al mòbil queden a mida completa.</p>${note}
+     <div class="row"><button class="btn" data-acct="sync" ${CLOUD.busy?'disabled':''}>Sincronitza ara</button><button class="btn" data-acct="out">Surt</button></div>
+     <details class="rg danger-zone"><summary><span><b>Esborra el compte</b><small>I totes les dades del núvol</small></span></summary><div class="in">
+       <p>S’esborraran el compte i tot el que hi ha al núvol: troballes, fotos i apunts. El que hi ha en aquest mòbil es queda aquí.</p>
+       <button class="btn danger" data-acct="delete">Esborra el compte</button></div></details>
+     <p class="muted" style="font-size:.85rem;margin:0">${priv}</p>`;
+  }
+  const m=CLOUD.mode;
+  return `<h2>Compte</h2><p class="muted">Entra per tenir la llibreta a tots els teus dispositius i no perdre-la si canvies de mòbil. És gratuït.</p>
+   <button class="btn solid gbtn" data-acct="google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#fff" opacity=".8" d="M12 22c2.7 0 5-.9 6.6-2.5l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#fff" opacity=".6" d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#fff" opacity=".9" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>Entra amb Google</button>
+   <div class="orline"><span>o amb el teu correu</span></div>
+   <div class="seg" role="tablist" aria-label="Com vols entrar">${[['link','Amb enllaç'],['pass','Amb contrasenya']].map(([k,l])=>`<button role="tab" data-acct-mode="${k}" aria-selected="${m===k}">${l}</button>`).join('')}</div>
+   <form class="xform" id="ac-form" novalidate>
+     <label for="ac-email">Correu</label><input id="ac-email" type="email" autocomplete="email" inputmode="email">
+     ${m==='pass'?`<label for="ac-pass">Contrasenya</label><input id="ac-pass" type="password" autocomplete="current-password" minlength="6">`:''}
+     ${note}
+     ${m==='link'?`<button class="btn solid" data-acct="link">Envia’m un enllaç per entrar</button><p class="muted" style="font-size:.85rem;margin:0">Sense contrasenya: reps un correu i, en obrir l’enllaç, ja has entrat.</p>`
+       :`<div class="row"><button class="btn solid" data-acct="in">Entra</button><button class="btn" data-acct="new">Crea el compte</button></div><button class="linkbtn" data-acct="reset">He oblidat la contrasenya</button>`}
+   </form>
+   <p class="muted" style="font-size:.85rem;margin:0">Només tu pots veure les teves dades. ${priv}</p>`;
+}
+function paintAccount(){
+  if(state.tab!=='perfil') return;
+  const a=$('#acct'), me=$('#me'); if(!a) return;
+  const keep=$('#ac-email')?.value||'';
+  a.innerHTML=acctHTML(); if(me) me.innerHTML=meHTML();
+  if($('#ac-email')) $('#ac-email').value=keep;
+}
+
+async function cloudSync(){
+  if(!CLOUD.user||!CLOUD.ok||!navigator.onLine) return;
+  if(CLOUD.busy){ CLOUD.again=true; return; }
+  CLOUD.busy=true; paintAccount();
+  const {F,db}=CLOUD.fb, uid=CLOUD.user.uid, col=n=>F.collection(db,'users',uid,n), ref=(n,id)=>F.doc(db,'users',uid,n,id);
+  const upd=r=>r.upd||Date.parse(r.saved||'')||0;
+  try{
+    const all=await cisTx('readonly',st=>st.getAll());
+    const remote=new Map((await F.getDocs(col('troballes'))).docs.map(d=>[d.id,d.data()]));
+    // 1. Puja el que és nou o més recent al mòbil
+    for(const r of all){ const rm=remote.get(r.id);
+      if(rm && (rm.upd||0)>=upd(r)) continue;
+      if(!rm && r.deleted) continue;
+      await cloudPush(r, rm?(rm.n||0):0); remote.set(r.id,{upd:upd(r)}); }
+    // 2. Baixa el que és nou o més recent al núvol
+    const local=new Map(all.map(r=>[r.id,r]));
+    for(const [id,rm] of remote){ const l=local.get(id);
+      if(l && upd(l)>=(rm.upd||0)) continue;
+      if(rm.deleted){ if(l){ await cisTx('readwrite',st=>st.put({id,deleted:true,upd:rm.upd})); cisForget(id); } continue; }
+      const photos=[];
+      for(let i=0;i<(rm.n||0);i++){ const s=await F.getDoc(ref('fotos',id+'_'+i)); if(s.exists()) photos.push(new Blob([s.data().b.toUint8Array()],{type:'image/jpeg'})); }
+      await cisTx('readwrite',st=>st.put({id,sp:rm.sp||'',name:rm.name||'',date:rm.date,loc:rm.loc||null,note:rm.note||'',photos,saved:rm.saved||'',upd:rm.upd}));
+      cisForget(id);
+    }
+    // 3. Apunts de les fitxes
+    const ra=new Map((await F.getDocs(col('apunts'))).docs.map(d=>[d.id,d.data()]));
+    for(const s of SPECIES){ const lt=getNote(s.id), lu=getNoteUpd(s.id)||(lt?1:0), rm=ra.get(s.id);
+      if(rm && (rm.upd||0)>lu) setNote(s.id, rm.t||'', rm.upd);
+      else if(lu && (!rm || lu>(rm.upd||0))) await F.setDoc(ref('apunts',s.id),{t:lt,upd:lu}); }
+    CLOUD.last=Date.now(); CLOUD.err='';
+  }catch(e){ CLOUD.err = e&&e.code==='unavailable' ? 'Sense connexió: es sincronitzarà quan en tornis a tenir.' : `No s’ha pogut sincronitzar (${e&&(e.code||e.message)}).`; }
+  CLOUD.busy=false; await cisLoad(); paintAccount();
+  if(CLOUD.again){ CLOUD.again=false; cloudSync(); }
+}
+async function cloudPush(r, prevN){
+  const {F,db}=CLOUD.fb, uid=CLOUD.user.uid, ref=(n,id)=>F.doc(db,'users',uid,n,id);
+  const n = r.deleted ? 0 : (r.photos||[]).length;
+  for(let i=0;i<n;i++){ const small=await shrinkBlob(r.photos[i],800,.72);
+    await F.setDoc(ref('fotos',r.id+'_'+i),{b:F.Bytes.fromUint8Array(new Uint8Array(await small.arrayBuffer()))}); }
+  for(let i=n;i<Math.max(prevN,n);i++) await F.deleteDoc(ref('fotos',r.id+'_'+i));
+  await F.setDoc(ref('troballes',r.id), r.deleted ? {deleted:true,upd:r.upd}
+    : {sp:r.sp||'',name:r.name||'',date:r.date,loc:r.loc||null,note:r.note||'',n,saved:r.saved||'',upd:r.upd||Date.parse(r.saved||'')||Date.now()});
+}
+function shrinkBlob(b,max,q){ return new Promise((ok,ko)=>{ const u=URL.createObjectURL(b), im=new Image();
+  im.onload=()=>{ const k=Math.min(1,max/Math.max(im.width,im.height)), c=document.createElement('canvas'); c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u); c.toBlob(x=>x?ok(x):ko(new Error('img')),'image/jpeg',q); };
+  im.onerror=()=>{ URL.revokeObjectURL(u); ko(new Error('img')); }; im.src=u; }); }
+const notePending=new Set(); let noteTimer=null;
+function notePushLater(id){
+  if(!CLOUD.user) return; notePending.add(id); clearTimeout(noteTimer);
+  noteTimer=setTimeout(async()=>{ const {F,db}=CLOUD.fb, uid=CLOUD.user&&CLOUD.user.uid; if(!uid) return;
+    for(const k of [...notePending]){ notePending.delete(k); try{ await F.setDoc(F.doc(db,'users',uid,'apunts',k),{t:getNote(k),upd:getNoteUpd(k)}); }catch(e){} } }, 2500);
+}
+async function cloudDeleteAccount(){
+  if(!confirm('Vols esborrar el compte i totes les dades del núvol? No es pot desfer. El que hi ha en aquest mòbil es queda.')) return;
+  const {F,U,db}=CLOUD.fb, u=CLOUD.user, uid=u.uid;
+  for(const n of ['fotos','troballes','apunts']){ const q=await F.getDocs(F.collection(db,'users',uid,n)); for(const d of q.docs) await F.deleteDoc(d.ref); }
+  await U.deleteUser(u);
+  CLOUD.msg='Compte esborrat. La llibreta continua en aquest mòbil.';
 }
 
 // ---------- Experts (dades compartides, només amb consentiment) ----------
@@ -2669,6 +2856,8 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-gps]')){ cisLocate(); return; }
   if(e.target.closest('[data-gps-fix]')){ cisFixGps(); return; }
   if(e.target.closest('[data-gps-stop]')){ const d=CIS.draft; cisStopGps(); if(d) d.gps={}; paintGps(); return; }
+  const ac=e.target.closest('[data-acct]'); if(ac){ e.preventDefault(); if(CLOUD.ok) acctDo(ac.dataset.acct); return; }
+  const am=e.target.closest('[data-acct-mode]'); if(am){ CLOUD.mode=am.dataset.acctMode; CLOUD.err=''; CLOUD.msg=''; paintAccount(); return; }
   const mn=e.target.closest('[data-mine]'); if(mn){ state.mine = mn.dataset.mine==='true'; cards(); return; }
   const ar=e.target.closest('[data-area]'); if(ar){ goTab(ar.dataset.area==='experts'?'experts':'bergueda'); render(); return; }
 },true);
@@ -2681,6 +2870,7 @@ document.addEventListener('click',e=>{
   const c=e.target.closest('[data-copy]'); if(c){ const v=c.dataset.copy; const done=()=>{ c.textContent='Copiat'; setTimeout(()=>c.textContent='Copia',1500); };
     try{ navigator.clipboard.writeText(v).then(done).catch(()=>{ c.textContent=v; }); }catch(err){ c.textContent=v; } }
 });
+document.addEventListener('submit',e=>{ if(e.target.id==='ac-form'){ e.preventDefault(); if(CLOUD.ok) acctDo(CLOUD.mode==='link'?'link':'in'); } });
 document.addEventListener('change',e=>{
   const g=e.target.closest('[data-pref]'); if(g && e.target.name){ prefs[e.target.name]=e.target.value; savePrefs(); }
 });
@@ -2694,7 +2884,7 @@ if(BY_ID[h]) openSheet(h);
 if(h==='identifica') openKey();
 initSample();
 initExperts();
-cisLoad();
+cisLoad().then(cloudInit);
 })();
 
 </script>
