@@ -439,6 +439,9 @@ details.know summary b{ font-size:1.08rem }
 .soilb{ display:inline-block; border-radius:999px; padding:.05rem .55rem; font-size:.8rem; font-weight:700; margin-right:.2rem; background:var(--chip); color:var(--fg) }
 .soilb.s-calcari{ background:#e8e2d0; color:#5a4a20 } .soilb.s-acid{ background:#e2dcef; color:#4a3a6a } .soilb.s-fusta{ background:#ead9c4; color:#5c3d1e } .soilb.s-nitrogenat{ background:#dceadb; color:#2f5a2c }
 .soil a,.pencil a[data-know]{ font-size:.85rem }
+.soilcmp{ display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:.6rem }
+.soilcmp>div{ border-radius:12px; padding:.6rem .8rem } .soilcmp h4{ margin:0 0 .2rem } .soilcmp p{ margin:0; font-size:.93rem }
+.sc-calc{ background:#e8e2d0; color:#3d3215 } .sc-acid{ background:#e2dcef; color:#33264d }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -1606,6 +1609,37 @@ const KNOW = [
     <dt>Rotllana</dt><dd>Bolets que surten en cercle perquè el micel·li creix cap a fora des d’un punt. També en diuen cercle de bruixa.</dd>
    </dl>` },
 
+ { id:'sol', title:'Les pedres i el sòl', sub:'Per què cada bolet surt on surt',
+   body:`<p>La roca de sota decideix com és el sòl, i el sòl decideix quins arbres i quins bolets hi viuen. Hi ha dos grans tipus de sòl:</p>
+   <div class="soilcmp">
+    <div class="sc-calc"><h4>Sòl calcari (bàsic)</h4><p>Ve de la pedra calcària i de les margues. Té un pH de més de 7 i sovint és prim, pedregós i de color clar. Al Berguedà és el més comú.</p></div>
+    <div class="sc-acid"><h4>Sòl àcid (silícic)</h4><p>Ve de roques com el granit, la pissarra o alguns gresos, o de sòls on la pluja s’ha endut la calç. Té un pH de menys de 6,5 i és pobre en calci.</p></div>
+   </div>
+   <h3>Per què importa als bolets</h3>
+   <p>Molts bolets viuen units a les arrels d’un arbre (micorriza), i cada arbre prefereix un sòl. A més, cada fong té un interval de pH on viu bé. En un estudi de 42 pinedes de Catalunya, el pH va ser el factor del sòl que més explicava quins fongs hi havia.</p>
+   <ul class="tools">
+    <li><b>Calcícoles</b>: prefereixen sòl calcari. Per exemple, el rovelló.</li>
+    <li><b>Acidòfils o calcífugs</b>: prefereixen sòl àcid. Per exemple, el pinetell, que tendeix a sòls sorrencs i silícics.</li>
+    <li><b>Indiferents</b>: surten en tots dos.</li>
+    <li><b>Descomponedors</b>: viuen de fusta o fullaraca morta; la roca de sota els afecta poc.</li>
+   </ul>
+   <h3>Com saber quin sòl trepitges</h3>
+   <ul class="tools">
+    <li><b>La prova del vinagre.</b> Posa unes gotes de vinagre sobre una pedra neta: si fa bombolles, és calcària. La dolomia gairebé no en fa. Porta ulleres i guants, i si te’n cau a l’ull, renta’l amb aigua 15 minuts.</li>
+    <li><b>Plantes que indiquen sòl calcari:</b> boix, romaní, bruc d’hivern, pinassa i pi blanc.</li>
+    <li><b>Plantes que indiquen sòl àcid:</b> bruguerola, bruc boal, neret, nabiu, castanyer, estepa negra i estepa borrera.</li>
+    <li><b>Ni una cosa ni l’altra:</b> l’alzina i el pi roig surten en tots dos sòls. Al Berguedà, el pi roig fa grans pinedes sobre calcari.</li>
+   </ul>
+   <h3>El sòl del Berguedà</h3>
+   <p>El Berguedà és, sobretot, de pedra calcària. Les clapes de sòl àcid són poques i petites.</p>
+   <dl class="gloss">
+    <dt>1 · Cadí i Pedraforca</dt><dd>Calcàries i margues del Cretaci i el Juràssic. Sòls calcaris. Al Moixeró, a dalt, hi ha sòls descalcificats amb pi negre, neret i nabiu.</dd>
+    <dt>2 · Alt Llobregat i Catllaràs</dt><dd>Calcàries i margues, amb capes de lignit a Cercs, Fígols i Vallcebre. Sòls calcaris, amb terrenys silícics a Castellar de n’Hug.</dd>
+    <dt>3 · Berga, Queralt i serres</dt><dd>Calcàries de Queralt i els Rasos, i conglomerats i gresos al Picancel, la Quar i Capolat. Al cim dels Rasos de Peguera hi ha prats i pi negre sobre sòl àcid.</dd>
+    <dt>4 · Baix Berguedà</dt><dd>Gresos, conglomerats, lutites i calcàries de relleu pla. Sòls calcaris, però sobre gres la pluja n’ha tret la calç en alguns llocs: entre Sagàs i Berga hi ha bruc boal i estepa borrera.</dd>
+   </dl>
+   <p class="muted" style="font-size:.85rem">Fonts: <a href="https://eforown.ctfc.cat/pdf/10_Sols_et_especes_en_Mediterrannee.pdf" target="_blank" rel="noopener">CTFC, sòls i espècies</a> · <a href="https://eforown.ctfc.cat/pdf/R54_Techniques_production_champignons_forestiers_cat_FINAL.pdf" target="_blank" rel="noopener">CTFC, producció de bolets</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8538088/" target="_blank" rel="noopener">pH i fongs en pinedes de Catalunya</a> · <a href="https://www.miteco.gob.es/content/dam/miteco/es/biodiversidad/temas/inventarios-nacionales/iect_lactarius_deliciosus_tcm30-164130.pdf" target="_blank" rel="noopener">MITECO, Lactarius deliciosus</a> · <a href="https://www.enciclopedia.cat/historia-natural-dels-paisos-catalans/les-ericacies" target="_blank" rel="noopener">Les ericàcies</a> · <a href="https://www.enciclopedia.cat/historia-natural-dels-paisos-catalans/les-buxacies" target="_blank" rel="noopener">Les buxàcies</a> · <a href="https://www.enciclopedia.cat/catalunya-romanica/el-marc-geografic-del-romanic-del-bergueda" target="_blank" rel="noopener">El marc geogràfic del Berguedà</a> · <a href="https://www.enciclopedia.cat/historia-natural-dels-paisos-catalans/les-serres-de-cadi-moixero-i-mogrony" target="_blank" rel="noopener">Cadí-Moixeró</a> · <a href="https://www.enciclopedia.cat/historia-natural-dels-paisos-catalans/la-serra-del-catllaras" target="_blank" rel="noopener">El Catllaràs</a> · <a href="https://diposit.ub.edu/dspace/handle/2445/193342" target="_blank" rel="noopener">Mapes de vegetació (UB)</a> · <a href="https://geology.com/minerals/acid-test.shtml" target="_blank" rel="noopener">La prova de l’àcid</a></p>` },
+
  { id:'estris', title:'Què cal portar al bosc', sub:'Els estris del boletaire',
    body:`<ul class="tools">
     <li><b>Cistell o caixa rígida.</b> Mai bosses de plàstic: els bolets s’aixafen, es fan malbé i no deixen caure les espores.</li>
@@ -1644,7 +1678,482 @@ const SOILS = {
   fusta:     {label:'Sobre fusta',          short:'Fusta'},
   nitrogenat:{label:'Sòls rics en nitrogen',short:'Nitrogenat'}
 };
-const SOIL = {};
+// conf: alta = ho diu una font fiable; mitjana = es dedueix de l'hàbitat; baixa = les fonts no coincideixen (no es fa servir a la clau).
+const SOIL = {
+ "rovello": {
+ "sol": "calcari",
+ "per": "Viu amb la pinassa i el pi blanc sobre sòls calcaris: és el bolet de sòl calcari per excel·lència.",
+ "conf": "alta",
+ "fonts": [
+ "https://eforown.ctfc.cat/pdf/Fitxa%2010%20-%20catala_FINAL5_R2.pdf",
+ "https://en.wikipedia.org/wiki/Lactarius_sanguifluus"
+ ]
+ },
+ "pinetell": {
+ "sol": "indiferent",
+ "per": "Les fonts no coincideixen: moltes el donen en sòls sorrencs i àcids, però també surt en pinedes calcàries.",
+ "conf": "baixa",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633899-451901_LactariusDeliciosus.pdf",
+ "https://www.miteco.gob.es/content/dam/miteco/es/biodiversidad/temas/inventarios-nacionales/iect_lactarius_deliciosus_tcm30-164130.pdf",
+ "https://svampguiden.com/en/art/4723-tallblodriska"
+ ]
+ },
+ "cep": {
+ "sol": "acid",
+ "per": "Prefereix terrenys silícics, amb sòls àcids o poc àcids (gres, quarsita, granit). Tolera sòls poc àcids.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633889-451891_BoletusEdulis.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100511"
+ ]
+ },
+ "cep-de-pi": {
+ "sol": "acid",
+ "per": "Sota pi roig en sòls àcids, sovint sorrencs, amb bruc i molsa.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.first-nature.com/fungi/boletus-pinophilus.php",
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633890-451892_BoletusPinicola.pdf"
+ ]
+ },
+ "rossinyol": {
+ "sol": "acid",
+ "per": "Terrenys silícics força àcids (pH 4,5–5,5), amb roures, faigs, pins i estepes.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633891-451893_CantharellusSub.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100580"
+ ]
+ },
+ "fredolic": {
+ "sol": "calcari",
+ "per": "Prefereix sòls calcaris o neutres sota pins, però surt en pinedes de tota mena.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://www.first-nature.com/fungi/tricholoma-terreum.php",
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633911-451914_TricholomaTerreum.pdf"
+ ]
+ },
+ "llenega-negra": {
+ "sol": "calcari",
+ "per": "Pinedes de pinassa i pi blanc sobre terreny calcari. Sovint surt amb el rovelló.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633897-451899_HydrophorusLimacinus.pdf",
+ "https://en.wikipedia.org/wiki/Hygrophorus_latitabundus"
+ ]
+ },
+ "moixerno": {
+ "sol": "calcari",
+ "per": "Prats, marges i bardisses sobre sòls calcaris rics en humus.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100304",
+ "https://first-nature.com/fungi/calocybe-gambosa.php"
+ ]
+ },
+ "camagroc": {
+ "sol": "calcari",
+ "per": "Llocs humits i molsosos de pinedes, normalment sobre sòls calcaris.",
+ "conf": "alta",
+ "fonts": [
+ "https://svampguiden.com/en/art/3215-golden-chanterelle"
+ ]
+ },
+ "trompeta": {
+ "sol": "indiferent",
+ "per": "Les fonts no coincideixen: unes diuen sòls calcaris pesants i d’altres sòls sorrencs pobres. Viu sota faigs i roures, en llocs humits.",
+ "conf": "baixa",
+ "fonts": [
+ "https://en.wikipedia.org/wiki/Craterellus_cornucopioides",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100586"
+ ]
+ },
+ "ou-de-reig": {
+ "sol": "acid",
+ "per": "Silicícola: alzinars, rouredes i castanyedes clares amb bruc i estepes, en sòls de pH 4–6.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633886-451888_AmanitaCaesarea.pdf",
+ "https://www.first-nature.com/fungi/amanita-caesarea.php"
+ ]
+ },
+ "cama-sec": {
+ "sol": "indiferent",
+ "per": "Depèn més de l’herba i dels prats pasturats que de la roca.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633902-451904_MarasmiusOreades.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100372"
+ ]
+ },
+ "pimpinella-morada": {
+ "sol": "nitrogenat",
+ "per": "Descompon fullaraca i humus en llocs rics en nutrients: vores de bosc, prats i munts de fulles.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100363",
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633900-451902_LepistaNuda.pdf"
+ ]
+ },
+ "apagallums": {
+ "sol": "indiferent",
+ "per": "Surt en sòls silícics i calcaris, amb una certa preferència pels àcids. Prats i clarianes poc adobats.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633901-451903_Macrolepiota.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100091"
+ ]
+ },
+ "murgola": {
+ "sol": "calcari",
+ "per": "Sòls calcaris, amb oms, freixes i boscos de ribera. També en llocs remenats o cremats.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.first-nature.com/fungi/morchella-esculenta.php",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=99887"
+ ]
+ },
+ "llengua-de-bou": {
+ "sol": "indiferent",
+ "per": "Prefereix sòls lleugerament àcids, però també surt en terrenys calcaris.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100641"
+ ]
+ },
+ "carbonera": {
+ "sol": "indiferent",
+ "per": "Sota planifolis i coníferes, en sòls tant àcids com calcaris.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100489"
+ ]
+ },
+ "llora-verda": {
+ "sol": "acid",
+ "per": "Rouredes, fagedes i castanyedes en sòls poc calcaris. És una preferència, no una regla.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100505",
+ "https://www.mycocharentes.fr/pdf1/1914.pdf"
+ ]
+ },
+ "marcot": {
+ "sol": "acid",
+ "per": "Sota avets, pins i faigs de muntanya, en terrenys àcids i pobres.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.fungipedia.org/media/kunena/attachments/2683/Articulosobreelmarzuolus.pdf"
+ ]
+ },
+ "farinera-borda": {
+ "sol": "indiferent",
+ "per": "Sota roures i altres planifolis, en sòls d’àcids a neutres i també calcaris. Pot sortir a tot arreu.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100099",
+ "https://pmc.ncbi.nlm.nih.gov/articles/PMC9138314"
+ ]
+ },
+ "reig-bord": {
+ "sol": "acid",
+ "per": "Amb bedolls i pins en sòls àcids, sorrencs o torbosos.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.newforestnpa.gov.uk/discover/plants-fungi/fungi/fly-agaric/",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100098"
+ ]
+ },
+ "pixaca": {
+ "sol": "indiferent",
+ "per": "Amb planifolis i coníferes. Les fonts no en diuen clarament el tipus de sòl.",
+ "conf": "baixa",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100101",
+ "https://svampguiden.com/art/visa/amanita_pantherina"
+ ]
+ },
+ "fals-carlet": {
+ "sol": "calcari",
+ "per": "Rouredes i fagedes, sovint sobre sòls argilosos o calcaris.",
+ "conf": "alta",
+ "fonts": [
+ "https://en.wikipedia.org/wiki/Entoloma_sinuatum",
+ "https://www.svampguiden.com/en/art/4037-livid-pinkgill"
+ ]
+ },
+ "bolet-doliu": {
+ "sol": "fusta",
+ "per": "En grups sobre soques, arrels enterrades i bases d’alzines, roures i oliveres.",
+ "conf": "alta",
+ "fonts": [
+ "https://en.wikipedia.org/wiki/Omphalotus_olearius"
+ ]
+ },
+ "bolet-de-cabra": {
+ "sol": "acid",
+ "per": "Viu només amb el bedoll, un arbre de sòls àcids.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100473",
+ "https://eforown.ctfc.cat/pdf/Fitxa%2010%20-%20catala_FINAL5_R2.pdf"
+ ]
+ },
+ "pinetell-bord": {
+ "sol": "acid",
+ "per": "Sota roures en sòls pobres, sorrencs o llimosos.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100459"
+ ]
+ },
+ "fredolic-metzinos": {
+ "sol": "calcari",
+ "per": "Sobre sòl calcari, amb faigs i avets de muntanya.",
+ "conf": "alta",
+ "fonts": [
+ "https://en.wikipedia.org/wiki/Tricholoma_pardinum",
+ "https://fr.wikipedia.org/wiki/Tricholoma_pardinum"
+ ]
+ },
+ "cortinari-metzinos": {
+ "sol": "indiferent",
+ "per": "Les fonts no coincideixen: n’hi ha que el donen en sòls àcids i d’altres en sòls argilosos calcaris. Viu amb roures, castanyers i avellaners.",
+ "conf": "baixa",
+ "fonts": [
+ "https://www.first-nature.com/fungi/cortinarius-orellanus.php",
+ "https://svampguiden.com/en/art/456-fool-s-webcap"
+ ]
+ },
+ "lepiota-petita": {
+ "sol": "nitrogenat",
+ "per": "Llocs herbosos remenats: camps, parcs, jardins i vores de camins.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://en.wikipedia.org/wiki/Lepiota_brunneoincarnata",
+ "https://www.first-nature.com/fungi/lepiota-brunneoincarnata.php"
+ ]
+ },
+ "escaldabecs": {
+ "sol": "acid",
+ "per": "Sota coníferes i bedolls en sòls humits i àcids, sovint amb molsa.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100491",
+ "https://www.first-nature.com/fungi/russula-emetica.php"
+ ]
+ },
+ "matagent": {
+ "sol": "calcari",
+ "per": "Sota roures i faigs vells, gairebé només en zones calcàries.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.first-nature.com/fungi/rubroboletus-satanas.php"
+ ]
+ },
+ "falsa-murgola": {
+ "sol": "acid",
+ "per": "Pinedes de primavera en sòls sorrencs i pobres.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://en.wikipedia.org/wiki/Gyromitra_esculenta",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=99884"
+ ]
+ },
+ "galerina": {
+ "sol": "fusta",
+ "per": "Sobre branques, troncs i soques molt podrits.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100198"
+ ]
+ },
+ "clitocibe-blanc": {
+ "sol": "indiferent",
+ "per": "Prats, marges de camí i parcs, sovint sorrencs, sense preferència clara de sòl.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://first-nature.com/fungi/clitocybe-rivulosa.php"
+ ]
+ },
+ "bolet-de-pi": {
+ "sol": "fusta",
+ "per": "En grups sobre fusta morta de coníferes i planifolis.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100277"
+ ]
+ },
+ "sureny-fosc": {
+ "sol": "acid",
+ "per": "Terrenys silícics i pobres (pH 4–6), amb roures, castanyers, alzinars i estepes.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633887-451889_BoletusAereus.pdf"
+ ]
+ },
+ "llenega-blanca": {
+ "sol": "calcari",
+ "per": "A la tardor, en sòls bàsics, amb coníferes.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://comunidad.madrid/sites/default/files/doc/sanidad/sali/a_hygrophorus_gliocyclus_e_hygrophorus_penarius.pdf"
+ ]
+ },
+ "carlet": {
+ "sol": "calcari",
+ "per": "Molt comú als alzinars i carrascars calcaris, sota la fullaraca.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633898-451900_HydrophorusRussula.pdf"
+ ]
+ },
+ "fredolic-gros": {
+ "sol": "acid",
+ "per": "Pinedes de pi roig sobre sòls sorrencs, secs, pobres i àcids.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100449",
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633910-451913_TricholomaPortentosum.pdf"
+ ]
+ },
+ "pollancro": {
+ "sol": "fusta",
+ "per": "Sobre soques, arrels i troncs vells de pollancres, àlbers, oms i salzes.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633885-451887_AgrocibeAegarita.pdf"
+ ]
+ },
+ "girgola-panical": {
+ "sol": "calcari",
+ "per": "Viu sobre les arrels del panical en ermots i pastures, sobretot en terrenys calcaris.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633904-451907_PleurotusEringii.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100246"
+ ]
+ },
+ "orellana": {
+ "sol": "fusta",
+ "per": "Sobre troncs i soques de pollancres, àlbers, freixes i altres planifolis.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633905-451908_PleurotusOstreatus.pdf"
+ ]
+ },
+ "camperol": {
+ "sol": "nitrogenat",
+ "per": "Prats pasturats i adobats amb fems, a prop de corrals i camins de bestiar.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633884-451823_AgaricusSp.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100064"
+ ]
+ },
+ "bola-de-neu": {
+ "sol": "nitrogenat",
+ "per": "Pastures, marges de camí, parcs i jardins en sòls rics en humus.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100070"
+ ]
+ },
+ "moixerno-blanc": {
+ "sol": "indiferent",
+ "per": "Clarianes, vores de bosc i pastures. No hem trobat cap font fiable sobre el tipus de sòl.",
+ "conf": "baixa",
+ "fonts": [
+ "https://first-nature.com/fungi/clitopillus-prunulus.php"
+ ]
+ },
+ "molleric": {
+ "sol": "indiferent",
+ "per": "Molt comú amb tota mena de pins, en sòls silícics i calcaris.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633908-451911_SuillusSp.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100542",
+ "https://en.wikipedia.org/wiki/Suillus_granulatus"
+ ]
+ },
+ "peu-de-rata-groc": {
+ "sol": "calcari",
+ "per": "Fagedes i avetoses de muntanya. Hi ha poques dades sobre el sòl.",
+ "conf": "baixa",
+ "fonts": [
+ "https://en.wikipedia.org/wiki/Ramaria_aurea"
+ ]
+ },
+ "cama-de-perdiu": {
+ "sol": "indiferent",
+ "per": "Només amb pins, perquè depèn dels mollerics. Surt en sorra seca i també en terreny calcari.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100549"
+ ]
+ },
+ "bolet-de-tinta": {
+ "sol": "nitrogenat",
+ "per": "Prats, jardins, cunetes, marges de camí i terres remogudes.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.larioja.org/medio-ambiente/es/reserva-biosfera/valores/naturaleza/valores-naturales/45_setaslocalizacion.ficheros/633894-451896_CoprinusComatus.pdf",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100131"
+ ]
+ },
+ "cogomassa": {
+ "sol": "indiferent",
+ "per": "A la primavera, amb alzines, roures i pi pinyer, en sòls d’àcids a bàsics.",
+ "conf": "alta",
+ "fonts": [
+ "https://pmc.ncbi.nlm.nih.gov/articles/PMC9138314"
+ ]
+ },
+ "bola-de-neu-pudent": {
+ "sol": "nitrogenat",
+ "per": "Parcs, jardins i boscos joves, en sòls rics i sovint calcaris.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100071"
+ ]
+ },
+ "bolet-de-femer": {
+ "sol": "fusta",
+ "per": "En grups sobre fusta, arrels i soques enterrades, sovint en jardins i llocs remenats.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100132"
+ ]
+ },
+ "peu-de-rata-bord": {
+ "sol": "calcari",
+ "per": "Sota faigs i roures en sòls calcaris pobres.",
+ "conf": "alta",
+ "fonts": [
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100821"
+ ]
+ },
+ "groguet": {
+ "sol": "acid",
+ "per": "Amb pins en sòls sorrencs, secs i pobres.",
+ "conf": "mitjana",
+ "fonts": [
+ "https://svampguiden.com/en/art/245051-yellow-knight",
+ "https://mushrooms.linnaeus.naturalis.nl/linnaeus_ng/app/views/species/taxon.php?id=100440"
+ ]
+ },
+ "inocibe": {
+ "sol": "calcari",
+ "per": "Sota faigs i carpes, gairebé sempre en sòls bàsics o neutres.",
+ "conf": "alta",
+ "fonts": [
+ "https://www.first-nature.com/fungi/inocybe-erubescens.php"
+ ]
+ }
+ };
 
 // Configuració web del projecte de Firebase «Boletaire» (boletaire-c2dfd).
 // No és secreta: la protegeixen les regles de Firestore i els dominis autoritzats.
@@ -1880,7 +2389,8 @@ function testsHTML(s,nb){
 const soilOf = s => (typeof SOIL!=='undefined' && SOIL[s.id]) || null;
 function soilHTML(s, nb){
   const o=soilOf(s); if(!o||!SOILS[o.sol]) return '';
-  const lab=SOILS[o.sol].label, more=`<a href="#coneixements" data-know="sol">Què vol dir?</a>`;
+  const lab=SOILS[o.sol].label, more=`<a href="#coneixements" data-know="sol">Què vol dir?</a>`
+    + ((o.fonts||[]).length?` <small class="srcs">Fonts: ${o.fonts.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">${i+1}</a>`).join(' ')}</small>`:'');
   return nb ? `<p class="pencil" style="margin:0"><b>Sòl:</b> ${esc(lab.toLowerCase())}. ${esc(o.per||'')} ${more}</p>`
             : `<p class="soil" style="margin:0"><span class="soilb s-${o.sol}">${SOILS[o.sol].short}</span> ${esc(o.per||'')} ${more}</p>`;
 }
