@@ -2480,6 +2480,7 @@ function renderTabs(){
     : `<button class="tab" data-tab="${t.id}" ${state.tab===t.id?'aria-current="page"':''}><svg viewBox="0 0 24 24" aria-hidden="true">${t.icon}</svg>${t.label}</button>`).join('');
 }
 function goTab(id){
+  NAV.scroll[state.tab]=window.scrollY;
   if(id==='experts') state.areaTab='experts';
   else if(id==='bergueda') state.areaTab='zona';
   state.tab = OLD_TABS[id]||id;
@@ -2595,7 +2596,7 @@ function gameSheet(inner, title){
   const el=$('#sheet');
   el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">${title}</span></div><div class="body game">${inner}</div>`;
   el.dataset.view='game'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden'; NAV.sheetHash=''; navSync();
-  $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='bolets') cards(); });
+  $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='bolets') keepScroll(cards); });
 }
 function meAvatar(big){
   const u=CLOUD.user, name=(RANK.mine&&RANK.mine.alias)||(u&&(u.displayName||u.email))||'';
@@ -2784,6 +2785,7 @@ function sheetNb(s){
 function openSheet(id){
   const s=BY_ID[id]; if(!s) return;
   const el=$('#sheet');
+  if(!el.hidden && el.dataset.view==='key') IDK.keyScroll=el.scrollTop;
   el.innerHTML = `<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button>
     <div class="skin-sw" role="group" aria-label="Estil de la fitxa"><button data-skin="llibreta" aria-pressed="${prefs.skin==='llibreta'}">Llibreta</button><button data-skin="estandard" aria-pressed="${prefs.skin==='estandard'}">Estàndard</button></div></div>
     <div class="body">${prefs.skin==='llibreta'?sheetNb(s):sheetStd(s)}</div>`;
@@ -2794,12 +2796,32 @@ function openSheet(id){
   $('#back').focus({preventScroll:true});
   NAV.sheetHash='#'+id; navSync();
 }
-function closeSheet(){ cisStopGps(); const el=$('#sheet'); if(IDK.from && el.dataset.view!=='key'){ IDK.from=false; openKey(); return; } el.hidden=true; el.innerHTML=''; el.dataset.view=''; document.body.style.overflow=''; NAV.sheetHash=''; navSync(); }
+function closeSheet(){ cisStopGps(); const el=$('#sheet'); if(IDK.from && el.dataset.view!=='key'){ IDK.from=false; openKey(); return; } el.hidden=true; el.innerHTML=''; el.dataset.view=''; IDK.keyScroll=0; document.body.style.overflow=''; NAV.sheetHash=''; navSync(); }
+
+// ---------- Actualitzacions ----------
+// L'app nova es baixa en segon pla; quan està a punt, la pàgina es recarrega sola (vegeu build_pwa.py).
+async function checkUpdate(){
+  const m=$('#upd-msg'), say=t=>{ if(m) m.textContent=t; };
+  if(!navigator.onLine){ say('Cal connexió per buscar actualitzacions.'); return; }
+  say('Buscant…');
+  try{
+    const reg=await navigator.serviceWorker.getRegistration();
+    if(!reg){ say('Recarrega la pàgina per activar les actualitzacions.'); return; }
+    await reg.update();
+    const nw=reg.installing||reg.waiting;
+    if(nw){ say('Hi ha una versió nova. S’està baixant; l’app es recarregarà sola en uns segons.'); if(reg.waiting) reg.waiting.postMessage('skip'); }
+    else say('Ja tens l’última versió.');
+  }catch(e){ say('No s’ha pogut comprovar. Torna-ho a provar amb connexió.'); }
+}
 
 // ---------- Botó enrere del mòbil ----------
 // Quan no ets a la pantalla d'inici (Bolets sense cap fitxa oberta) hi ha una entrada «guarda» a l'historial.
 // En tirar enrere, l'app puja un nivell (tanca la fitxa, o torna a Bolets) en lloc de sortir.
-const NAV = { guard:false, ignore:0, hash:'#bolets', sheetHash:'', timer:null };
+// El scroll el gestiona l'app: el navegador no l'ha de restaurar pel seu compte en tirar enrere
+try{ history.scrollRestoration='manual'; }catch(e){}
+const NAV = { guard:false, ignore:0, hash:'#bolets', sheetHash:'', timer:null, scroll:{} };
+// Torna a pintar sense perdre el punt de scroll
+const keepScroll = fn => { const y=window.scrollY; fn(); window.scrollTo(0,y); };
 const navRoot = () => $('#sheet').hidden && state.tab==='bolets';
 function navSync(){ clearTimeout(NAV.timer); NAV.timer=setTimeout(()=>{
   const want=!navRoot(), url = (!$('#sheet').hidden && NAV.sheetHash) || ('#'+(state.tab==='bergueda'&&state.areaTab==='experts'?'experts':state.tab));
@@ -2813,8 +2835,8 @@ addEventListener('popstate',()=>{
   NAV.guard=false;
   if($('#cel')){ CEL.queue.length=0; celClose(); navSync(); return; }
   const el=$('#sheet');
-  if(!el.hidden){ closeSheet(); if(state.tab==='perfil'||state.tab==='bolets') render(); }
-  else if(state.tab!=='bolets'){ state.tab='bolets'; render(); window.scrollTo(0,0); }
+  if(!el.hidden){ closeSheet(); if(el.hidden && (state.tab==='perfil'||state.tab==='bolets')) keepScroll(render); }
+  else if(state.tab!=='bolets'){ NAV.scroll[state.tab]=window.scrollY; state.tab='bolets'; render(); window.scrollTo(0, NAV.scroll.bolets||0); }
   navSync();
 });
 
@@ -3133,7 +3155,7 @@ function candHTML(c){
     <br><a href="#${s.id}" data-open="${s.id}" data-fromkey="1">Obre la fitxa</a></div></div>`;
 }
 function openKey(scrollTo){
-  const el=$('#sheet'); const keep = !el.hidden && el.dataset.view==='key' ? el.scrollTop : 0;
+  const el=$('#sheet'); const keep = !el.hidden && el.dataset.view==='key' ? el.scrollTop : (!el.hidden && IDK.keyScroll ? IDK.keyScroll : 0);
   el.dataset.view='key';
   el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">Clau guiada</span></div><div class="body">${keyHTML()}</div>`;
   el.hidden=false; document.body.style.overflow='hidden';
@@ -3176,6 +3198,9 @@ function viewProfile(){
      <h3>Tema</h3><div class="opt seg2" data-pref="theme">${opt('theme','sistema','Com el sistema')}${opt('theme','clar','Clar')}${opt('theme','fosc','Fosc')}</div>
      <p class="muted" style="font-size:.85rem;margin:0">La fitxa de llibreta sempre es veu sobre paper.</p></div>
    <div class="panel acct" id="acct">${acctHTML()}</div>
+   <div class="panel"><h2>Versió de l’app</h2>
+     <p class="muted" style="margin:0">${window.APP_VERSION?`Versió ${esc(window.APP_VERSION.slice(0,7))} · ${esc(window.APP_DATE||'')}`:'Versió de prova'}</p>
+     ${'serviceWorker' in navigator && window.APP_VERSION?`<button class="btn" data-update>Busca actualitzacions</button><p class="muted" id="upd-msg" role="status" style="margin:0;font-size:.88rem"></p>`:''}</div>
    <details class="rg"><summary><span><b>Sobre les dades i les fotos</b><small>${SPECIES.length} espècies · crèdits de Wikimedia Commons</small></span></summary><div class="in">
      <p>${SPECIES.length} espècies del Berguedà i de Catalunya, comestibles i tòxiques. El grau de comestibilitat segueix el consens de la Societat Catalana de Micologia. Les fotos són de Wikimedia Commons, amb llicència lliure. Els esbossos són orientatius.</p>
      <ul class="src">${SPECIES.filter(ph).map(s=>`<li><i>${esc(s.sci)}</i>: ${by(ph(s))}, ${esc(ph(s).lic)}, <a href="${ph(s).page}" target="_blank" rel="noopener">Commons</a></li>`).join('')}</ul></div></details>
@@ -3342,7 +3367,7 @@ function openFindView(id){
     <div class="row"><button class="btn solid" data-find-edit="${e.id}">Edita</button><button class="btn danger" data-find-del="${e.id}">Esborra</button></div>
    </article></div>`;
   el.dataset.view='findview'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden'; NAV.sheetHash=''; navSync();
-  $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='perfil') render(); });
+  $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='perfil') keepScroll(render); });
 }
 
 
@@ -3669,6 +3694,7 @@ document.addEventListener('click',e=>{
   const gm=e.target.closest('[data-game]'); if(gm){ gm.dataset.game==='badges'?openBadges():openRanking(); return; }
   const rk=e.target.closest('[data-rank]'); if(rk){ RANK.period=rk.dataset.rank; paintRanking(); return; }
   if(e.target.closest('[data-rank-out]')){ (async()=>{ if(!confirm('Vols treure’t del rànquing?')) return; const {F,db}=CLOUD.fb; try{ await F.deleteDoc(F.doc(db,'ranking',CLOUD.user.uid)); RANK.mine=null; }catch(err){} await rankLoad(); paintRanking(); })(); return; }
+  if(e.target.closest('[data-update]')){ checkUpdate(); return; }
   const mn=e.target.closest('[data-mine]'); if(mn){ state.mine = mn.dataset.mine==='true'; cards(); return; }
   const kn=e.target.closest('[data-know]'); if(kn){ e.preventDefault(); closeSheet(); goTab('coneixements'); render(); const d=$('#k-'+kn.dataset.know); if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({block:'start'}),30); } return; }
   const ar=e.target.closest('[data-area]'); if(ar){ goTab(ar.dataset.area==='experts'?'experts':'bergueda'); render(); return; }
@@ -3702,6 +3728,7 @@ cisLoad().then(cloudInit);
 })();
 
 </script>
+<script>window.APP_VERSION="3823e02644"; window.APP_DATE="2026-10-04";</script>
 <script>
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;

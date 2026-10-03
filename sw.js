@@ -1,5 +1,5 @@
-// Generat per build_pwa.py. Versió bdeb55793d
-const CACHE='boletaire-bdeb55793d', FONTS='boletaire-fonts';
+// Generat per build_pwa.py. Versió 3823e02644
+const CACHE='boletaire-3823e02644', FONTS='boletaire-fonts';
 const FILES=["./", "index.html", "privacitat.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/icon.svg"];
 self.addEventListener('install', e=>{
   e.waitUntil((async()=>{
@@ -8,6 +8,7 @@ self.addEventListener('install', e=>{
     self.skipWaiting();
   })());
 });
+self.addEventListener('message', e=>{ if(e.data==='skip') self.skipWaiting(); });
 self.addEventListener('activate', e=>{
   e.waitUntil((async()=>{
     for(const k of await caches.keys()) if(k!==CACHE && k!==FONTS) await caches.delete(k);
