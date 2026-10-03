@@ -379,6 +379,16 @@ details.know summary b{ font-size:1.08rem }
 .found{ display:grid; gap:.35rem; justify-items:start; margin:.6rem 0 }
 .found small{ font-size:.85rem; line-height:1.4; color:var(--muted) }
 .nb .found small{ font-family:var(--f-type); color:var(--pencil); font-size:.78rem }
+/* Col·lecció */
+.card{ position:relative }
+.gotb{ position:absolute; top:.35rem; right:.35rem; z-index:1; background:var(--accent); color:var(--accent-fg); border-radius:999px; padding:.05rem .45rem; font-size:.78rem; font-weight:700; box-shadow:0 1px 3px rgba(0,0,0,.3) }
+.prog .bar{ height:.7rem; background:var(--chip); border-radius:999px; overflow:hidden }
+.prog .bar i{ display:block; height:100%; background:var(--accent); border-radius:999px }
+.badges{ display:flex; flex-wrap:wrap; gap:.4rem }
+.badge{ border:1px dashed var(--line); border-radius:12px; padding:.35rem .6rem; color:var(--muted); font-size:.82rem; line-height:1.25 }
+.badge small{ display:block; font-size:.74rem }
+.badge.on{ border:1px solid var(--accent); color:var(--fg); background:color-mix(in srgb,var(--accent) 12%,transparent) }
+.badge.on b{ color:var(--accent) }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -1814,7 +1824,7 @@ function confHTML(c, nb){
 const REAG = Object.fromEntries(REAGENTS.map(r=>[r.id,r]));
 
 // ---------- Vistes ----------
-const state = { tab:'bolets', q:'', cat:'tots', now:false, hab:'', zone:'', areaZone:'', areaTab:'zona' };
+const state = { tab:'bolets', q:'', cat:'tots', now:false, hab:'', zone:'', areaZone:'', areaTab:'zona', mine:false };
 const TABS = [
   {id:'bolets', label:'Bolets', icon:'<path d="M4 12a8 7 0 0 1 16 0z"/><path d="M10 12v6a2 2 0 0 0 4 0v-6"/>'},
   {id:'coneixements', label:'Coneixements', icon:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M8 8h8M8 11.5h6"/>'},
@@ -1847,7 +1857,9 @@ function render(){
 }
 function filtered(){
   const q=state.q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const found=foundCount();
   return SPECIES.filter(s=>{
+    if(state.mine && !found[s.id]) return false;
     if(state.cat==='comestibles' && !['exc','com'].includes(s.cat)) return false;
     if(state.cat!=='tots' && state.cat!=='comestibles' && s.cat!==state.cat) return false;
     if(state.now && !inSeason(s)) return false;
@@ -1858,14 +1870,46 @@ function filtered(){
 }
 function cards(){
   const list=filtered();
+  const found=foundCount();
   $('#count').textContent = `${list.length} ${list.length===1?'espècie':'espècies'}`;
-  $('#grid').innerHTML = list.length ? list.map(s=>`<button class="card" data-open="${s.id}">${photoImg(s,'cph')}<span class="nm">${esc(s.ca)}</span><span class="sc">${esc(s.sci)}</span>${pill(s)}</button>`).join('')
+  if($('#progress')) $('#progress').innerHTML = state.mine ? progressHTML() : '';
+  $('#segmine').innerHTML = segMineHTML();
+  $('#grid').innerHTML = list.length ? list.map(s=>`<button class="card ${found[s.id]?'got':''}" data-open="${s.id}">${found[s.id]?`<span class="gotb" aria-label="L’has trobat ${found[s.id]} ${found[s.id]===1?'vegada':'vegades'}">✓${found[s.id]>1?` ${found[s.id]}`:''}</span>`:''}${photoImg(s,'cph')}<span class="nm">${esc(s.ca)}</span><span class="sc">${esc(s.sci)}</span>${pill(s)}</button>`).join('')
+    : state.mine && !Object.keys(found).length ? `<div class="empty"><p>Encara no has registrat cap bolet.</p><p>Quan en trobis un, obre’n la fitxa i toca «L’he trobat: registrar».</p><button class="btn solid" data-find="new">Registra una troballa</button></div>`
     : `<p class="empty">Cap espècie amb aquests filtres. Prova de treure’n algun.</p>`;
+}
+// ---------- Col·lecció: quantes espècies has trobat ----------
+function foundCount(){ const c={}; for(const e of CIS.list) if(e.sp && BY_ID[e.sp]) c[e.sp]=(c[e.sp]||0)+1; return c; }
+function segMineHTML(){
+  const n=Object.keys(foundCount()).length;
+  return [[false,`Tots · ${SPECIES.length}`],[true,`Els meus · ${n}`]].map(([v,l])=>`<button role="tab" data-mine="${v}" aria-selected="${state.mine===v}">${l}</button>`).join('');
+}
+const LEVELS=[[1,'Primera troballa'],[5,'Boletaire novell'],[15,'Boletaire'],[30,'Micòleg de camp'],[SPECIES.length,'Tota la llibreta']];
+function progressHTML(){
+  const found=foundCount(), ids=Object.keys(found), n=ids.length, tot=SPECIES.length;
+  const isFood=s=>['exc','com','pre'].includes(s.cat);
+  const food=SPECIES.filter(isFood), bad=SPECIES.filter(s=>!isFood(s));
+  const zones=new Set(CIS.list.filter(e=>e.loc).map(e=>zoneAt(e.loc.lat,e.loc.lon)).filter(Boolean));
+  const months=new Set(CIS.list.map(e=>new Date(e.date).getMonth()));
+  const spring=[2,3,4,5].some(m=>months.has(m)), autumn=[8,9,10,11].some(m=>months.has(m));
+  const loose=CIS.list.filter(e=>!e.sp).length;
+  const next=LEVELS.find(([k])=>n<k);
+  const badges=[...LEVELS.map(([k,l])=>[n>=k,l,`${k} ${k===1?'espècie':'espècies'}`]),
+    [zones.size>=4,'Les quatre zones','Troballes a les 4 zones del Berguedà'],
+    [spring&&autumn,'Primavera i tardor','Troballes a les dues temporades'],
+    [bad.some(s=>found[s.id]),'Ull de micòleg','Has reconegut un bolet tòxic o mortal']];
+  return `<div class="panel prog"><div class="aihd"><h2>Has trobat ${n} de ${tot} espècies</h2></div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${n}"><i style="width:${Math.round(n/tot*100)}%"></i></div>
+    <p class="muted" style="font-size:.9rem">Comestibles: ${food.filter(s=>found[s.id]).length} de ${food.length} · Tòxics i mortals: ${bad.filter(s=>found[s.id]).length} de ${bad.length}${loose?` · ${loose} sense identificar`:''}${next?`. Et ${next[0]-n===1?'falta 1 espècie':`falten ${next[0]-n} espècies`} per a «${next[1]}».`:''}</p>
+    <div class="badges">${badges.map(([on,l,h])=>`<span class="badge ${on?'on':''}" title="${h}"><b>${on?'★':'☆'} ${l}</b><small>${h}</small></span>`).join('')}</div>
+    <p class="muted" style="font-size:.85rem;margin:0">Els tòxics i mortals compten igual amb una foto: no cal que els cullis.</p></div>`;
 }
 function viewList(){
   const chipsDef=[['tots','Tots'],['comestibles','Comestibles'],['pre','Precaució'],['reb','Picants'],['tox','Tòxics'],['mor','Mortals']];
   return `<div class="view">
    <div class="safety" role="note"><span class="ic" aria-hidden="true">!</span><span><b>Aquesta app serveix per aprendre, no per decidir què et menges.</b> Si tens el més mínim dubte, no el mengis i fes-lo revisar per una <a href="#experts" data-tab="experts">persona experta</a>.</span></div>
+   <div class="seg" role="tablist" aria-label="Quins bolets" id="segmine"></div>
+   <div id="progress"></div>
    <label class="search" for="q"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Cerca: rovelló, Boletus, níscalo…" value="${esc(state.q)}" autocomplete="off"></label>
    <div class="chips" role="group" aria-label="Comestibilitat">${chipsDef.map(([k,l])=>`<button class="chip" data-cat="${k}" aria-pressed="${state.cat===k}">${l}</button>`).join('')}</div>
    <div class="row"><label class="toggle" for="now"><input type="checkbox" id="now" ${state.now?'checked':''}> Només els que surten al ${MESOS[NOW-1]}</label>
@@ -1906,7 +1950,7 @@ function sheetStd(s){
    ${testsHTML(s,false)}
    <section><h2>Curiositat</h2><p class="box" style="margin:0">${esc(s.cur)}</p></section>
    <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
-     <small>Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
+     <small>${foundCount()[s.id]?`Ja l’has registrat ${foundCount()[s.id]===1?'1 vegada':foundCount()[s.id]+' vegades'}. `:''}Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
    <section><h2>Les meves notes</h2><label for="nota" class="sr" style="font-size:.9rem;color:var(--muted)">Es guarden només en aquest dispositiu.</label><textarea id="nota" data-id="${s.id}" placeholder="On l’has trobat, data, olor, què et va dir l’expert…">${esc(getNote(s.id))}</textarea></section>
    <div class="links"><a class="btn" href="${commons(s)}" target="_blank" rel="noopener">Fotos lliures a Wikimedia ↗</a></div>
   </article>`;
@@ -1932,7 +1976,7 @@ function sheetNb(s){
    ${testsHTML(s,true)}
    <h2>Curiositat</h2><p class="pencil" style="margin:0">${esc(s.cur)}</p>
    <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
-     <small>Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
+     <small>${foundCount()[s.id]?`Ja l’has registrat ${foundCount()[s.id]===1?'1 vegada':foundCount()[s.id]+' vegades'}. `:''}Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
    <h2>Els meus apunts</h2><label for="nota" style="font-family:var(--f-type);font-size:.78rem;color:var(--pencil)">(només es guarden en aquest dispositiu)</label>
    <textarea id="nota" data-id="${s.id}" placeholder="data, lloc, olor…">${esc(getNote(s.id))}</textarea>
    <div class="nlinks"><a href="${commons(s)}" target="_blank" rel="noopener">→ fotos lliures (Wikimedia)</a></div>
@@ -2325,7 +2369,7 @@ async function cisTx(mode, fn){ const db=await cisDB(); return new Promise((ok,k
   tx.oncomplete=()=>ok(req?req.result:undefined); tx.onerror=()=>ko(tx.error); }); }
 async function cisLoad(){
   try{ CIS.list=(await cisTx('readonly',st=>st.getAll())).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }catch(e){ CIS.off=true; }
-  CIS.ready=true; if(state.tab==='perfil' && $('#cis-list')) $('#cis-list').innerHTML=cisListHTML();
+  CIS.ready=true; if(state.tab==='perfil' && $('#cis-list')) $('#cis-list').innerHTML=cisListHTML(); if(state.tab==='bolets' && $('#grid')) cards();
 }
 const cisURL=(e,i)=> CIS.urls[e.id+':'+i] || (CIS.urls[e.id+':'+i]=URL.createObjectURL(e.photos[i]));
 function cisForget(id){ for(const k in CIS.urls) if(k.startsWith(id+':')){ URL.revokeObjectURL(CIS.urls[k]); delete CIS.urls[k]; } }
@@ -2368,6 +2412,7 @@ function openFind(id, sp){
    <div class="body"><form class="xform find" id="f-form" novalidate>
     <h1 id="sheet-title" style="font-size:1.5rem">${e?'Edita la troballa':'Nova troballa'}</h1>
     <label for="f-sp">Quin bolet és?</label><select id="f-sp"><option value="">No ho sé, o no és a la llista</option>${opts}</select>
+    <div id="f-warn"></div>
     <div id="f-namewrap" ${d.sp?'hidden':''}><label for="f-name">Nom, si en saps algun</label><input id="f-name" maxlength="80" value="${esc(d.name)}" placeholder="p. ex. bolet blanc del prat"></div>
     <label for="f-date">Quan</label><input type="datetime-local" id="f-date" value="${esc(d.date)}">
     <label>Fotos <small class="muted">(fins a ${CIS_MAX})</small></label><div id="f-photos"></div>
@@ -2379,12 +2424,13 @@ function openFind(id, sp){
    </form></div>`;
   el.dataset.view='find'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
   $('#back').addEventListener('click',closeSheet);
-  $('#f-sp').addEventListener('change',ev=>{ d.sp=ev.target.value; $('#f-namewrap').hidden=!!d.sp; });
+  const spWarn=()=>{ const x=BY_ID[d.sp]; $('#f-warn').innerHTML = x&&['tox','mor'].includes(x.cat) ? `<div class="danger-line"><b>${x.cat==='mor'?'Mortal':'Tòxic'}.</b> N’hi ha prou amb les fotos: no cal que el cullis. Si l’has tocat, renta’t les mans.</div>` : ''; };
+  $('#f-sp').addEventListener('change',ev=>{ d.sp=ev.target.value; $('#f-namewrap').hidden=!!d.sp; spWarn(); });
   $('#f-name').addEventListener('input',ev=>d.name=ev.target.value);
   $('#f-date').addEventListener('input',ev=>d.date=ev.target.value);
   $('#f-note').addEventListener('input',ev=>d.note=ev.target.value);
   $('#f-form').addEventListener('submit',ev=>{ ev.preventDefault(); cisSave(); });
-  paintPhotos(); paintGps();
+  paintPhotos(); paintGps(); spWarn();
   if(!e) cisLocate(); // en una troballa nova, comença a buscar la posició de seguida
 }
 function draftURL(b){ return b._u || (b._u=URL.createObjectURL(b)); }
@@ -2600,6 +2646,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-gps]')){ cisLocate(); return; }
   if(e.target.closest('[data-gps-fix]')){ cisFixGps(); return; }
   if(e.target.closest('[data-gps-stop]')){ const d=CIS.draft; cisStopGps(); if(d) d.gps={}; paintGps(); return; }
+  const mn=e.target.closest('[data-mine]'); if(mn){ state.mine = mn.dataset.mine==='true'; cards(); return; }
   const ar=e.target.closest('[data-area]'); if(ar){ goTab(ar.dataset.area==='experts'?'experts':'bergueda'); render(); return; }
 },true);
 document.addEventListener('keydown',e=>{ const zp=e.target.closest&&e.target.closest('.zp'); if(zp && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); zp.dispatchEvent(new MouseEvent('click',{bubbles:true})); } });
