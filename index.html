@@ -219,6 +219,8 @@ details.rg summary::after{ content:"+"; font-size:1.4rem; color:var(--muted) }
 details.rg[open] summary::after{ content:"–" }
 details.rg .in{ display:grid; gap:.6rem; padding-bottom:1rem }
 details.rg .in p{ margin:0 } details.rg ol{ margin:0; padding-left:1.2rem }
+.shots{ width:100%; height:auto; color:var(--accent); display:block }
+.pgsteps{ display:grid; gap:.45rem } .pgsteps li{ padding-left:.15rem }
 .warn-line{ background:var(--warn-bg); border-radius:10px; padding:.55rem .75rem; font-size:.93rem }
 .danger-line{ background:var(--tox-bg); border-radius:10px; padding:.55rem .75rem; font-size:.93rem }
 .tbl{ overflow-x:auto } .tbl table{ border-collapse:collapse; width:100%; min-width:30rem; font-size:.92rem }
@@ -1519,7 +1521,7 @@ function paintZone(){
 }
 
 // ---------- Clau d'identificació guiada ----------
-const IDK = { ans:{}, zone:'', month:String(NOW), photo:null, demo:-1, geo:'' };
+const IDK = { ans:{}, zone:'', month:String(NOW), photo:null, demo:-1, geo:'', guide:false };
 // --- "Avui i aquí": la ubicació del mòbil es converteix a zona. No surt del dispositiu. ---
 // Mateixa projecció que build_map.py; límits del Berguedà segons OpenStreetMap (relació 358838).
 const GEO = { minx:1.6103518, maxx:2.0710234, miny:41.8974423, maxy:42.3233011, W:360, pad:8 };
@@ -1592,6 +1594,7 @@ function aiLiveHTML(){
   const left=Math.max(0,AIMAX-aiUsed());
   return `<section class="ai live"><div class="aihd"><h2>Prova-ho amb la teva foto</h2><span class="demotag">${left} de ${AIMAX} consultes de prova</span></div>
     <p class="muted">IA real: Claude mira la teva foto i la compara amb les ${SPECIES.length} espècies de l’app. Fa servir el teu compte de Claude i et demanarà permís el primer cop.</p>
+    <p class="muted">Millor foto per a la IA: de costat i una mica per sota, amb la base del peu. <a href="#kguide" data-photoguide>Com fer la foto</a></p>
     ${left>0 && LIVE.state!=='busy' ? `<label class="btn solid" for="aifile">Fes o tria una foto</label><input type="file" id="aifile" accept="image/*" hidden>`:''}
     ${left===0?`<p class="muted">Ja has fet les ${AIMAX} consultes de prova. A l’app real seria una funció de pagament.</p>`:''}
     ${LIVE.state==='busy'?`<p class="busy" role="status">La IA està mirant la foto… pot trigar fins a un minut.</p><button class="btn" data-aistop>Atura</button>`:''}
@@ -1658,15 +1661,42 @@ function bestNext(cands){
     vals.delete('?'); if(vals.size>bv){ bv=vals.size; best=q; } }
   return best;
 }
+// --- Com fer la foto: guia breu, serveix per comparar i per a la IA ---
+const PHOTO_SHOTS = `<svg class="shots" viewBox="0 0 500 124" role="img" aria-label="Cinc fotos: on és, de costat amb una moneda, per sota, la base del peu i tallat">
+  <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+   <g><path d="M18 78 h70"/><path d="M28 40 l10 -24 l10 24 z M38 40 v12"/><path d="M58 70 q12 -16 24 0 z M68 70 v8 M72 70 v8"/></g>
+   <g transform="translate(100 0)"><path d="M22 52 q28 -36 56 0 z"/><path d="M44 52 c-2 10 -2 20 -4 26 h20 c-2 -6 -2 -16 -4 -26"/><circle cx="78" cy="72" r="7"/></g>
+   <g transform="translate(200 0)"><circle cx="50" cy="46" r="30"/><circle cx="50" cy="46" r="6"/><path d="M50 16 v24 M50 52 v24 M20 46 h24 M56 46 h24 M29 25 l17 17 M54 50 l17 17 M71 25 l-17 17 M46 50 l-17 17"/></g>
+   <g transform="translate(300 0)"><path d="M40 18 c-2 18 -2 34 -4 46 h28 c-2 -12 -2 -28 -4 -46"/><path d="M32 60 q-4 16 18 18 q22 -2 18 -18"/><path d="M14 52 h14 M72 52 h14" stroke-dasharray="4 4"/></g>
+   <g transform="translate(400 0)"><path d="M22 52 q28 -36 56 0 z"/><path d="M44 52 c-2 10 -2 20 -4 26 h20 c-2 -6 -2 -16 -4 -26"/><path d="M50 18 v62" stroke-dasharray="3 4"/><path d="M60 30 q8 4 10 14" opacity=".6"/></g>
+  </g>
+  <g font-size="17" font-weight="700" text-anchor="middle" fill="currentColor"><text x="50" y="112">1 On és</text><text x="150" y="112">2 De costat</text><text x="250" y="112">3 Per sota</text><text x="350" y="112">4 La base</text><text x="450" y="112">5 Tallat</text></g>
+ </svg>`;
+function photoGuideHTML(){
+  return `<details class="rg" id="kguide" ${IDK.guide?'open':''}><summary><span><b>Com fer la foto perquè serveixi</b><small>Per comparar-lo o per a la IA. Millor diverses fotos que una.</small></span></summary><div class="in">
+   ${PHOTO_SHOTS}
+   <ol class="pgsteps">
+    <li><b>On és, abans de collir-lo.</b> Una foto de lluny: si surt de terra, de fusta o de molsa, i quins arbres hi ha a prop.</li>
+    <li><b>De costat, sencer.</b> Barret, peu i base en una sola foto, amb una moneda o un dit al costat per veure’n la mida.</li>
+    <li><b>Per sota.</b> Que es vegi si té làmines, porus o agulles, i com s’uneixen al peu. Si té anell, fes-ne una foto de prop.</li>
+    <li><b>La base del peu.</b> Treu-lo sencer gratant la terra amb el ganivet; no el tallis arran. Si hi ha una volva (un sac o uns anells a la base), ha de sortir a la foto: és el que delata les amanites mortals.</li>
+    <li><b>Tallat de dalt a baix.</b> El color de la carn i, al cap de 5 minuts, una altra foto per veure si canvia (blaveja, enrogeix…). Si treu làtex, que se’n vegi el color.</li>
+   </ol>
+   <p><b>Si en trobes més d’un,</b> fotografia’n un de jove i un de vell: canvien molt. <b>Llum natural i sense flaix</b>; toca la pantalla sobre el bolet perquè quedi enfocat.</p>
+   <p><b>Si només en pots fer una</b> (per exemple, per a la IA): de costat i una mica per sota, que surtin el barret, les làmines o porus, el peu i la base.</p>
+   <p class="muted">Toca els bolets que no coneixes amb guants o renta’t les mans després. No el tastis mai i porta’l a part dels altres a la cistella.</p>
+  </div></details>`;
+}
 function keyHTML(){
   const cands=scoreAll(), ok=cands.filter(c=>c.x===0), nxt=bestNext(cands);
   return `<article class="key">
    <h1 id="sheet-title" style="font-size:1.6rem">Identifica’l pas a pas</h1>
    <p class="lead">Respon el que puguis. Cada resposta descarta espècies. Si no ho saps, deixa-ho en blanc.</p>
    <div class="danger-line"><b>Això és una pista, no una identificació.</b> Abans de menjar-te’l, fes-lo revisar per una persona experta.</div>
+   ${photoGuideHTML()}
    ${aiDemoHTML()}
    <section class="kq" id="kphoto"><h2>La teva foto <small>(opcional)</small></h2>
-     <p class="muted">No s’envia enlloc: només serveix per comparar-la amb les fotos dels candidats.</p>
+     <p class="muted">No s’envia enlloc: només serveix per comparar-la amb les fotos dels candidats. <a href="#kguide" data-photoguide>Com fer la foto</a></p>
      ${IDK.photo?`<img class="kphoto" src="${IDK.photo}" alt="La teva foto">`:''}
      <label class="btn" for="kfile">${IDK.photo?'Canvia la foto':'Afegeix una foto'}</label><input type="file" id="kfile" accept="image/*" hidden></section>
    <section class="kq"><h2>On i quan</h2>
@@ -1704,6 +1734,7 @@ function openKey(scrollTo){
   $('#kfile').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ IDK.photo=r.result; openKey(); }; r.readAsDataURL(f); });
   $('#kzone').addEventListener('change',e=>{ IDK.zone=e.target.value; IDK.geo=''; openKey(); });
   $('#kgeo').addEventListener('click',hereNow);
+  $('#kguide').addEventListener('toggle',e=>{ IDK.guide=e.target.open; });
   const af=$('#aifile'); if(af) af.addEventListener('change',e=>{ const f=e.target.files[0]; if(f) runLive(f); });
   $('#kmonth').addEventListener('change',e=>{ IDK.month=e.target.value; openKey(); });
   el.scrollTop = scrollTo==='res' ? ($('#kres').offsetTop-60) : keep;
@@ -1717,6 +1748,7 @@ document.addEventListener('click',e=>{
     if(a==='open') openKey(); if(a==='reset'){ IDK.ans={}; IDK.zone=''; IDK.month=String(NOW); IDK.photo=null; IDK.geo=''; openKey(); $('#sheet').scrollTop=0; }
     if(a==='results') openKey('res'); return; }
   const lf=e.target.closest('[data-livefill]'); if(lf&&LIVE.res){ IDK.ans=JSON.parse(JSON.stringify(LIVE.res.pre)); IDK.photo=LIVE.img; openKey(); $('#sheet').scrollTop=$('#kphoto').offsetTop-60; return; }
+  const pg=e.target.closest('[data-photoguide]'); if(pg){ e.preventDefault(); const g=$('#kguide'); g.open=true; IDK.guide=true; $('#sheet').scrollTop=g.offsetTop-60; return; }
   const st=e.target.closest('[data-aistop]'); if(st){ aiAbort&&aiAbort.abort(); return; }
   const dm=e.target.closest('[data-demo]'); if(dm){ IDK.demo = IDK.demo==+dm.dataset.demo ? -1 : +dm.dataset.demo; openKey(); return; }
   const df=e.target.closest('[data-demofill]'); if(df){ const d=AIDEMO[+df.dataset.demofill]; IDK.ans=JSON.parse(JSON.stringify(d.pre)); IDK.photo=PHOTOS[d.sci].src; openKey(); const el=$('#sheet'); el.scrollTop=$('#kphoto').offsetTop-60; return; }

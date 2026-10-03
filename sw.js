@@ -1,5 +1,5 @@
-// Generat per build_pwa.py. Versió 1f25fa249e
-const CACHE='boletaire-1f25fa249e', FONTS='boletaire-fonts';
+// Generat per build_pwa.py. Versió fa81d5070b
+const CACHE='boletaire-fa81d5070b', FONTS='boletaire-fonts';
 const FILES=["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png"];
 self.addEventListener('install', e=>{
   e.waitUntil((async()=>{
