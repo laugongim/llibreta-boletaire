@@ -389,6 +389,11 @@ details.know summary b{ font-size:1.08rem }
 .badge small{ display:block; font-size:.74rem }
 .badge.on{ border:1px solid var(--accent); color:var(--fg); background:color-mix(in srgb,var(--accent) 12%,transparent) }
 .badge.on b{ color:var(--accent) }
+.mynb{ display:grid; gap:.6rem } .mynb .found{ margin:0 }
+.mynb textarea{ width:100% } .nbl{ font-family:var(--f-type); font-size:.78rem; color:var(--pencil) }
+.nb .mynb .cisrow{ background:#fbf8ef; border-color:#d8ccaa; color:#2b2b2b; font-family:var(--f-ui) }
+.settings h3{ font-size:.95rem; margin-top:.4rem }
+.seg2{ grid-template-columns:repeat(auto-fit,minmax(5.2rem,1fr)) }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -1878,6 +1883,16 @@ function cards(){
     : state.mine && !Object.keys(found).length ? `<div class="empty"><p>Encara no has registrat cap bolet.</p><p>Quan en trobis un, obre’n la fitxa i toca «L’he trobat: registrar».</p><button class="btn solid" data-find="new">Registra una troballa</button></div>`
     : `<p class="empty">Cap espècie amb aquests filtres. Prova de treure’n algun.</p>`;
 }
+// ---------- La meva llibreta, dins de cada fitxa: les teves troballes i els teus apunts ----------
+function myNotebookHTML(s, nb){
+  return `<section class="mynb"><h2>La meva llibreta</h2>
+   <div class="mynb-finds" data-sp="${s.id}">${myFindsHTML(s)}</div>
+   <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
+     <small>Registra cada troballa amb fotos i el lloc exacte. Tot el que apuntis també ho trobaràs a <a href="#perfil" data-tab="perfil">Perfil › La meva llibreta</a>.</small></div>
+   <label for="nota" class="${nb?'nbl':'muted'}">${nb?'apunts (només en aquest mòbil)':'Apunts. Es guarden només en aquest mòbil.'}</label>
+   <textarea id="nota" data-id="${s.id}" placeholder="${nb?'data, lloc, olor…':'On l’has trobat, data, olor, què et va dir l’expert…'}">${esc(getNote(s.id))}</textarea></section>`;
+}
+function myFindsHTML(s){ const mine=CIS.list.filter(e=>e.sp===s.id); return mine.length?`<div class="cis">${mine.map(cisRowHTML).join('')}</div>`:''; }
 // ---------- Col·lecció: quantes espècies has trobat ----------
 function foundCount(){ const c={}; for(const e of CIS.list) if(e.sp && BY_ID[e.sp]) c[e.sp]=(c[e.sp]||0)+1; return c; }
 function segMineHTML(){
@@ -1949,9 +1964,7 @@ function sheetStd(s){
    ${s.conf.length?`<section><h2>Es pot confondre amb</h2><div class="conf">${s.conf.map(c=>confHTML(c,false)).join('')}</div></section>`:''}
    ${testsHTML(s,false)}
    <section><h2>Curiositat</h2><p class="box" style="margin:0">${esc(s.cur)}</p></section>
-   <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
-     <small>${foundCount()[s.id]?`Ja l’has registrat ${foundCount()[s.id]===1?'1 vegada':foundCount()[s.id]+' vegades'}. `:''}Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
-   <section><h2>Les meves notes</h2><label for="nota" class="sr" style="font-size:.9rem;color:var(--muted)">Es guarden només en aquest dispositiu.</label><textarea id="nota" data-id="${s.id}" placeholder="On l’has trobat, data, olor, què et va dir l’expert…">${esc(getNote(s.id))}</textarea></section>
+   ${myNotebookHTML(s,false)}
    <div class="links"><a class="btn" href="${commons(s)}" target="_blank" rel="noopener">Fotos lliures a Wikimedia ↗</a></div>
   </article>`;
 }
@@ -1975,10 +1988,7 @@ function sheetNb(s){
    ${s.conf.length?`<div class="sticky">${confRisk(s)?`<h3>Compte! Es confon amb…</h3>`:RISK[s.cat]>=2?`<h3>Se sol confondre amb…</h3><p style="margin:0 0 .3rem">Qui el cull sovint es pensa que és un d’aquests.</p>`:`<h3>També pot ser…</h3>`}<ul>${s.conf.map(c=>confHTML(c,true)).join('')}</ul></div>`:''}
    ${testsHTML(s,true)}
    <h2>Curiositat</h2><p class="pencil" style="margin:0">${esc(s.cur)}</p>
-   <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
-     <small>${foundCount()[s.id]?`Ja l’has registrat ${foundCount()[s.id]===1?'1 vegada':foundCount()[s.id]+' vegades'}. `:''}Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
-   <h2>Els meus apunts</h2><label for="nota" style="font-family:var(--f-type);font-size:.78rem;color:var(--pencil)">(només es guarden en aquest dispositiu)</label>
-   <textarea id="nota" data-id="${s.id}" placeholder="data, lloc, olor…">${esc(getNote(s.id))}</textarea>
+   ${myNotebookHTML(s,true)}
    <div class="nlinks"><a href="${commons(s)}" target="_blank" rel="noopener">→ fotos lliures (Wikimedia)</a></div>
   </article>`;
 }
@@ -2337,20 +2347,17 @@ document.addEventListener('click',e=>{
 // ---------- Ajustos ----------
 function viewProfile(){
   const opt=(name,val,label,help)=>`<label for="${name}-${val}"><input type="radio" id="${name}-${val}" name="${name}" value="${val}" ${prefs[name]===val?'checked':''}><span><b>${label}</b>${help?`<small>${help}</small>`:''}</span></label>`;
-  const notes=SPECIES.filter(s=>getNote(s.id).trim());
   return `<div class="view">
    <div class="panel me"><span class="av big" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
      <div style="min-width:0"><h1 style="font-size:1.4rem">El teu perfil</h1><p class="muted" style="margin:.15rem 0 0">Encara no cal compte: tot el que fas es guarda només en aquest mòbil.</p></div></div>
    ${cisPanel()}
-   <div class="panel"><h2>Els teus apunts</h2>
-     ${notes.length?`<ul class="mynotes">${notes.map(s=>`<li><a href="#${s.id}" data-open="${s.id}"><b>${esc(s.ca)}</b></a> ${pill(s)}<br><small>${esc(getNote(s.id).trim().slice(0,120))}${getNote(s.id).trim().length>120?'…':''}</small></li>`).join('')}</ul>`
-       :`<p class="muted">Encara no has escrit cap apunt. A cada fitxa hi ha un espai per apuntar on l’has trobat, amb quins arbres o com feia olor.</p>`}</div>
-   <div class="panel"><h2>Estil de les fitxes</h2><div class="opt" data-pref="skin">
+   <div class="panel settings"><h2>Ajustos</h2>
+     <h3>Estil de les fitxes</h3><div class="opt" data-pref="skin">
      ${opt('skin','llibreta','Llibreta de camp','Paper antic, notes escrites a mà i esbossos a llapis.')}
-     ${opt('skin','estandard','Estàndard','Lletra més llegible, contrast alt i colors del tema. Recomanat amb lectors de pantalla.')}</div></div>
-   <div class="panel"><h2>Mida del text</h2><div class="opt" data-pref="size">${opt('size','normal','Normal')}${opt('size','gran','Gran')}</div></div>
-   <div class="panel"><h2>Tema</h2><div class="opt" data-pref="theme">${opt('theme','sistema','Com el sistema')}${opt('theme','clar','Clar')}${opt('theme','fosc','Fosc')}</div>
-     <p class="lead" style="font-size:.9rem">La fitxa de llibreta sempre es veu sobre paper.</p></div>
+     ${opt('skin','estandard','Estàndard','Lletra més llegible, contrast alt i colors del tema. Recomanat amb lectors de pantalla.')}</div>
+     <h3>Mida del text</h3><div class="opt seg2" data-pref="size">${opt('size','normal','Normal')}${opt('size','gran','Gran')}</div>
+     <h3>Tema</h3><div class="opt seg2" data-pref="theme">${opt('theme','sistema','Com el sistema')}${opt('theme','clar','Clar')}${opt('theme','fosc','Fosc')}</div>
+     <p class="muted" style="font-size:.85rem;margin:0">La fitxa de llibreta sempre es veu sobre paper.</p></div>
    <div class="panel"><h2>Compte</h2><p class="muted">Més endavant podràs crear un compte per tenir els apunts a tots els dispositius i, si ets expert, apuntar-te a la llista d’experts.</p></div>
    <details class="rg"><summary><span><b>Sobre les dades i les fotos</b><small>${SPECIES.length} espècies · crèdits de Wikimedia Commons</small></span></summary><div class="in">
      <p>${SPECIES.length} espècies del Berguedà i de Catalunya, comestibles i tòxiques. El grau de comestibilitat segueix el consens de la Societat Catalana de Micologia. Les fotos són de Wikimedia Commons, amb llicència lliure. Els esbossos són orientatius.</p>
@@ -2359,7 +2366,7 @@ function viewProfile(){
 }
 
 
-// ---------- La meva cistella: troballes amb fotos i ubicació precisa ----------
+// ---------- La meva llibreta: troballes amb fotos i ubicació precisa ----------
 // Tot es guarda en aquest dispositiu (IndexedDB), fotos incloses. Res no s'envia enlloc.
 const CIS = { list:[], ready:false, off:false, draft:null, urls:{}, watch:null };
 const CIS_MAX=5;
@@ -2369,7 +2376,8 @@ async function cisTx(mode, fn){ const db=await cisDB(); return new Promise((ok,k
   tx.oncomplete=()=>ok(req?req.result:undefined); tx.onerror=()=>ko(tx.error); }); }
 async function cisLoad(){
   try{ CIS.list=(await cisTx('readonly',st=>st.getAll())).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }catch(e){ CIS.off=true; }
-  CIS.ready=true; if(state.tab==='perfil' && $('#cis-list')) $('#cis-list').innerHTML=cisListHTML(); if(state.tab==='bolets' && $('#grid')) cards();
+  CIS.ready=true; if(state.tab==='perfil' && $('#cis-list')){ $('#cis-list').innerHTML=cisListHTML(); $('#cis-count').textContent=cisCountText(); } if(state.tab==='bolets' && $('#grid')) cards();
+  const mf=$('#sheet .mynb-finds'); if(mf && BY_ID[mf.dataset.sp]) mf.innerHTML=myFindsHTML(BY_ID[mf.dataset.sp]);
 }
 const cisURL=(e,i)=> CIS.urls[e.id+':'+i] || (CIS.urls[e.id+':'+i]=URL.createObjectURL(e.photos[i]));
 function cisForget(id){ for(const k in CIS.urls) if(k.startsWith(id+':')){ URL.revokeObjectURL(CIS.urls[k]); delete CIS.urls[k]; } }
@@ -2378,20 +2386,35 @@ const cisWhen = d => { try{ const x=new Date(d); const m=MESOS[x.getMonth()]; re
 const nowLocal = () => { const d=new Date(); return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16); };
 
 function cisPanel(){
-  return `<div class="panel"><div class="aihd"><h2>La meva cistella</h2>${CIS.list.length?`<span class="muted">${CIS.list.length} ${CIS.list.length===1?'troballa':'troballes'}</span>`:''}</div>
-   <p class="muted">Els bolets que has collit, amb fins a ${CIS_MAX} fotos i el lloc exacte on els has trobat. Es guarda només en aquest mòbil.</p>
-   <button class="btn solid" data-find="new">Afegeix una troballa</button>
+  return `<div class="panel"><div class="aihd"><h2>La meva llibreta</h2><span class="muted" id="cis-count">${cisCountText()}</span></div>
+   <p class="muted">Els bolets que has trobat, amb fins a ${CIS_MAX} fotos i el lloc exacte, i els apunts de cada fitxa. Es guarda només en aquest mòbil.</p>
+   <button class="btn solid" data-find="new">Registra una troballa</button>
    <div id="cis-list">${cisListHTML()}</div></div>`;
 }
-function cisListHTML(){
-  if(CIS.off) return `<p class="warn-line">Aquest navegador no deixa guardar la cistella. Prova-ho amb l’app instal·lada o amb un altre navegador.</p>`;
+function cisCountText(){
   if(!CIS.ready) return '';
-  return CIS.list.length ? `<div class="cis">${CIS.list.map(e=>{ const sp=BY_ID[e.sp];
-    const img = e.photos&&e.photos.length ? `<img src="${cisURL(e,0)}" alt="">` : sp&&ph(sp) ? `<img src="${ph(sp).src}" alt="">` : `<span class="noimg" aria-hidden="true"></span>`;
-    const z = e.loc ? zoneAt(e.loc.lat,e.loc.lon) : null;
-    return `<button class="cisrow" data-find-open="${e.id}">${img}<span><b>${esc(cisName(e))}</b> ${sp?pill(sp):''}<small>${cisWhen(e.date)}${z?` · ${ZONES[z].name}`:''}${e.photos&&e.photos.length?` · ${e.photos.length} ${e.photos.length===1?'foto':'fotos'}`:''}</small></span></button>`; }).join('')}</div>` : '';
+  const ids=new Set([...CIS.list.filter(e=>e.sp&&BY_ID[e.sp]).map(e=>e.sp), ...SPECIES.filter(x=>getNote(x.id).trim()).map(x=>x.id)]);
+  const n=CIS.list.length; return ids.size||n ? `${ids.size} ${ids.size===1?'bolet':'bolets'} · ${n} ${n===1?'troballa':'troballes'}` : '';
 }
-
+function cisRowHTML(e){
+  const sp=BY_ID[e.sp], z=e.loc?zoneAt(e.loc.lat,e.loc.lon):null;
+  const img = e.photos&&e.photos.length ? `<img src="${cisURL(e,0)}" alt="">` : sp&&ph(sp) ? `<img src="${ph(sp).src}" alt="">` : `<span class="noimg" aria-hidden="true"></span>`;
+  return `<button class="cisrow" data-find-open="${e.id}">${img}<span><b>${esc(cisName(e))}</b><small>${cisWhen(e.date)}${z?` · ${ZONES[z].name}`:''}${e.photos&&e.photos.length?` · ${e.photos.length} ${e.photos.length===1?'foto':'fotos'}`:''}</small></span></button>`;
+}
+function cisListHTML(){
+  if(CIS.off) return `<p class="warn-line">Aquest navegador no deixa guardar les troballes. Prova-ho amb l’app instal·lada o amb un altre navegador. Els apunts sí que es guarden.</p>`;
+  if(!CIS.ready) return '';
+  const found=foundCount(), noted=SPECIES.filter(x=>getNote(x.id).trim()).map(x=>x.id);
+  const ids=[...new Set([...CIS.list.filter(e=>e.sp&&BY_ID[e.sp]).map(e=>e.sp), ...noted])];
+  const last=id=>CIS.list.filter(e=>e.sp===id).map(e=>e.date).sort().pop()||'';
+  ids.sort((a,b)=>last(b).localeCompare(last(a)) || BY_ID[a].ca.localeCompare(BY_ID[b].ca,'ca'));
+  const loose=CIS.list.filter(e=>!e.sp||!BY_ID[e.sp]);
+  if(!ids.length && !loose.length) return `<p class="muted" style="margin:.4rem 0 0">Encara és buida. Quan trobis un bolet, obre’n la fitxa i toca «L’he trobat: registrar», o escriu-hi un apunt.</p>`;
+  return `<div class="cis">${ids.map(id=>{ const s=BY_ID[id], mine=CIS.list.filter(e=>e.sp===id), withPh=mine.find(e=>e.photos&&e.photos.length), note=getNote(id).trim();
+      const img = withPh ? `<img src="${cisURL(withPh,0)}" alt="">` : ph(s) ? `<img src="${ph(s).src}" alt="">` : `<span class="noimg" aria-hidden="true"></span>`;
+      return `<button class="cisrow" data-open="${id}">${img}<span><b>${esc(s.ca)}</b> ${pill(s)}<small>${mine.length?`${mine.length} ${mine.length===1?'troballa':'troballes'} · darrera ${cisWhen(last(id)).replace(/, \d\d:\d\d$/,'')}`:'Només apunts'}${note?` · «${esc(note.slice(0,60))}${note.length>60?'…':''}»`:''}</small></span></button>`; }).join('')}
+    ${loose.map(cisRowHTML).join('')}</div>`;
+}
 function locHTML(l){
   const z=zoneAt(l.lat,l.lon), q=l.acc<=10?'molt precisa':l.acc<=25?'bona':'poc precisa';
   const ll=`${l.lat.toFixed(6)}, ${l.lon.toFixed(6)}`;
@@ -2408,7 +2431,7 @@ function openFind(id, sp){
   CIS.draft = e ? { ...e, photos:[...(e.photos||[])], gps:{} } : { id:null, sp:sp||'', name:'', date:nowLocal(), photos:[], loc:null, note:'', gps:{} };
   const d=CIS.draft, el=$('#sheet');
   const opts=[...SPECIES].sort((a,b)=>a.ca.localeCompare(b.ca,'ca')).map(x=>`<option value="${x.id}" ${d.sp===x.id?'selected':''}>${esc(x.ca)}</option>`).join('');
-  el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">La meva cistella</span></div>
+  el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">La meva llibreta</span></div>
    <div class="body"><form class="xform find" id="f-form" novalidate>
     <h1 id="sheet-title" style="font-size:1.5rem">${e?'Edita la troballa':'Nova troballa'}</h1>
     <label for="f-sp">Quin bolet és?</label><select id="f-sp"><option value="">No ho sé, o no és a la llista</option>${opts}</select>
@@ -2418,9 +2441,9 @@ function openFind(id, sp){
     <label>Fotos <small class="muted">(fins a ${CIS_MAX})</small></label><div id="f-photos"></div>
     <label>On l’has trobat</label><div id="f-gps"></div>
     <label for="f-note">Notes</label><textarea id="f-note" rows="3" placeholder="Arbres del voltant, quantitat, olor, si el vas fer revisar…">${esc(d.note)}</textarea>
-    <p class="muted" style="font-size:.85rem">Que sigui a la cistella no vol dir que es pugui menjar.</p>
+    <p class="muted" style="font-size:.85rem">Que sigui a la llibreta no vol dir que es pugui menjar.</p>
     <p class="xmsg" id="f-msg" role="status"></p>
-    <div class="row"><button class="btn solid" type="submit">Desa a la cistella</button>${e?`<button class="btn danger" type="button" data-find-del="${e.id}">Esborra</button>`:''}</div>
+    <div class="row"><button class="btn solid" type="submit">Desa a la llibreta</button>${e?`<button class="btn danger" type="button" data-find-del="${e.id}">Esborra</button>`:''}</div>
    </form></div>`;
   el.dataset.view='find'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
   $('#back').addEventListener('click',closeSheet);
@@ -2488,7 +2511,7 @@ async function cisDelete(id){
 }
 function openFindView(id){
   const e=CIS.list.find(x=>x.id===id); if(!e) return; const sp=BY_ID[e.sp], el=$('#sheet');
-  el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">La meva cistella</span></div>
+  el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">La meva llibreta</span></div>
    <div class="body"><article class="std find">
     ${e.photos&&e.photos.length?`<div class="gal">${e.photos.map((b,i)=>`<img src="${cisURL(e,i)}" alt="Foto ${i+1} de ${esc(cisName(e))}">`).join('')}</div>`:''}
     <div><h1 id="sheet-title" style="font-size:1.6rem">${esc(cisName(e))}</h1>${sp?`<p style="margin:.2rem 0 0">${pill(sp)} <a href="#${sp.id}" data-open="${sp.id}">Veure la fitxa</a></p>`:''}
