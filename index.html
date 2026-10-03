@@ -406,6 +406,36 @@ details.know summary b{ font-size:1.08rem }
 .linkbtn{ background:none; border:0; padding:0; color:var(--accent); text-decoration:underline; cursor:pointer; justify-self:start; font-size:.92rem }
 .danger-zone summary b{ color:var(--tox) }
 .av.big img{ width:100%; height:100%; border-radius:50%; object-fit:cover }
+/* Insígnies i rànquing */
+.prog{ gap:.6rem }
+.progbtns{ display:grid; grid-template-columns:1fr 1fr; gap:.5rem }
+.pbtn{ display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; column-gap:.55rem; align-items:center; text-align:left; background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:.55rem .7rem; cursor:pointer; color:var(--fg) }
+.pbtn .mini{ grid-row:1/3; display:flex } .pbtn .mini i{ width:1.9rem; height:1.9rem; margin-left:-.5rem; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center; border:2px solid var(--bg) }
+.pbtn .mini i:first-child{ margin-left:0 } .pbtn .mini i.off{ background:var(--chip); color:var(--muted) } .pbtn .mini i.gold{ background:#d9a520; color:#2b1d00 }
+.pbtn .mini svg{ width:1.05rem; height:1.05rem; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+.pbtn small{ color:var(--muted); font-size:.8rem }
+.game{ display:grid; gap:1rem }
+.ghead{ display:grid; justify-items:center; text-align:center; gap:.35rem; padding:.5rem 0 }
+.ghead p{ margin:0 }
+.gav{ width:2.4rem; height:2.4rem; border-radius:50%; background:var(--chip); color:var(--fg); display:inline-grid; place-items:center; font-weight:700; overflow:hidden; flex:0 0 auto; border:2px solid var(--accent) }
+.gav img,.gav svg{ width:100%; height:100% ; object-fit:cover }
+.gav.big{ width:5.5rem; height:5.5rem; font-size:2rem; border-width:3px; box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 18%,transparent) }
+.bgrid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem .6rem }
+.bdg{ display:grid; justify-items:center; text-align:center; gap:.2rem }
+.bdg .bc{ width:4.4rem; height:4.4rem; border-radius:50%; display:grid; place-items:center; background:var(--chip); color:var(--muted); opacity:.55 }
+.bdg .bc svg{ width:2rem; height:2rem; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.bdg.on .bc{ opacity:1; color:#f4ecd8; background:radial-gradient(circle at 30% 25%, #5d9a6c, #2e5a3a 70%); box-shadow:0 0 0 3px rgba(93,154,108,.45), 0 6px 14px -6px rgba(0,0,0,.5) }
+.bdg b{ font-size:.85rem; line-height:1.15 } .bdg small{ font-size:.72rem; color:var(--muted); line-height:1.2 }
+.bdg:not(.on) b{ color:var(--muted) }
+.podium{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:end; gap:.4rem; text-align:center; padding-top:1rem }
+.pod{ display:grid; justify-items:center; gap:.2rem; min-width:0 } .pod b{ font-size:.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100% }
+.pod .gav{ width:3.6rem; height:3.6rem; font-size:1.3rem } .pod.p1 .gav{ width:4.8rem; height:4.8rem; font-size:1.7rem; border-width:3px }
+.pod .sc{ font-weight:700; color:var(--accent); font-size:1.15rem } .pod .pn{ font-weight:700; color:var(--muted) }
+.crown{ color:#d9a520 } .crown svg{ width:1.8rem; height:1.8rem; fill:#d9a520; stroke:#8a6510; stroke-width:1 }
+.pod.me .gav, .rlist li.me{ outline:2px solid #d9a520; outline-offset:2px }
+.rlist{ list-style:none; margin:0; padding:0; display:grid; gap:.45rem }
+.rlist li{ display:grid; grid-template-columns:1.6rem auto 1fr auto; gap:.6rem; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:.35rem .9rem .35rem .6rem }
+.rlist .pos{ color:var(--muted); font-weight:700; text-align:center } .rlist b{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap } .rlist .sc{ font-weight:700; color:var(--accent) }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -1917,25 +1947,124 @@ function segMineHTML(){
   const n=Object.keys(foundCount()).length;
   return [[false,`Tots · ${SPECIES.length}`],[true,`Els meus · ${n}`]].map(([v,l])=>`<button role="tab" data-mine="${v}" aria-selected="${state.mine===v}">${l}</button>`).join('');
 }
-const LEVELS=[[1,'Primera troballa'],[5,'Boletaire novell'],[15,'Boletaire'],[30,'Micòleg de camp'],[SPECIES.length,'Tota la llibreta']];
-function progressHTML(){
-  const found=foundCount(), ids=Object.keys(found), n=ids.length, tot=SPECIES.length;
-  const isFood=s=>['exc','com','pre'].includes(s.cat);
-  const food=SPECIES.filter(isFood), bad=SPECIES.filter(s=>!isFood(s));
+const MONO = `<rect width="100" height="100" rx="22" fill="#2e5a3a"/> <rect x="28" y="38" width="44" height="52" rx="13" fill="#f4ecd8"/> <path d="M12,47 C12,22 31,11 50,11 C69,11 88,22 88,47 Q50,40 12,47 Z" fill="#8a5530"/> <path d="M18,44 Q50,38 82,44" fill="none" stroke="#6a3f22" stroke-width="1.6" opacity=".8"/> <path d="M24,32 C30,20 42,15 52,15" fill="none" stroke="#b98456" stroke-width="4.5" stroke-linecap="round" opacity=".75"/> <path fill="#2e5a3a" fill-rule="evenodd" d="M38,51 H55 A8,8 0 0 1 55,67 H56 A9,9 0 0 1 56,85 H38 Z M46,57 H54 A2,2 0 0 1 54,61 H46 Z M46,72 H55.5 A3.5,3.5 0 0 1 55.5,79 H46 Z"/>`;
+// ---------- Insígnies i rànquing ----------
+// Es compten espècies diferents, no quantitat de bolets: el joc no ha de premiar collir molt.
+const isFood = s => ['exc','com','pre'].includes(s.cat);
+function myStats(){
+  const found=foundCount(), ids=Object.keys(found), year=new Date().getFullYear();
+  const yearIds=new Set(CIS.list.filter(e=>e.sp&&BY_ID[e.sp]&&String(e.date).startsWith(String(year))).map(e=>e.sp));
   const zones=new Set(CIS.list.filter(e=>e.loc).map(e=>zoneAt(e.loc.lat,e.loc.lon)).filter(Boolean));
   const months=new Set(CIS.list.map(e=>new Date(e.date).getMonth()));
-  const spring=[2,3,4,5].some(m=>months.has(m)), autumn=[8,9,10,11].some(m=>months.has(m));
+  return { found, n:ids.length, year, nYear:yearIds.size, zones, months,
+    bad:ids.filter(id=>!isFood(BY_ID[id])).length, food:ids.filter(id=>isFood(BY_ID[id])).length,
+    photos5:CIS.list.some(e=>(e.photos||[]).length>=5), precise:CIS.list.some(e=>e.loc&&e.loc.acc<=5),
+    ceps:['cep','cep-de-pi','sureny-fosc'].filter(id=>found[id]).length,
+    early:CIS.list.some(e=>{ const h=new Date(e.date).getHours(); return h>=5&&h<8; }) };
+}
+const BI = { // icones de les insígnies (24×24, traç)
+  bolet:'<path d="M4 12a8 7 0 0 1 16 0z"/><path d="M10 12v6a2 2 0 0 0 4 0v-6"/>',
+  cistell:'<path d="M3 10h18l-2 10H5z"/><path d="M8 10a4 5 0 0 1 8 0"/><path d="M8 14v3M12 14v3M16 14v3"/>',
+  ple:'<path d="M3 11h18l-2 9H5z"/><path d="M6 11a3 3 0 0 1 5-2 3 3 0 0 1 5 0 3 3 0 0 1 3 2"/>',
+  lupa:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/>',
+  corona:'<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>',
+  mapa:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  fulla:'<path d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15z"/><path d="M5 19l8-8"/>',
+  ull:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="4"/>',
+  diana:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8" fill="currentColor"/>',
+  cep:'<path d="M3 11c0-4 4-7 9-7s9 3 9 7z"/><path d="M8 11c-1 4 0 8 1 9h6c1-1 2-5 1-9"/>',
+  sol:'<circle cx="12" cy="14" r="4"/><path d="M12 4v3M4.9 7.9l2.1 2.1M19.1 7.9 17 10M2 18h20"/>'
+};
+const BADGES = [
+  {id:'primera', ic:'bolet',   name:'Primera troballa',  desc:'Registra la primera espècie.',              ok:t=>t.n>=1},
+  {id:'novell',  ic:'cistell', name:'Boletaire novell',  desc:'5 espècies diferents.',                     ok:t=>t.n>=5},
+  {id:'boletaire',ic:'ple',    name:'Boletaire',         desc:'15 espècies diferents.',                    ok:t=>t.n>=15},
+  {id:'micoleg', ic:'lupa',    name:'Micòleg de camp',   desc:'30 espècies diferents.',                    ok:t=>t.n>=30},
+  {id:'totes',   ic:'corona',  name:'Tota la llibreta',  desc:`Les ${SPECIES.length} espècies de l’app.`,  ok:t=>t.n>=SPECIES.length},
+  {id:'zones',   ic:'mapa',    name:'Les quatre zones',  desc:'Troballes a les 4 zones del Berguedà.',     ok:t=>t.zones.size>=4},
+  {id:'estacions',ic:'fulla',  name:'Primavera i tardor',desc:'Troballes a les dues temporades.',          ok:t=>[2,3,4,5].some(m=>t.months.has(m))&&[8,9,10,11].some(m=>t.months.has(m))},
+  {id:'ull',     ic:'ull',     name:'Ull de micòleg',    desc:'Reconeix un bolet tòxic o mortal.',         ok:t=>t.bad>=1},
+  {id:'foto',    ic:'camera',  name:'Bon fotògraf',      desc:'Una troballa amb les 5 fotos.',             ok:t=>t.photos5},
+  {id:'precis',  ic:'diana',   name:'Al metre',          desc:'Una ubicació amb precisió de ±5 m.',        ok:t=>t.precise},
+  {id:'ceps',    ic:'cep',     name:'Caçador de ceps',   desc:'Cep, cep de pi i sureny fosc.',             ok:t=>t.ceps>=3},
+  {id:'matiner', ic:'sol',     name:'Matiner',           desc:'Una troballa abans de les 8 del matí.',     ok:t=>t.early}
+];
+const LEVELS=[[1,'Primera troballa'],[5,'Boletaire novell'],[15,'Boletaire'],[30,'Micòleg de camp'],[SPECIES.length,'Tota la llibreta']];
+const badgeSVG = (ic,on) => `<svg viewBox="0 0 24 24" aria-hidden="true">${BI[ic]}</svg>`;
+function progressHTML(){
+  const t=myStats(), tot=SPECIES.length, foodTot=SPECIES.filter(isFood).length;
+  const next=LEVELS.find(([k])=>t.n<k), got=BADGES.filter(b=>b.ok(t)).length;
   const loose=CIS.list.filter(e=>!e.sp).length;
-  const next=LEVELS.find(([k])=>n<k);
-  const badges=[...LEVELS.map(([k,l])=>[n>=k,l,`${k} ${k===1?'espècie':'espècies'}`]),
-    [zones.size>=4,'Les quatre zones','Troballes a les 4 zones del Berguedà'],
-    [spring&&autumn,'Primavera i tardor','Troballes a les dues temporades'],
-    [bad.some(s=>found[s.id]),'Ull de micòleg','Has reconegut un bolet tòxic o mortal']];
-  return `<div class="panel prog"><div class="aihd"><h2>Has trobat ${n} de ${tot} espècies</h2></div>
-    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${n}"><i style="width:${Math.round(n/tot*100)}%"></i></div>
-    <p class="muted" style="font-size:.9rem">Comestibles: ${food.filter(s=>found[s.id]).length} de ${food.length} · Tòxics i mortals: ${bad.filter(s=>found[s.id]).length} de ${bad.length}${loose?` · ${loose} sense identificar`:''}${next?`. Et ${next[0]-n===1?'falta 1 espècie':`falten ${next[0]-n} espècies`} per a «${next[1]}».`:''}</p>
-    <div class="badges">${badges.map(([on,l,h])=>`<span class="badge ${on?'on':''}" title="${h}"><b>${on?'★':'☆'} ${l}</b><small>${h}</small></span>`).join('')}</div>
+  return `<div class="panel prog"><h2>Has trobat ${t.n} de ${tot} espècies</h2>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${t.n}"><i style="width:${Math.round(t.n/tot*100)}%"></i></div>
+    <p class="muted" style="font-size:.9rem;margin:0">Comestibles: ${t.food} de ${foodTot} · Tòxics i mortals: ${t.bad} de ${tot-foodTot}${loose?` · ${loose} sense identificar`:''}${next?`. Et ${next[0]-t.n===1?'falta 1 espècie':`falten ${next[0]-t.n} espècies`} per a «${next[1]}».`:''}</p>
+    <div class="progbtns"><button class="pbtn" data-game="badges"><span class="mini">${BADGES.filter(b=>b.ok(t)).slice(-3).map(b=>`<i>${badgeSVG(b.ic)}</i>`).join('')||`<i class="off">${badgeSVG('bolet')}</i>`}</span><b>Insígnies</b><small>${got} de ${BADGES.length}</small></button>
+      <button class="pbtn" data-game="ranking"><span class="mini"><i class="gold"><svg viewBox="0 0 24 24" aria-hidden="true">${BI.corona}</svg></i></span><b>Rànquing</b><small>${CLOUD.user?'Compara’t':'Amb compte'}</small></button></div>
     <p class="muted" style="font-size:.85rem;margin:0">Els tòxics i mortals compten igual amb una foto: no cal que els cullis.</p></div>`;
+}
+function gameSheet(inner, title){
+  const el=$('#sheet');
+  el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">${title}</span></div><div class="body game">${inner}</div>`;
+  el.dataset.view='game'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='bolets') cards(); });
+}
+function meAvatar(big){
+  const u=CLOUD.user, name=(RANK.mine&&RANK.mine.alias)||(u&&(u.displayName||u.email))||'';
+  return `<span class="gav ${big?'big':''}">${u&&u.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer">`:name?esc(name.trim().charAt(0).toUpperCase()):`<svg viewBox="0 0 100 100" aria-hidden="true">${MONO}</svg>`}</span>`;
+}
+function openBadges(){
+  const t=myStats(), got=BADGES.filter(b=>b.ok(t));
+  gameSheet(`<div class="ghead">${meAvatar(true)}<h1 id="sheet-title" style="font-size:1.5rem">${got.length} de ${BADGES.length} insígnies</h1><p class="muted">${t.n} ${t.n===1?'espècie trobada':'espècies trobades'}</p></div>
+    <div class="bgrid">${BADGES.map(b=>{ const on=b.ok(t); return `<div class="bdg ${on?'on':''}"><span class="bc">${badgeSVG(b.ic)}</span><b>${b.name}</b><small>${b.desc}</small></div>`; }).join('')}</div>`, 'Insígnies');
+}
+
+// Rànquing: només amb compte i si la persona ho activa. Es publica un àlies i el nombre d'espècies, mai ubicacions.
+const RANK = { rows:[], mine:null, loaded:false, period:'any', err:'' };
+async function rankLoad(){
+  if(!CLOUD.user||!CLOUD.ok) return;
+  const {F,db}=CLOUD.fb;
+  try{
+    const me=await F.getDoc(F.doc(db,'ranking',CLOUD.user.uid)); RANK.mine=me.exists()?me.data():null;
+    const q=await F.getDocs(F.query ? F.query(F.collection(db,'ranking'), F.orderBy('species','desc'), F.limit(100)) : F.collection(db,'ranking'));
+    RANK.rows=q.docs.map(d=>({uid:d.id,...d.data()})); RANK.err='';
+  }catch(e){ RANK.err='No s’ha pogut carregar el rànquing. Torna-ho a provar amb connexió.'; }
+  RANK.loaded=true;
+}
+async function rankPush(){
+  if(!CLOUD.user||!CLOUD.ok||!RANK.mine) return;
+  const {F,db}=CLOUD.fb, t=myStats();
+  const d={alias:RANK.mine.alias, species:t.n, speciesYear:t.nYear, year:t.year, badges:BADGES.filter(b=>b.ok(t)).length, upd:Date.now()};
+  try{ await F.setDoc(F.doc(db,'ranking',CLOUD.user.uid), d); RANK.mine=d; }catch(e){}
+}
+async function openRanking(){
+  gameSheet(`<p class="muted">Carregant…</p>`,'Rànquing');
+  if(CLOUD.user) await rankLoad();
+  paintRanking();
+}
+function paintRanking(){
+  const b=$('#sheet .game'); if(!b) return;
+  if(!CLOUD.user){ b.innerHTML=`<div class="ghead">${meAvatar(true)}<h1 id="sheet-title" style="font-size:1.5rem">Rànquing de boletaires</h1>
+      <p class="muted">Compara quantes espècies diferents has trobat amb altres boletaires. Cal entrar al compte.</p>
+      <a class="btn solid" href="#perfil" data-tab="perfil">Entra al compte</a></div>`; return; }
+  if(!RANK.mine){ const sug=((CLOUD.user.displayName||'').split(' ')[0]||'Boletaire')+' '+String(CLOUD.user.uid).slice(0,3).toUpperCase();
+    b.innerHTML=`<div class="ghead">${meAvatar(true)}<h1 id="sheet-title" style="font-size:1.5rem">Vols sortir al rànquing?</h1>
+      <p class="muted">Només es veurà l’àlies que triïs i el nombre d’espècies i d’insígnies. Mai els llocs ni les fotos. Te’n pots treure quan vulguis.</p></div>
+      <form class="xform" id="rk-form"><label for="rk-alias">Àlies</label><input id="rk-alias" maxlength="24" value="${esc(sug)}">
+      ${RANK.err?`<p class="warn-line">${esc(RANK.err)}</p>`:''}<button class="btn solid" type="submit">Apunta’m al rànquing</button></form>`; return; }
+  const yr=RANK.period==='any', y=new Date().getFullYear();
+  const score=r=> yr ? (r.year===y ? r.speciesYear||0 : 0) : (r.species||0);
+  const rows=RANK.rows.map(r=>({...r, sc:score(r)})).filter(r=>r.sc>0||r.uid===CLOUD.user.uid).sort((a,b)=>b.sc-a.sc||(b.badges||0)-(a.badges||0));
+  const pos=rows.findIndex(r=>r.uid===CLOUD.user.uid);
+  const av=r=>`<span class="gav">${esc(String(r.alias||'?').trim().charAt(0).toUpperCase())}</span>`;
+  const top=rows.slice(0,3), order=[1,0,2].filter(i=>top[i]);
+  b.innerHTML=`<h1 id="sheet-title" style="font-size:1.5rem;text-align:center">Rànquing</h1>
+   <div class="seg" role="tablist">${[['any',`Aquest any`],['sempre','Sempre']].map(([k,l])=>`<button role="tab" data-rank="${k}" aria-selected="${RANK.period===k}">${l}</button>`).join('')}</div>
+   ${RANK.err?`<p class="warn-line">${esc(RANK.err)}</p>`:''}
+   <div class="podium">${order.map(i=>{ const r=top[i]; return `<div class="pod p${i+1} ${r.uid===CLOUD.user.uid?'me':''}">${i===0?`<span class="crown"><svg viewBox="0 0 24 24">${BI.corona}</svg></span>`:`<span class="pn">${i+1}</span>`}${av(r)}<b>${esc(r.alias)}</b><span class="sc">${r.sc}</span></div>`; }).join('')}</div>
+   <ol class="rlist" start="4">${rows.slice(3,50).map((r,k)=>`<li class="${r.uid===CLOUD.user.uid?'me':''}"><span class="pos">${k+4}</span>${av(r)}<b>${esc(r.alias)}</b><span class="sc">${r.sc}</span></li>`).join('')}</ol>
+   ${pos>=50?`<ol class="rlist"><li class="me"><span class="pos">${pos+1}</span>${av(rows[pos])}<b>${esc(rows[pos].alias)}</b><span class="sc">${rows[pos].sc}</span></li></ol>`:''}
+   <p class="muted" style="font-size:.85rem;text-align:center">Puntuació: espècies diferents trobades${yr?' aquest any':''}. Surts com a «${esc(RANK.mine.alias)}». <button class="linkbtn" data-rank-out>Treu-me del rànquing</button></p>`;
 }
 function viewList(){
   const chipsDef=[['tots','Tots'],['comestibles','Comestibles'],['pre','Precaució'],['reb','Picants'],['tox','Tòxics'],['mor','Mortals']];
@@ -2681,6 +2810,7 @@ async function cloudSync(){
       if(rm && (rm.upd||0)>lu) setNote(s.id, rm.t||'', rm.upd);
       else if(lu && (!rm || lu>(rm.upd||0))) await F.setDoc(ref('apunts',s.id),{t:lt,upd:lu}); }
     CLOUD.last=Date.now(); CLOUD.err='';
+    await rankLoad(); await rankPush();
   }catch(e){ CLOUD.err = e&&e.code==='unavailable' ? 'Sense connexió: es sincronitzarà quan en tornis a tenir.' : `No s’ha pogut sincronitzar (${e&&(e.code||e.message)}).`; }
   CLOUD.busy=false; await cisLoad(); paintAccount();
   if(CLOUD.again){ CLOUD.again=false; cloudSync(); }
@@ -2707,6 +2837,7 @@ function notePushLater(id){
 async function cloudDeleteAccount(){
   if(!confirm('Vols esborrar el compte i totes les dades del núvol? No es pot desfer. El que hi ha en aquest mòbil es queda.')) return;
   const {F,U,db}=CLOUD.fb, u=CLOUD.user, uid=u.uid;
+  try{ await F.deleteDoc(F.doc(db,'ranking',uid)); }catch(e){}
   for(const n of ['fotos','troballes','apunts']){ const q=await F.getDocs(F.collection(db,'users',uid,n)); for(const d of q.docs) await F.deleteDoc(d.ref); }
   await U.deleteUser(u);
   CLOUD.msg='Compte esborrat. La llibreta continua en aquest mòbil.';
@@ -2858,6 +2989,9 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-gps-stop]')){ const d=CIS.draft; cisStopGps(); if(d) d.gps={}; paintGps(); return; }
   const ac=e.target.closest('[data-acct]'); if(ac){ e.preventDefault(); if(CLOUD.ok) acctDo(ac.dataset.acct); return; }
   const am=e.target.closest('[data-acct-mode]'); if(am){ CLOUD.mode=am.dataset.acctMode; CLOUD.err=''; CLOUD.msg=''; paintAccount(); return; }
+  const gm=e.target.closest('[data-game]'); if(gm){ gm.dataset.game==='badges'?openBadges():openRanking(); return; }
+  const rk=e.target.closest('[data-rank]'); if(rk){ RANK.period=rk.dataset.rank; paintRanking(); return; }
+  if(e.target.closest('[data-rank-out]')){ (async()=>{ if(!confirm('Vols treure’t del rànquing?')) return; const {F,db}=CLOUD.fb; try{ await F.deleteDoc(F.doc(db,'ranking',CLOUD.user.uid)); RANK.mine=null; }catch(err){} await rankLoad(); paintRanking(); })(); return; }
   const mn=e.target.closest('[data-mine]'); if(mn){ state.mine = mn.dataset.mine==='true'; cards(); return; }
   const ar=e.target.closest('[data-area]'); if(ar){ goTab(ar.dataset.area==='experts'?'experts':'bergueda'); render(); return; }
 },true);
@@ -2870,7 +3004,8 @@ document.addEventListener('click',e=>{
   const c=e.target.closest('[data-copy]'); if(c){ const v=c.dataset.copy; const done=()=>{ c.textContent='Copiat'; setTimeout(()=>c.textContent='Copia',1500); };
     try{ navigator.clipboard.writeText(v).then(done).catch(()=>{ c.textContent=v; }); }catch(err){ c.textContent=v; } }
 });
-document.addEventListener('submit',e=>{ if(e.target.id==='ac-form'){ e.preventDefault(); if(CLOUD.ok) acctDo(CLOUD.mode==='link'?'link':'in'); } });
+document.addEventListener('submit',e=>{ if(e.target.id==='rk-form'){ e.preventDefault(); const a=($('#rk-alias').value||'').trim().slice(0,24); if(!a) return; RANK.mine={alias:a}; rankPush().then(rankLoad).then(paintRanking); return; }
+  if(e.target.id==='ac-form'){ e.preventDefault(); if(CLOUD.ok) acctDo(CLOUD.mode==='link'?'link':'in'); } });
 document.addEventListener('change',e=>{
   const g=e.target.closest('[data-pref]'); if(g && e.target.name){ prefs[e.target.name]=e.target.value; savePrefs(); }
 });
