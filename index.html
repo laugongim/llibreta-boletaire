@@ -479,6 +479,7 @@ button.bdg{ background:none; border:0; padding:0; cursor:pointer; color:var(--fg
 .kopts .chip{ white-space:normal; text-align:left; max-width:100% }
 .kbar .btn{ white-space:nowrap; flex:0 0 auto } .kbar>span,.kbar>div:first-child{ min-width:0 }
 .key, .view, .std, .game, .xform{ grid-template-columns:minmax(0,1fr) }
+.kmap{ display:grid; gap:.4rem; justify-items:center } .kmap .map{ max-width:22rem } .kmap p{ margin:0; font-size:.88rem; text-align:center }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -2403,7 +2404,7 @@ function mapSVG(o={}){
     const on = sel ? z===sel : (hl.length? hl.includes(z) : true);
     const fill = nb ? (on?'url(#hatch)':'none') : `var(--z${z})`;
     const op = nb ? 1 : (on ? (sel||hl.length? .95 : .85) : .28);
-    g+=`<path d="${MAP.zones[z]}" fill="${fill}" fill-opacity="${op}" stroke="${nb?'none':`var(--z${z})`}" stroke-opacity="${op}" stroke-width="1.2" stroke-linejoin="round" ${o.interactive?`class="zp" data-zone="${z}" role="button" tabindex="0" aria-label="${ZONES[z].name}" aria-pressed="${z===sel}"`:''}/>`;
+    g+=`<path d="${MAP.zones[z]}" fill="${fill}" fill-opacity="${op}" stroke="${nb?'none':`var(--z${z})`}" stroke-opacity="${op}" stroke-width="1.2" stroke-linejoin="round" ${o.pick?`class="zp zpk" data-kzone="${z}" role="button" tabindex="0" aria-label="${ZONES[z].name}" aria-pressed="${z===sel}"`:''}${o.interactive?`class="zp" data-zone="${z}" role="button" tabindex="0" aria-label="${ZONES[z].name}" aria-pressed="${z===sel}"`:''}/>`;
   }
   if(!mini) g+=`<g pointer-events="none">${Object.values(MAP.munis).map(p=>`<path d="${p}" fill="none" stroke="${nb?'#3a2e24':'var(--map-muni)'}" stroke-width="${nb?.7:.5}" opacity="${nb?.6:1}"/>`).join('')}</g>`;
   if(!mini){
@@ -2413,7 +2414,7 @@ function mapSVG(o={}){
   }
   if(o.pt) g+=`<circle cx="${o.pt[0]}" cy="${o.pt[1]}" r="${mini?14:9}" fill="#bb2630" stroke="#fff" stroke-width="${mini?5:3}"/>`;
   const f=nb?' filter="url(#rough)"':'';
-  return `<svg class="map ${mini?'mini':''}" viewBox="0 0 ${MAP.w} ${MAP.h}" role="${o.interactive?'group':'img'}" aria-label="Mapa de les zones del Berguedà"><g${f}>${g}</g></svg>`;
+  return `<svg class="map ${mini?'mini':''}" viewBox="0 0 ${MAP.w} ${MAP.h}" role="${o.interactive||o.pick?'group':'img'}" aria-label="Mapa de les zones del Berguedà"><g${f}>${g}</g></svg>`;
 }
 function zoneNames(s){ return s.z.map(z=>ZONES[z].name).join(', '); }
 function tests(s){
@@ -2919,7 +2920,7 @@ function paintZone(){
 }
 
 // ---------- Clau d'identificació guiada ----------
-const IDK = { ans:{}, zone:'', month:String(NOW), photo:null, demo:-1, geo:'', guide:false };
+const IDK = { ans:{}, zone:'', month:String(NOW), photo:null, demo:-1, geo:'', guide:false, mapOpen:false, pt:null };
 // --- "Localitza'm": la ubicació del mòbil es converteix a zona. No surt del dispositiu. ---
 // Mateixa projecció que build_map.py; límits del Berguedà segons OpenStreetMap (relació 358838).
 const GEO = { minx:1.6103518, maxx:2.0710234, miny:41.8974423, maxy:42.3233011, W:360, pad:8 };
@@ -2946,7 +2947,8 @@ function locateMe(){
   IDK.geo='busy'; openKey();
   navigator.geolocation.getCurrentPosition(pos=>{
     const z=zoneAt(pos.coords.latitude,pos.coords.longitude);
-    if(z){ IDK.zone=z; IDK.geo=`Ets a la zona ${z}. La ubicació no surt del mòbil.`; }
+    IDK.pt = z ? geoToMap(pos.coords.latitude,pos.coords.longitude) : null;
+    if(z){ IDK.zone=z; IDK.geo=`Ets a la zona ${z}: ${ZONES[z].name}. La ubicació no surt del mòbil.`; }
     else { IDK.zone=''; IDK.geo='Sembla que no ets al Berguedà. Tria la zona a mà si vols.'; }
     openKey();
   }, err=>{
@@ -3106,6 +3108,8 @@ function keyHTML(){
      <div class="row"><select id="kzone"><option value="">No ho sé</option>${Object.entries(ZONES).map(([k,v])=>`<option value="${k}" ${IDK.zone===k?'selected':''}>${v.name}</option>`).join('')}</select>
        <button class="btn" id="kgeo" style="flex:0 0 auto" ${IDK.geo==='busy'?'disabled':''}>${IDK.geo==='busy'?'Buscant…':'Localitza’m'}</button></div>
      ${IDK.geo&&IDK.geo!=='busy'?`<p class="muted" role="status">${esc(IDK.geo)}</p>`:''}
+     <button type="button" class="linkbtn" data-kmap aria-expanded="${IDK.mapOpen}">${IDK.mapOpen?'Amaga el mapa':'No saps quina zona és? Mira-ho al mapa'}</button>
+     ${IDK.mapOpen?`<div class="kmap">${mapSVG({sel:IDK.zone, pick:true, pt:IDK.pt})}<p class="muted">${IDK.zone?`Zona ${IDK.zone}: <b>${ZONES[IDK.zone].name}</b>. Toca una altra zona per canviar-la.`:'Toca la zona on ets.'}${IDK.pt?' El punt vermell és on ets ara.':''}</p></div>`:''}
      <label class="klab" for="kmonth">Quan</label>
      <div class="row"><select id="kmonth"><option value="">Qualsevol mes</option>${MESOS.map((m,i)=>`<option value="${i+1}" ${IDK.month==String(i+1)?'selected':''}>${m}${i+1===NOW?' (aquest mes)':''}</option>`).join('')}</select></div></section>
    ${keyQs().map(q=>`<section class="kq ${nxt&&nxt.k===q.k?'next':''}" id="kq-${q.k}">${nxt&&nxt.k===q.k?'<span class="nexttag">La pregunta més útil ara</span>':''}<h2>${q.q}</h2>${q.help?`<p class="muted">${q.help}${q.reag?` <a href="#r-${q.reag}" data-reag="${q.reag}">Com es fa</a>`:''}</p>`:''}
@@ -3643,6 +3647,8 @@ document.addEventListener('click',e=>{
 });
 
 document.addEventListener('click',e=>{
+  if(e.target.closest('[data-kmap]')){ IDK.mapOpen=!IDK.mapOpen; openKey(); return; }
+  const zk=e.target.closest('[data-kzone]'); if(zk){ IDK.zone = IDK.zone===zk.dataset.kzone ? '' : zk.dataset.kzone; IDK.geo=''; openKey(); return; }
   const zp=e.target.closest('.zp,.zchip'); if(zp){ state.areaZone = state.areaZone==zp.dataset.zone ? '' : zp.dataset.zone; paintZone(); return; }
   const zl=e.target.closest('[data-zonelist]'); if(zl){ state.zone=zl.dataset.zonelist; state.tab='bolets'; render(); navSync(); window.scrollTo(0,0); return; }
   const zg=e.target.closest('[data-zonego]'); if(zg){ e.preventDefault(); closeSheet(); state.areaZone=zg.dataset.zonego; goTab('bergueda'); render(); setTimeout(()=>$('#zones-panel')?.scrollIntoView({block:'start'}),30); return; }
