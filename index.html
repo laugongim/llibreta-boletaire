@@ -21,8 +21,8 @@
 :root{
   --bg:#f2f3ee; --surface:#ffffff; --fg:#1b2119; --muted:#58614f; --line:#d5d9cc; --accent:#2e5a3a; --accent-fg:#ffffff;
   --chip:#e5e8de; --focus:#1f6feb;
-  --ok:#2c7a37; --warn:#9a6511; --acrid:#b4561a; --tox:#bb2630; --mortal:#4a1830;
-  --ok-bg:#e3f1e3; --warn-bg:#fbf0d9; --acrid-bg:#fbe6d6; --tox-bg:#fadfe0; --mortal-bg:#efdde6;
+  --ok:#2c7a37; --warn:#9a6511; --acrid:#b4561a; --tox:#bb2630; --mortal:#b3121c; --toxcat:#7b3fa6;
+  --ok-bg:#e3f1e3; --warn-bg:#fbf0d9; --acrid-bg:#fbe6d6; --tox-bg:#fadfe0; --mortal-bg:#fbdcdc; --toxcat-bg:#f0e5f8;
   --sk-ink:#2a2f27;
   --z1:#6f93a6; --z2:#7fa46b; --z3:#c7a866; --z4:#d08a5c; --map-line:#ffffff; --map-muni:rgba(255,255,255,.55);
   --f-ui:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
@@ -35,14 +35,14 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#121611; --surface:#1b2019; --fg:#e4e9dc; --muted:#a3ad98; --line:#2f362c; --accent:#8cc49a; --accent-fg:#0f1a12;
   --chip:#252b22; --focus:#79a8ff;
-  --ok:#7fcf88; --warn:#e3b45a; --acrid:#ef9a5c; --tox:#f2777e; --mortal:#e7a4c4;
-  --ok-bg:#1d2e1f; --warn-bg:#33291a; --acrid-bg:#36241a; --tox-bg:#3a1c1f; --mortal-bg:#331a27;
+  --ok:#7fcf88; --warn:#e3b45a; --acrid:#ef9a5c; --tox:#f2777e; --mortal:#ff7a7a; --toxcat:#cfa6f2;
+  --ok-bg:#1d2e1f; --warn-bg:#33291a; --acrid-bg:#36241a; --tox-bg:#3a1c1f; --mortal-bg:#3d1719; --toxcat-bg:#2b1f38;
   --sk-ink:#dfe4d6; --z1:#5f8ea6; --z2:#6f9a5c; --z3:#b2955a; --z4:#c07a50; --map-line:#121611; --map-muni:rgba(18,22,17,.5); color-scheme:dark }}
 :root[data-theme="dark"]{
   --bg:#121611; --surface:#1b2019; --fg:#e4e9dc; --muted:#a3ad98; --line:#2f362c; --accent:#8cc49a; --accent-fg:#0f1a12;
   --chip:#252b22; --focus:#79a8ff;
-  --ok:#7fcf88; --warn:#e3b45a; --acrid:#ef9a5c; --tox:#f2777e; --mortal:#e7a4c4;
-  --ok-bg:#1d2e1f; --warn-bg:#33291a; --acrid-bg:#36241a; --tox-bg:#3a1c1f; --mortal-bg:#331a27;
+  --ok:#7fcf88; --warn:#e3b45a; --acrid:#ef9a5c; --tox:#f2777e; --mortal:#ff7a7a; --toxcat:#cfa6f2;
+  --ok-bg:#1d2e1f; --warn-bg:#33291a; --acrid-bg:#36241a; --tox-bg:#3a1c1f; --mortal-bg:#3d1719; --toxcat-bg:#2b1f38;
   --sk-ink:#dfe4d6; --z1:#5f8ea6; --z2:#6f9a5c; --z3:#b2955a; --z4:#c07a50; --map-line:#121611; --map-muni:rgba(18,22,17,.5); color-scheme:dark }
 html[data-size="gran"]{ font-size:118% }
 html,body{ height:100% }
@@ -95,7 +95,7 @@ h1,h2,h3{ text-wrap:balance; margin:0 }
 .pill{ justify-self:start; display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; padding:.12rem .55rem; font-size:.78rem; font-weight:700 }
 .pill i{ font-style:normal }
 .c-exc,.c-com{ background:var(--ok-bg); color:var(--ok) } .c-pre{ background:var(--warn-bg); color:var(--warn) }
-.c-reb{ background:var(--acrid-bg); color:var(--acrid) } .c-tox{ background:var(--tox-bg); color:var(--tox) } .c-mor{ background:var(--mortal-bg); color:var(--mortal) }
+.c-reb{ background:var(--acrid-bg); color:var(--acrid) } .c-tox{ background:var(--toxcat-bg); color:var(--toxcat) } .c-mor{ background:var(--mortal-bg); color:var(--mortal) }
 .empty{ text-align:center; padding:2rem 1rem; color:var(--muted) }
 
 /* Targetes en mode llibreta: etiquetes d'herbari */
@@ -106,7 +106,7 @@ body[data-skin="llibreta"] .card .sc{ font-family:var(--f-type); font-style:norm
 body[data-skin="llibreta"] .card .pill{ background:transparent; border:2px solid currentColor; border-radius:3px; font-family:var(--f-type); text-transform:uppercase; letter-spacing:.06em; transform:rotate(-2deg) }
 body[data-skin="llibreta"] .card .pill.c-exc,body[data-skin="llibreta"] .card .pill.c-com{ color:#2f6a33 }
 body[data-skin="llibreta"] .card .pill.c-pre{ color:#8a5a0c } body[data-skin="llibreta"] .card .pill.c-reb{ color:#a0501a }
-body[data-skin="llibreta"] .card .pill.c-tox{ color:#a3302a } body[data-skin="llibreta"] .card .pill.c-mor{ color:#4a1830 }
+body[data-skin="llibreta"] .card .pill.c-tox{ color:#6a2f8f } body[data-skin="llibreta"] .card .pill.c-mor{ color:#a3121c }
 
 /* Fitxa (pantalla completa) */
 .sheet{ position:fixed; inset:0; z-index:8; overflow-y:auto; background:var(--bg); padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); -webkit-overflow-scrolling:touch }
@@ -168,7 +168,7 @@ body[data-skin="llibreta"] .card .pill.c-tox{ color:#a3302a } body[data-skin="ll
 .nb .oth{ font-family:var(--f-hand); font-size:1.35rem; color:var(--pencil); margin:0 }
 .stamp{ position:absolute; top:1.5rem; right:.7rem; z-index:1; font-family:var(--f-type); text-transform:uppercase; letter-spacing:.03em; font-size:.8rem; line-height:1.15; text-align:center; padding:.35rem .45rem; border:3px double currentColor; border-radius:6px; transform:rotate(9deg); opacity:.85; max-width:7.4rem; mix-blend-mode:multiply;
   -webkit-mask-image:radial-gradient(circle at 30% 40%, #000 55%, rgba(0,0,0,.65) 56%, #000 70%); mask-image:radial-gradient(circle at 30% 40%, #000 55%, rgba(0,0,0,.65) 56%, #000 70%) }
-.stamp.s-exc,.stamp.s-com{ color:#2f6a33 } .stamp.s-pre{ color:#8a5a0c } .stamp.s-reb{ color:#a0501a } .stamp.s-tox{ color:#a3302a } .stamp.s-mor{ color:#3a0f22; font-size:1.05rem; border-width:4px }
+.stamp.s-exc,.stamp.s-com{ color:#2f6a33 } .stamp.s-pre{ color:#8a5a0c } .stamp.s-reb{ color:#a0501a } .stamp.s-tox{ color:#6a2f8f } .stamp.s-mor{ color:#a3121c; font-size:1.05rem; border-width:4px }
 .nb .plate{ position:relative; margin:1.3rem auto .6rem; width:min(15rem,82%); background:#faf5e8; padding:.6rem .6rem 1.9rem; box-shadow:0 2px 6px rgba(0,0,0,.18); transform:rotate(-2deg) }
 .nb .plate::before,.nb .plate::after{ content:""; position:absolute; width:4rem; height:1.2rem; background:var(--tape); top:-.55rem }
 .nb .plate::before{ left:-.8rem; transform:rotate(-28deg) } .nb .plate::after{ right:-.8rem; transform:rotate(26deg) }
@@ -204,8 +204,11 @@ body[data-skin="llibreta"] .card .pill.c-tox{ color:#a3302a } body[data-skin="ll
 .panel h2{ font-size:1.15rem }
 .panel p{ margin:0 }
 .panel ul{ margin:0; padding-left:1.15rem; display:grid; gap:.35rem }
-.kv{ display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:.3rem .8rem; align-items:center }
-.kv .n{ font-size:1.35rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.02em }
+/* Telèfons d'urgència: etiqueta a sobre i número sencer a sota, perquè no es parteixi al mòbil */
+.kv{ display:grid; gap:.7rem }
+.kv .tel{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.1rem .8rem; align-items:center }
+.kv .lb{ grid-column:1/-1; font-size:.9rem; color:var(--muted) }
+.kv .n{ font-size:1.35rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.02em; white-space:nowrap; color:var(--fg); text-decoration:none }
 .copy{ border:1px solid var(--line); background:var(--chip); border-radius:8px; padding:.3rem .6rem; font-size:.85rem; cursor:pointer }
 details.rg{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:.2rem 1rem }
 details.rg summary{ cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:.6rem; padding:.75rem 0 }
@@ -1357,7 +1360,7 @@ function bindList(){
 
 // ---------- Fitxa ----------
 function sheetStd(s){
-  const c=CATS[s.cat], color = {exc:'ok',com:'ok',pre:'warn',reb:'acrid',tox:'tox',mor:'mortal'}[s.cat];
+  const c=CATS[s.cat], color = {exc:'ok',com:'ok',pre:'warn',reb:'acrid',tox:'toxcat',mor:'mortal'}[s.cat];
   const toxic=['tox','mor','reb'].includes(s.cat);
   return `<article class="std">
    <div class="banner" style="background:var(--${color}-bg);color:var(--${color})"><span class="ic" aria-hidden="true"><span>${c.icon}</span></span>${c.label}${s.q?` · ${s.q}`:''}</div>
@@ -1462,8 +1465,8 @@ function viewArea(){
   return `<div class="view">
    <h1 style="font-size:1.6rem">El Berguedà</h1>
    <div class="panel" style="border-color:var(--tox)"><h2 style="color:var(--tox)">Si creus que t’has intoxicat</h2>
-     <div class="kv"><span>Emergències</span><span class="n">112</span><button class="copy" data-copy="112">Copia</button>
-     <span>Informació toxicològica (24 h)</span><span class="n">91 562 04 20</span><button class="copy" data-copy="915620420">Copia</button></div>
+     <div class="kv"><div class="tel"><span class="lb">Emergències</span><a class="n" href="tel:112">112</a><button class="copy" data-copy="112">Copia</button></div>
+     <div class="tel"><span class="lb">Informació toxicològica (24 h)</span><a class="n" href="tel:+34915620420">91 562 04 20</a><button class="copy" data-copy="915620420">Copia</button></div></div>
      <ul><li>Ves a urgències encara que et trobis bé: els bolets més perillosos triguen hores o dies a donar símptomes.</li>
      <li>Porta les restes dels bolets, crus o cuinats, i fotos.</li><li>Avisa tothom que n’hagi menjat.</li></ul></div>
    <div class="panel" id="zones-panel"><h2>Què trobaràs a cada zona</h2><p class="lead" style="font-size:.92rem">Toca una zona del mapa. És orientatiu: depèn de l’hàbitat i de l’altitud, i els bolets no entenen de límits.</p>
