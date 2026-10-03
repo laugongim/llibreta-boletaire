@@ -1541,6 +1541,7 @@ function aiResultHTML(d, src, fillAttr, foot){
      ${foot?`<p class="muted" style="font-size:.8rem;margin:0">${foot}</p>`:''}</div>`;
 }
 // --- IA de veritat: 5 consultes de prova per dispositiu, amb el pla de Claude de qui la fa servir ---
+const CLAUDE_URL='https://claude.ai/artifact/VEKdD124Lx8CgcWhybdUtj'; // versió dins de Claude, on la IA per foto funciona
 const AIMAX=5; const LIVE={ state:'idle', res:null, img:null, err:'' };
 function aiUsed(){ try{ return +(localStorage.getItem(KEY+':ia')||0); }catch(e){ return 0; } }
 function aiUse(){ try{ localStorage.setItem(KEY+':ia', String(aiUsed()+1)); }catch(e){} }
@@ -1551,7 +1552,8 @@ async function initSample(){
     if($('#sheet').dataset.view==='key') openKey(); }catch(e){}
 }
 function aiLiveHTML(){
-  if(!SAMPLE||!SAMPLE_IMG) return `<section class="ai live off"><h2>Prova-ho amb la teva foto</h2><p class="muted">${window.claude?'La IA en directe només funciona quan obres l’app dins de Claude.':'La IA amb la teva foto encara no està disponible en aquesta versió.'} Mentrestant, fes servir els exemples o les preguntes.</p></section>`;
+  if(!SAMPLE||!SAMPLE_IMG) return `<section class="ai live off"><h2>Prova-ho amb la teva foto</h2>${window.claude?`<p class="muted">La IA en directe només funciona quan obres l’app dins de Claude. Mentrestant, fes servir els exemples o les preguntes.</p>`
+    :`<p class="muted">La IA amb la teva foto funciona quan obres l’app dins de Claude, amb el teu compte i sense cost extra.</p><a class="btn solid" href="${CLAUDE_URL}" target="_blank" rel="noopener">Obre l’app a Claude</a><p class="muted">Aquí pots fer servir els exemples o les preguntes.</p>`}</section>`;
   const left=Math.max(0,AIMAX-aiUsed());
   return `<section class="ai live"><div class="aihd"><h2>Prova-ho amb la teva foto</h2><span class="demotag">${left} de ${AIMAX} consultes de prova</span></div>
     <p class="muted">IA real: Claude mira la teva foto i la compara amb les ${SPECIES.length} espècies de l’app. Fa servir el teu compte de Claude i et demanarà permís el primer cop.</p>
