@@ -411,7 +411,7 @@ const SPECIES = [
   hab:'Fagedes, avetoses, pinedes de pi roig i rouredes. Al Berguedà, sobretot a les zones mitjanes i altes.',
   arb:['faig','avet','pi','roure'], mes:[6,8,9,10,11],
   conf:[ {id:'matagent', t:'Porus vermells, xarxa vermella al peu i carn que blaveja. Tòxic.'},
-         {name:'Tylopilus felleus (bolet amarg)', t:'Porus rosats i xarxa fosca al peu. No és tòxic però és molt amarg i espatlla el plat.'} ],
+         {name:'Tylopilus felleus (bolet amarg)', cat:'reb', t:'Porus rosats i xarxa fosca al peu. No és tòxic però és molt amarg i espatlla el plat.'} ],
   tox:'Es pot menjar cru en làmines fines si és ben fresc. Rebutja els exemplars vells o amb cucs.',
   cur:'El cep viu en simbiosi (micorriza) amb els arbres: no es pot cultivar, per això sempre és silvestre.',
   note:'Porus que NO blavegen + xarxa blanca al peu.' },
@@ -442,7 +442,7 @@ const SPECIES = [
   hab:'Alzinars, rouredes, castanyedes, fagedes i pinedes de sòl àcid. Sovint entre molsa.',
   arb:['alzina','roure','faig','pi'], mes:[6,7,8,9,10,11],
   conf:[ {id:'bolet-doliu', t:'Creix en grups sobre soques o arrels, amb làmines vertaderes i fines. Tòxic.'},
-         {name:'Hygrophoropsis aurantiaca (fals rossinyol)', t:'Taronja més intens, amb làmines vertaderes i fines. No és recomanable.'},
+         {name:'Hygrophoropsis aurantiaca (fals rossinyol)', cat:'reb', t:'Taronja més intens, amb làmines vertaderes i fines. No és recomanable.'},
          {id:'cortinari-metzinos', t:'Color rovell, làmines espaiades i esporada marró. Mortal.'} ],
   cur:'Gairebé no es cuca, per això aguanta bé dies a la nevera.',
   note:'Plecs, no làmines! Olor d’albercoc.' },
@@ -473,8 +473,8 @@ const SPECIES = [
       espora:'Blanca' },
   hab:'Pinedes de sòl calcari (pinassa, pi blanc). Se sol trobar mig colgada a la fullaraca.',
   arb:['pi'], mes:[10,11,12],
-  conf:[ {name:'Cortinarius viscosos', t:'També enganxen, però les làmines són ocre a rovell i l’esporada és marró rovell. N’hi ha de tòxics.'},
-         {name:'Gomphidius', t:'Viscós, amb làmines grises a negres. Comestible mediocre.'} ],
+  conf:[ {name:'Cortinarius viscosos', cat:'tox', t:'També enganxen, però les làmines són ocre a rovell i l’esporada és marró rovell. N’hi ha de tòxics.'},
+         {name:'Gomphidius', cat:'com', t:'Viscós, amb làmines grises a negres. Comestible mediocre.'} ],
   tox:'Pela la cutícula viscosa abans de cuinar-la.',
   cur:'L’esporada blanca és la manera més segura de separar-la dels cortinaris viscosos, que la tenen marró.',
   note:'Fes l’esporada: BLANCA.' },
@@ -490,7 +490,7 @@ const SPECIES = [
   hab:'Prats de muntanya i marges, sovint sota arços o rosers silvestres. Forma rotllanes que es repeteixen any rere any.',
   arb:['prat'], mes:[4,5,6],
   conf:[ {id:'fals-carlet', t:'Làmines groguenques que passen a rosades i esporada rosa. Tòxic.'},
-         {name:'Inocybe erubescens', t:'Barret fibrós que enrogeix. Molt tòxic (muscarina).'},
+         {name:'Inocybe erubescens', cat:'tox', t:'Barret fibrós que enrogeix. Molt tòxic (muscarina).'},
          {id:'clitocibe-blanc', t:'Petit i blanc, de prat. Tòxic.'} ],
   cur:'És un bolet de primavera: surt cap a Sant Jordi, per això en castellà en diuen “seta de San Jorge”.',
   note:'Primavera. Olor de FARINA. Esporada blanca.' },
@@ -505,7 +505,7 @@ const SPECIES = [
       espora:'Blanca a crema' },
   hab:'Pinedes humides, entre molsa i sovint prop de torrents. Surt en grups grans.',
   arb:['pi'], mes:[10,11,12],
-  conf:[ {name:'Craterellus tubaeformis', t:'Peu més grisenc i plecs més marcats. També comestible.'} ],
+  conf:[ {name:'Craterellus tubaeformis', cat:'com', t:'Peu més grisenc i plecs més marcats. També comestible.'} ],
   cur:'Asseca molt bé: penjat en un fil, manté l’aroma tot l’any.',
   note:'Cama GROGA, buida. Molsa i humitat.' },
 
@@ -565,7 +565,7 @@ const SPECIES = [
       espora:'Rosa pàl·lid' },
   hab:'Fullaraca de pinedes, alzinars i boscos mixtos; també marges i compost.',
   arb:['pi','alzina','roure'], mes:[10,11,12],
-  conf:[ {name:'Cortinarius violacis', t:'Tenen cortina (teles fines) al peu i esporada marró rovell. N’hi ha de tòxics.'} ],
+  conf:[ {name:'Cortinarius violacis', cat:'tox', t:'Tenen cortina (teles fines) al peu i esporada marró rovell. N’hi ha de tòxics.'} ],
   tox:'És TÒXICA CRUA. Cal cuinar-la bé. Algunes persones no la toleren.',
   cur:'Fes l’esporada: la rosa pàl·lida de la pimpinella la separa dels cortinaris, que la fan marró.',
   note:'Mai crua! Esporada rosada.' },
@@ -581,7 +581,7 @@ const SPECIES = [
   hab:'Clarianes, marges de bosc i prats.',
   arb:['prat','pi','roure'], mes:[8,9,10,11],
   conf:[ {id:'lepiota-petita', t:'Lepiotes petites (menys de 10 cm). Mortals.'},
-         {name:'Chlorophyllum', t:'Carn que enrogeix en tallar-la. Alguns són tòxics.'} ],
+         {name:'Chlorophyllum', cat:'tox', t:'Carn que enrogeix en tallar-la. Alguns són tòxics.'} ],
   tox:'Cull només exemplars de més de 10 cm de barret, amb anell mòbil. Menja’n el barret ben cuit.',
   cur:'El nom “apagallums” ve de la forma del barret jove, que recorda l’estri per apagar les espelmes.',
   note:'Més de 10 cm! Anell que es mou.' },
@@ -706,7 +706,7 @@ const SPECIES = [
       espora:'Blanca' },
   hab:'Pinedes, rouredes i fagedes.',
   arb:['pi','roure','faig'], mes:[8,9,10,11],
-  conf:[ {name:'Amanita rubescens (reig vinós)', t:'Carn que enrogeix en tallar-la o pels forats de cuc. No es recomana.'},
+  conf:[ {name:'Amanita rubescens (reig vinós)', cat:'pre', t:'Carn que enrogeix en tallar-la o pels forats de cuc. No es recomana.'},
          {id:'fredolic', t:'El fredolic no té anell ni volva.'} ],
   tox:'Mateixos tòxics que el reig bord, en més quantitat. Síndrome panterínica greu.',
   cur:'És més perillós que el reig bord perquè, de color bru, passa desapercebut i es confon amb bolets comestibles.',
@@ -876,7 +876,7 @@ const SPECIES = [
       espora:'Marró rovell' },
   hab:'En grups sobre fusta morta, sobretot de coníferes.',
   arb:['fusta'], mes:[9,10,11,12],
-  conf:[ {name:'Kuehneromyces mutabilis', t:'També creix en grups sobre fusta i és comestible. Tan semblant que no es recomana collir-lo.'} ],
+  conf:[ {name:'Kuehneromyces mutabilis', cat:'com', t:'També creix en grups sobre fusta i és comestible. Tan semblant que no es recomana collir-lo.'} ],
   tox:'Amatoxines, les mateixes que la farinera borda. Mortal.',
   cur:'És un dels bolets més petits que poden matar. No collis mai bolets petits i bruns sobre fusta per menjar.',
   note:'Petit, bru, sobre fusta, anell = NO.' },
@@ -907,7 +907,7 @@ const SPECIES = [
       espora:'Bru porpra' },
   hab:'En grups sobre soques i fusta de pins i planifolis.',
   arb:['fusta','pi'], mes:[1,2,3,4,5,6,7,8,9,10,11,12],
-  conf:[ {name:'Armillaria mellea', t:'Té anell i esporada blanca; cal saber-la cuinar.'} ],
+  conf:[ {name:'Armillaria mellea', cat:'pre', t:'Té anell i esporada blanca; cal saber-la cuinar.'} ],
   tox:'Síndrome gastrointestinal.',
   cur:'Surt gairebé tot l’any. Les làmines verdoses el delaten.',
   note:'Groc sofre + làmines verdes.' }
@@ -1289,6 +1289,10 @@ function season(mes){
 const pill = sp => `<span class="pill c-${sp.cat}"><i aria-hidden="true">${CATS[sp.cat].icon}</i>${CATS[sp.cat].short}</span>`;
 const commons = sp => `https://commons.wikimedia.org/w/index.php?search=${encodeURIComponent(sp.sci)}&title=Special:MediaSearch&type=image`;
 const inSeason = sp => sp.mes.includes(NOW);
+// Perill de cada categoria. La nota diu «Compte!» només si algun bolet amb què es confon és més perillós que aquest;
+// si és un tòxic que es confon amb comestibles, diu «Se sol confondre amb…»; entre comestibles, «També pot ser…».
+const RISK = { exc:0, com:0, pre:1, reb:2, tox:3, mor:4 };
+function confRisk(s){ return s.conf.some(c=>{ const k = c.id ? BY_ID[c.id].cat : c.cat; return k ? RISK[k]>RISK[s.cat] : RISK[s.cat]<3; }); }
 function confHTML(c, nb){
   const t = c.id ? BY_ID[c.id] : null;
   const name = t ? `${t.ca}${nb?'':` · ${CATS[t.cat].short}`}` : c.name;
@@ -1402,7 +1406,7 @@ function sheetNb(s){
    <h2>On el trobo</h2><p style="margin:0">${esc(s.hab)}</p>
    <div class="ncal" aria-label="Temporada: ${season(s.mes)}">${INIT.map((l,i)=>`<span class="${s.mes.includes(i+1)?'on':''} ${i+1===NOW?'now':''}" title="${MESOS[i]}">${l}</span>`).join('')}</div>
    <div class="nbmap">${mapSVG({hl:s.z,mini:true,nb:true})}<p class="pencil">${esc(zoneNames(s))}<br><a href="#bergueda" data-zonego="${s.z[0]}">→ veure el mapa</a></p></div>
-   ${s.conf.length?`<div class="sticky"><h3>Compte! Es confon amb…</h3><ul>${s.conf.map(c=>confHTML(c,true)).join('')}</ul></div>`:''}
+   ${s.conf.length?`<div class="sticky">${confRisk(s)?`<h3>Compte! Es confon amb…</h3>`:RISK[s.cat]>=2?`<h3>Se sol confondre amb…</h3><p style="margin:0 0 .3rem">Qui el cull sovint es pensa que és un d’aquests.</p>`:`<h3>També pot ser…</h3>`}<ul>${s.conf.map(c=>confHTML(c,true)).join('')}</ul></div>`:''}
    ${testsHTML(s,true)}
    <h2>Curiositat</h2><p class="pencil" style="margin:0">${esc(s.cur)}</p>
    <h2>Els meus apunts</h2><label for="nota" style="font-family:var(--f-type);font-size:.78rem;color:var(--pencil)">(només es guarden en aquest dispositiu)</label>
@@ -1935,7 +1939,11 @@ initExperts();
 </script>
 <script>
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
-  addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{ if(hadSW && !reloaded){ reloaded = true; location.reload(); } });
+  addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').then(reg=>{
+    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') reg.update().catch(()=>{}); });
+  }).catch(()=>{}));
 }
 </script>
 </body>
