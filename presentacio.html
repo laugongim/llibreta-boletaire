@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boletaire · Presentació</title>
+<meta name="description" content="Boletaire és una app gratuïta per aprendre a reconèixer els bolets del Berguedà i els que s’hi confonen. Busquem persones expertes que la revisin.">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f3ee; --card:#ffffff; --fg:#1b2119; --muted:#58614f; --line:#d9ddd0;
+  --accent:#2e5a3a; --accent-fg:#ffffff; --soft:#e3ebdf; --paper:#efe5c9; --ink:#3a2f1c;
+  --warn-bg:#f8dedd; --warn-fg:#9b2a26; --gold:#d6a734;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121611; --card:#1b2019; --fg:#e4e9dc; --muted:#a3ad98; --line:#2f362c;
+    --accent:#8cc49a; --accent-fg:#10200f; --soft:#223024; --paper:#2a2619; --ink:#efe5c9;
+    --warn-bg:#3a1d1c; --warn-fg:#f2a19c; --gold:#e3bb55;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121611; --card:#1b2019; --fg:#e4e9dc; --muted:#a3ad98; --line:#2f362c;
+  --accent:#8cc49a; --accent-fg:#10200f; --soft:#223024; --paper:#2a2619; --ink:#efe5c9;
+  --warn-bg:#3a1d1c; --warn-fg:#f2a19c; --gold:#e3bb55;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--bg); color:var(--fg); font:18px/1.6 "Atkinson Hyperlegible", system-ui, sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:68rem; margin:0 auto; padding:0 16px}
+h1,h2,h3{line-height:1.2; margin:0}
+h2{font-size:clamp(1.5rem,4vw,2rem); margin-bottom:.6rem}
+h3{font-size:1.1rem}
+p{margin:.5rem 0}
+.muted{color:var(--muted)}
+section{padding:3.2rem 0; border-top:1px solid var(--line)}
+.lead{font-size:1.15rem; max-width:44rem}
+
+/* capçalera */
+header.hero{padding:2.5rem 0 3rem}
+.brand{display:flex; align-items:center; gap:.8rem; margin-bottom:2rem}
+.brand img{width:52px; height:52px; border-radius:12px}
+.brand b{font:700 2.1rem/1 Caveat, cursive; color:var(--accent)}
+.hero-grid{display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:2.5rem; align-items:center}
+.hero h1{font-size:clamp(2rem,6vw,3.2rem); margin-bottom:1rem}
+.hero h1 em{font:700 1.15em/1 Caveat, cursive; color:var(--accent); font-style:normal}
+.cta{display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.5rem}
+.btn{display:inline-block; padding:.75rem 1.2rem; border-radius:999px; font-weight:700; text-decoration:none; border:2px solid var(--accent)}
+.btn.solid{background:var(--accent); color:var(--accent-fg)}
+.btn.ghost{color:var(--accent)}
+.stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.8rem; margin-top:2rem}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:.8rem .9rem}
+.stat b{display:block; font-size:1.7rem; line-height:1.1; color:var(--accent)}
+.stat span{font-size:.88rem; color:var(--muted)}
+
+/* mòbils */
+.phone{margin:0; background:#111; border-radius:30px; padding:9px; box-shadow:0 18px 40px rgba(0,0,0,.18); max-width:300px; width:100%; justify-self:center}
+.phone img{display:block; width:100%; height:auto; border-radius:22px}
+.hero .phone{transform:rotate(2deg)}
+
+.warn{background:var(--warn-bg); color:var(--warn-fg); border-radius:14px; padding:1rem 1.2rem; margin-top:1.4rem; max-width:44rem}
+.warn b{color:inherit}
+
+/* funcionalitats */
+.feats{display:grid; gap:3rem; margin-top:2rem}
+.feat{display:grid; grid-template-columns:minmax(0,260px) minmax(0,1fr); gap:2.2rem; align-items:center}
+.feat:nth-child(even){grid-template-columns:minmax(0,1fr) minmax(0,260px)}
+.feat:nth-child(even) .phone{order:2}
+.feat .kick{font:700 1.5rem/1 Caveat, cursive; color:var(--accent)}
+.feat h3{font-size:1.35rem; margin:.2rem 0 .5rem}
+.feat ul{margin:.6rem 0 0; padding-left:1.2rem}
+.feat li{margin:.25rem 0}
+
+/* què us demanem */
+.asks{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.5rem}
+.ask{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:1.2rem}
+.ask .n{display:inline-grid; place-items:center; width:2rem; height:2rem; border-radius:50%; background:var(--accent); color:var(--accent-fg); font-weight:700; margin-bottom:.6rem}
+.ask ul{padding-left:1.1rem; margin:.5rem 0 0}
+.ask li{margin:.2rem 0}
+
+.cols{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-top:1.5rem}
+.box{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:1.2rem}
+.box ul{padding-left:1.1rem; margin:.4rem 0 0}
+.box li{margin:.25rem 0}
+
+.note{background:var(--paper); color:var(--ink); border-radius:4px; padding:1.4rem 1.5rem; transform:rotate(-.6deg); box-shadow:0 8px 20px rgba(0,0,0,.08); max-width:40rem; margin:1.5rem auto 0}
+.note p{font:600 1.45rem/1.35 Caveat, cursive; margin:0}
+
+footer{padding:2.5rem 0 3rem; border-top:1px solid var(--line); color:var(--muted); font-size:.92rem}
+
+@media (max-width:820px){
+  .hero-grid{grid-template-columns:minmax(0,1fr)}
+  .hero .phone{max-width:240px; transform:none}
+  .feat, .feat:nth-child(even){grid-template-columns:minmax(0,1fr); gap:1.2rem}
+  .feat:nth-child(even) .phone{order:0}
+  .feat .phone{max-width:240px}
+  .asks{grid-template-columns:minmax(0,1fr)}
+  .cols{grid-template-columns:minmax(0,1fr)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+ <div class="wrap">
+  <div class="brand"><img src="icons/icon-192.png" alt="" width="52" height="52"><b>Boletaire</b></div>
+  <div class="hero-grid">
+   <div>
+    <h1>Aprendre a conèixer els bolets del Berguedà, <em>i sobretot els que es confonen</em></h1>
+    <p class="lead">Boletaire és una app gratuïta per al mòbil. Ensenya a mirar un bolet amb calma, a distingir-lo dels que s’hi assemblen i a saber on i quan surt a la comarca. Funciona al bosc sense cobertura.</p>
+    <p class="lead">Ara és un prototip. <b>Abans de fer-la pública, volem que la revisin persones que en saben.</b> Aquesta pàgina explica què fa i com hi podeu ajudar.</p>
+    <div class="cta">
+     <a class="btn solid" href="./">Obre l’app</a>
+     <a class="btn ghost" href="#ajuda">Com hi podeu ajudar</a>
+    </div>
+    <div class="stats">
+     <div class="stat"><b>55</b><span>espècies amb fitxa</span></div>
+     <div class="stat"><b>22</b><span>tòxiques o mortals</span></div>
+     <div class="stat"><b>8</b><span>zones naturals de la comarca</span></div>
+     <div class="stat"><b>0 €</b><span>sense publicitat ni pagaments</span></div>
+    </div>
+   </div>
+   <figure class="phone"><img src="presentacio/llista.jpg" alt="Llista de bolets de l’app, amb l’avís que serveix per aprendre i no per decidir què et menges" width="780" height="1688"></figure>
+  </div>
+ </div>
+</header>
+
+<section>
+ <div class="wrap">
+  <h2>La idea: primer la seguretat</h2>
+  <p class="lead">Cada any hi ha intoxicacions per bolets que s’han confós amb un comestible. Boletaire no vol substituir ningú que en sap: vol que la gent arribi a la persona experta amb més criteri i més prudència.</p>
+  <div class="warn"><b>L’app ho diu a cada pantalla:</b> serveix per aprendre, no per decidir què et menges. Si hi ha el més mínim dubte, el bolet no es menja i s’ensenya a una persona experta. La clau guiada i les proves químiques mai donen el vistiplau per menjar.</div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <h2>Què fa l’app</h2>
+  <div class="feats">
+
+   <div class="feat">
+    <figure class="phone"><img src="presentacio/fitxa.jpg" alt="Fitxa del rovelló amb foto, nom científic, esbós i la pista per reconèixer-lo" width="780" height="1688" loading="lazy"></figure>
+    <div>
+     <div class="kick">55 fitxes</div>
+     <h3>Una fitxa per a cada espècie</h3>
+     <p>Noms populars, nom científic, com és el barret, el que hi ha a sota, el peu, la carn i l’esporada. També on surt, en quins mesos i en quin tipus de sòl.</p>
+     <ul>
+      <li>Hi ha els comestibles més buscats i els tòxics i mortals de la zona.</li>
+      <li>Es pot llegir com una llibreta de camp o en un format més llegible.</li>
+     </ul>
+    </div>
+   </div>
+
+   <div class="feat">
+    <figure class="phone"><img src="presentacio/confon.jpg" alt="Nota groga d’una fitxa: Compte! Es confon amb el matagent, que és tòxic" width="780" height="1688" loading="lazy"></figure>
+    <div>
+     <div class="kick">El més important</div>
+     <h3>Amb què es confon, i com no equivocar-se</h3>
+     <p>Cada fitxa explica amb quines espècies es confon i quina diferència cal mirar. Quan el risc és un tòxic o un mortal, la nota ho diu clar: «Compte! Es confon amb…».</p>
+     <p>També hi ha les proves que es poden fer a casa (esporada, tall de la carn, reactius) i què n’esperar. Cada prova acaba igual: cap prova diu si es pot menjar.</p>
+    </div>
+   </div>
+
+   <div class="feat">
+    <figure class="phone"><img src="presentacio/clau.jpg" alt="Clau guiada amb preguntes: on creix i què hi ha sota el barret" width="780" height="1688" loading="lazy"></figure>
+    <div>
+     <div class="kick">Identifica</div>
+     <h3>Una clau guiada, pas a pas</h3>
+     <p>Preguntes senzilles (on creix, què té sota el barret, de quin color és, si té làtex, anell o volva, a què fa olor, com canvia en tallar-lo) que van descartant espècies. L’app proposa primer la pregunta que més ajuda.</p>
+     <p>El resultat és una llista de candidats amb el que falta comprovar, mai una identificació segura.</p>
+    </div>
+   </div>
+
+   <div class="feat">
+    <figure class="phone"><img src="presentacio/mapa.jpg" alt="Mapa del Berguedà dividit en 8 zones naturals, amb el Cadí i Moixeró seleccionat" width="780" height="1688" loading="lazy"></figure>
+    <div>
+     <div class="kick">El Berguedà</div>
+     <h3>8 zones naturals i què hi surt</h3>
+     <p>Del Cadí i el Pedraforca fins a la vall del Llobregat i el Merlès. Per a cada zona: altitud, boscos, tipus de sòl i quins bolets s’hi poden trobar.</p>
+     <p>També hi ha els telèfons d’emergència i de toxicologia, les normes de collida i les fires i jornades micològiques de la comarca.</p>
+    </div>
+   </div>
+
+   <div class="feat">
+    <figure class="phone"><img src="presentacio/sol.jpg" alt="Tema de coneixements: Les pedres i el sòl, amb el sòl calcari i el sòl àcid" width="780" height="1688" loading="lazy"></figure>
+    <div>
+     <div class="kick">Coneixements</div>
+     <h3>El que cal saber abans de sortir</h3>
+     <p>Temes curts per a qui comença: les parts d’un bolet, les paraules de les fitxes, les pedres i el sòl, què cal portar al bosc, les regles d’or, com fer una bona foto i el kit de reactius.</p>
+     <p>La part de geologia i sòls va sortir d’una xerrada amb un micòleg de la zona, i s’ha completat amb fonts publicades.</p>
+    </div>
+   </div>
+
+   <div class="feat">
+    <figure class="phone"><img src="presentacio/meus.jpg" alt="Progrés de la llibreta: has trobat 7 de 55 espècies, amb insígnies i rànquing" width="780" height="1688" loading="lazy"></figure>
+    <div>
+     <div class="kick">La meva llibreta</div>
+     <h3>Apuntar les troballes</h3>
+     <p>Cada persona pot registrar el que troba: fins a 5 fotos, la ubicació GPS precisa, la data i notes. Els tòxics compten igual amb una foto, sense haver-los de collir.</p>
+     <p>Els llocs on es troben bolets són privats: no es comparteixen ni es publiquen mai.</p>
+    </div>
+   </div>
+
+   <div class="feat">
+    <figure class="phone"><img src="presentacio/insignies.jpg" alt="Pantalla d’insígnies: 7 de 12 aconseguides, com Ull de micòleg i Explorador" width="780" height="1688" loading="lazy"></figure>
+    <div>
+     <div class="kick">Per tenir ganes de tornar-hi</div>
+     <h3>Insígnies, i un rànquing voluntari</h3>
+     <p>12 insígnies que premien aprendre, no collir més: reconèixer un tòxic, trobar bolets a diverses zones, fer bones fotos o una ubicació precisa. El rànquing és opcional: només hi surt qui s’hi apunta.</p>
+    </div>
+   </div>
+
+  </div>
+ </div>
+</section>
+
+<section id="ajuda">
+ <div class="wrap">
+  <h2>Com hi podeu ajudar</h2>
+  <p class="lead">Tot és voluntari i sense cap compromís d’horari. Qualsevol d’aquestes tres coses ja seria una gran ajuda.</p>
+  <div class="asks">
+   <div class="ask">
+    <div class="n">1</div>
+    <h3>Revisar el contingut</h3>
+    <ul>
+     <li>Les 55 fitxes: descripció, comestibilitat i temporada.</li>
+     <li>Les confusions: si n’hi falta alguna perillosa.</li>
+     <li>Les zones, els sòls i quins bolets hi surten.</li>
+     <li>Les preguntes de la clau guiada.</li>
+    </ul>
+    <p class="muted">Si voleu, a l’app constarà qui ho ha revisat.</p>
+   </div>
+   <div class="ask">
+    <div class="n">2</div>
+    <h3>Ser-hi com a experts</h3>
+    <p>A l’apartat Experts, perquè la gent us pugui ensenyar un bolet abans de menjar-se’l.</p>
+    <ul>
+     <li>Només amb consentiment per escrit.</li>
+     <li>Només es publica el que trieu: nom, zona i una sola manera de contacte.</li>
+     <li>Us podeu retirar quan vulgueu.</li>
+    </ul>
+   </div>
+   <div class="ask">
+    <div class="n">3</div>
+    <h3>Fotos de la zona</h3>
+    <p>Ara les fotos són de Wikimedia Commons. Fotos fetes al Berguedà, amb el vostre crèdit, ajudarien a reconèixer els bolets tal com surten aquí.</p>
+    <p class="muted">Opcional. Només amb la llicència que vosaltres trieu.</p>
+   </div>
+  </div>
+  <div class="note"><p>A l’app recomanem portar sempre el bolet sencer a una persona experta. No us demanarem identificacions per foto.</p></div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <h2>Com està feta</h2>
+  <div class="cols">
+   <div class="box">
+    <h3>D’on surt la informació</h3>
+    <ul>
+     <li>La comestibilitat segueix el consens de la Societat Catalana de Micologia i la <i>Història Natural dels Països Catalans</i>.</li>
+     <li>Els sòls i la geologia, d’estudis del CTFC, la Universitat de Barcelona i l’Enciclopèdia Catalana. Per a cada espècie consta la font i el grau de confiança.</li>
+     <li>Les fotos, de Wikimedia Commons, amb llicència lliure i el crèdit de cada autor.</li>
+    </ul>
+    <p class="muted">Encara no l’ha revisada cap persona experta. Per això us escrivim.</p>
+   </div>
+   <div class="box">
+    <h3>Gratuïta, i amb respecte per la privacitat</h3>
+    <ul>
+     <li>Sense publicitat, sense pagaments i sense seguiment.</li>
+     <li>S’instal·la des del navegador del mòbil i funciona sense cobertura.</li>
+     <li>En català i en castellà.</li>
+     <li>La llibreta es guarda al mòbil. Si es vol, es pot entrar amb un compte per tenir-la a diversos dispositius. Les dades es guarden a la Unió Europea i només les veu qui les ha creat. <a href="privacitat.html">Política de privacitat</a></li>
+    </ul>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <h2>Proveu-la</h2>
+  <p class="lead">Obriu l’enllaç al mòbil. Al menú del navegador, toqueu «Afegeix a la pantalla d’inici» o «Instal·la l’app» i quedarà com una app més.</p>
+  <div class="cta">
+   <a class="btn solid" href="./">laugongim.github.io/llibreta-boletaire</a>
+  </div>
+  <h2 style="margin-top:2.5rem">Contacte</h2>
+  <p class="lead">Per a qualsevol dubte, comentari o correcció, escriviu a <a href="mailto:laugg95@gmail.com">laugg95@gmail.com</a>. Ens podem veure en persona o parlar per telèfon quan us vagi bé.</p>
+ </div>
+</section>
+
+<footer>
+ <div class="wrap">Boletaire · projecte personal i sense ànim de lucre · Berguedà, 2026. Captures del prototip d’octubre de 2026.</div>
+</footer>
+
+</body>
+</html>

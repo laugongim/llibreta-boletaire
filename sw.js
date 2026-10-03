@@ -27,7 +27,8 @@ self.addEventListener('fetch', e=>{
   if(u.origin!==location.origin) return;
   e.respondWith((async()=>{
     const c=await caches.open(CACHE);
-    const hit=await c.match(r,{ignoreSearch:true}) || (r.mode==='navigate' && await c.match('index.html'));
-    return hit || fetch(r);
+    const hit=await c.match(r,{ignoreSearch:true}); if(hit) return hit;
+    // pàgines que no són a la memòria cau (p. ex. presentacio.html): de la xarxa; sense connexió, l'app
+    try{ return await fetch(r); }catch(err){ if(r.mode==='navigate') return c.match('index.html'); throw err; }
   })());
 });
