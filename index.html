@@ -219,6 +219,7 @@ details.rg summary::after{ content:"+"; font-size:1.4rem; color:var(--muted) }
 details.rg[open] summary::after{ content:"–" }
 details.rg .in{ display:grid; gap:.6rem; padding-bottom:1rem }
 details.rg .in p{ margin:0 } details.rg ol{ margin:0; padding-left:1.2rem }
+.klab{ font-weight:700; font-size:.92rem; margin-bottom:-.2rem }
 .shots{ width:100%; height:auto; color:var(--accent); display:block }
 .pgsteps{ display:grid; gap:.45rem } .pgsteps li{ padding-left:.15rem }
 .warn-line{ background:var(--warn-bg); border-radius:10px; padding:.55rem .75rem; font-size:.93rem }
@@ -1526,7 +1527,7 @@ function paintZone(){
 
 // ---------- Clau d'identificació guiada ----------
 const IDK = { ans:{}, zone:'', month:String(NOW), photo:null, demo:-1, geo:'', guide:false };
-// --- "Avui i aquí": la ubicació del mòbil es converteix a zona. No surt del dispositiu. ---
+// --- "Localitza'm": la ubicació del mòbil es converteix a zona. No surt del dispositiu. ---
 // Mateixa projecció que build_map.py; límits del Berguedà segons OpenStreetMap (relació 358838).
 const GEO = { minx:1.6103518, maxx:2.0710234, miny:41.8974423, maxy:42.3233011, W:360, pad:8 };
 function geoToMap(lat,lon){
@@ -1547,17 +1548,16 @@ function zoneAt(lat,lon){
   for(const z in MAP.zones) for(const r of pathRings(MAP.zones[z])) for(const [x,y] of r){ const dd=Math.hypot(x-p[0],y-p[1]); if(dd<bd){ bd=dd; best=z; } }
   return bd<10 ? best : null;
 }
-function hereNow(){
-  IDK.month=String(NOW);
+function locateMe(){
   if(!navigator.geolocation){ IDK.geo='Aquest navegador no pot donar la ubicació. Tria la zona a mà.'; openKey(); return; }
   IDK.geo='busy'; openKey();
   navigator.geolocation.getCurrentPosition(pos=>{
     const z=zoneAt(pos.coords.latitude,pos.coords.longitude);
-    if(z){ IDK.zone=z; IDK.geo=`Ets a la zona ${z}: ${ZONES[z].name}.`; }
-    else { IDK.zone=''; IDK.geo='Sembla que no ets al Berguedà. Hem posat el mes d’avui; tria la zona a mà si vols.'; }
+    if(z){ IDK.zone=z; IDK.geo=`Ets a la zona ${z}. La ubicació no surt del mòbil.`; }
+    else { IDK.zone=''; IDK.geo='Sembla que no ets al Berguedà. Tria la zona a mà si vols.'; }
     openKey();
   }, err=>{
-    IDK.geo = err.code===1 ? 'No has donat permís per saber la ubicació. Hem posat el mes d’avui; tria la zona a mà.' : 'No s’ha pogut saber la ubicació. Hem posat el mes d’avui; tria la zona a mà.';
+    IDK.geo = err.code===1 ? 'No has donat permís per saber la ubicació. Tria la zona a mà.' : 'No s’ha pogut saber la ubicació. Tria la zona a mà.';
     openKey();
   }, { enableHighAccuracy:false, timeout:15000, maximumAge:600000 });
 }
@@ -1704,11 +1704,12 @@ function keyHTML(){
      ${IDK.photo?`<img class="kphoto" src="${IDK.photo}" alt="La teva foto">`:''}
      <label class="btn" for="kfile">${IDK.photo?'Canvia la foto':'Afegeix una foto'}</label><input type="file" id="kfile" accept="image/*" hidden></section>
    <section class="kq"><h2>On i quan</h2>
-     <button class="btn solid" id="kgeo" ${IDK.geo==='busy'?'disabled':''}>${IDK.geo==='busy'?'Buscant on ets…':'Avui i aquí'}</button>
-     ${IDK.geo&&IDK.geo!=='busy'?`<p class="muted" role="status">${esc(IDK.geo)}</p>`:`<p class="muted">Posa el mes d’avui i la zona on ets. La ubicació no surt del mòbil.</p>`}
-     <div class="row">
-     <select id="kzone" aria-label="Zona"><option value="">Zona: no ho sé</option>${Object.entries(ZONES).map(([k,v])=>`<option value="${k}" ${IDK.zone===k?'selected':''}>${v.name}</option>`).join('')}</select>
-     <select id="kmonth" aria-label="Mes"><option value="">Mes: qualsevol</option>${MESOS.map((m,i)=>`<option value="${i+1}" ${IDK.month==String(i+1)?'selected':''}>${m}</option>`).join('')}</select></div></section>
+     <label class="klab" for="kzone">On</label>
+     <div class="row"><select id="kzone"><option value="">No ho sé</option>${Object.entries(ZONES).map(([k,v])=>`<option value="${k}" ${IDK.zone===k?'selected':''}>${v.name}</option>`).join('')}</select>
+       <button class="btn" id="kgeo" style="flex:0 0 auto" ${IDK.geo==='busy'?'disabled':''}>${IDK.geo==='busy'?'Buscant…':'Localitza’m'}</button></div>
+     ${IDK.geo&&IDK.geo!=='busy'?`<p class="muted" role="status">${esc(IDK.geo)}</p>`:''}
+     <label class="klab" for="kmonth">Quan</label>
+     <div class="row"><select id="kmonth"><option value="">Qualsevol mes</option>${MESOS.map((m,i)=>`<option value="${i+1}" ${IDK.month==String(i+1)?'selected':''}>${m}${i+1===NOW?' (aquest mes)':''}</option>`).join('')}</select></div></section>
    ${KEYQ.map(q=>`<section class="kq ${nxt&&nxt.k===q.k?'next':''}" id="kq-${q.k}">${nxt&&nxt.k===q.k?'<span class="nexttag">La pregunta més útil ara</span>':''}<h2>${q.q}</h2>${q.help?`<p class="muted">${q.help}${q.reag?` <a href="#r-${q.reag}" data-reag="${q.reag}">Com es fa</a>`:''}</p>`:''}
      <div class="kopts" role="group" aria-label="${esc(q.q)}">${q.o.map(([v,l])=>`<button class="chip" data-kq="${q.k}" data-kv="${v}" aria-pressed="${(IDK.ans[q.k]||[]).includes(v)}">${l}</button>`).join('')}</div></section>`).join('')}
    <section class="kres" id="kres"><h2>${ok.length?(ok.length===1?'1 candidat que encaixa amb tot':`${ok.length} candidats que encaixen amb tot`):'Cap espècie encaixa amb tot'}</h2>
@@ -1737,7 +1738,7 @@ function openKey(scrollTo){
   $('#back').addEventListener('click',()=>{ IDK.from=false; closeSheet(); });
   $('#kfile').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ IDK.photo=r.result; openKey(); }; r.readAsDataURL(f); });
   $('#kzone').addEventListener('change',e=>{ IDK.zone=e.target.value; IDK.geo=''; openKey(); });
-  $('#kgeo').addEventListener('click',hereNow);
+  $('#kgeo').addEventListener('click',locateMe);
   $('#kguide').addEventListener('toggle',e=>{ IDK.guide=e.target.open; });
   const af=$('#aifile'); if(af) af.addEventListener('change',e=>{ const f=e.target.files[0]; if(f) runLive(f); });
   $('#kmonth').addEventListener('change',e=>{ IDK.month=e.target.value; openKey(); });
