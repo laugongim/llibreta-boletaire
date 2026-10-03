@@ -376,6 +376,9 @@ details.know summary b{ font-size:1.08rem }
 .find .gal{ display:flex; gap:.5rem; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -16px; padding:0 16px }
 .find .gal img{ flex:0 0 86%; max-height:20rem; object-fit:cover; border-radius:12px; scroll-snap-align:center }
 .find textarea{ width:100%; border:1px solid var(--line); background:var(--bg); border-radius:10px; padding:.55rem .7rem; resize:vertical }
+.found{ display:grid; gap:.35rem; justify-items:start; margin:.6rem 0 }
+.found small{ font-size:.85rem; line-height:1.4; color:var(--muted) }
+.nb .found small{ font-family:var(--f-type); color:var(--pencil); font-size:.78rem }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -1902,7 +1905,8 @@ function sheetStd(s){
    ${s.conf.length?`<section><h2>Es pot confondre amb</h2><div class="conf">${s.conf.map(c=>confHTML(c,false)).join('')}</div></section>`:''}
    ${testsHTML(s,false)}
    <section><h2>Curiositat</h2><p class="box" style="margin:0">${esc(s.cur)}</p></section>
-   <button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: afegeix-lo a la cistella</button>
+   <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
+     <small>Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
    <section><h2>Les meves notes</h2><label for="nota" class="sr" style="font-size:.9rem;color:var(--muted)">Es guarden només en aquest dispositiu.</label><textarea id="nota" data-id="${s.id}" placeholder="On l’has trobat, data, olor, què et va dir l’expert…">${esc(getNote(s.id))}</textarea></section>
    <div class="links"><a class="btn" href="${commons(s)}" target="_blank" rel="noopener">Fotos lliures a Wikimedia ↗</a></div>
   </article>`;
@@ -1927,7 +1931,8 @@ function sheetNb(s){
    ${s.conf.length?`<div class="sticky">${confRisk(s)?`<h3>Compte! Es confon amb…</h3>`:RISK[s.cat]>=2?`<h3>Se sol confondre amb…</h3><p style="margin:0 0 .3rem">Qui el cull sovint es pensa que és un d’aquests.</p>`:`<h3>També pot ser…</h3>`}<ul>${s.conf.map(c=>confHTML(c,true)).join('')}</ul></div>`:''}
    ${testsHTML(s,true)}
    <h2>Curiositat</h2><p class="pencil" style="margin:0">${esc(s.cur)}</p>
-   <p><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: a la cistella</button></p>
+   <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
+     <small>Les teves troballes, amb fotos i ubicació, es guarden a <a href="#perfil" data-tab="perfil">la cistella del teu perfil</a>.</small></div>
    <h2>Els meus apunts</h2><label for="nota" style="font-family:var(--f-type);font-size:.78rem;color:var(--pencil)">(només es guarden en aquest dispositiu)</label>
    <textarea id="nota" data-id="${s.id}" placeholder="data, lloc, olor…">${esc(getNote(s.id))}</textarea>
    <div class="nlinks"><a href="${commons(s)}" target="_blank" rel="noopener">→ fotos lliures (Wikimedia)</a></div>
