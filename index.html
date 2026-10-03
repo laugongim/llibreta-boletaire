@@ -358,6 +358,24 @@ details.know summary b{ font-size:1.08rem }
 .gloss{ margin:0; display:grid; gap:.55rem } .gloss dt{ font-weight:700 } .gloss dd{ margin:0 0 .2rem; color:var(--fg) }
 .tools,.rules{ margin:0; padding-left:1.2rem; display:grid; gap:.45rem }
 .know h3{ font-size:1rem; margin-top:.4rem }
+/* La meva cistella */
+.cis{ display:grid; gap:.5rem; margin-top:.3rem }
+.cisrow{ display:grid; grid-template-columns:3.6rem minmax(0,1fr); gap:.7rem; align-items:center; text-align:left; background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:.45rem; cursor:pointer; color:var(--fg) }
+.cisrow img,.cisrow .noimg{ width:3.6rem; height:3.6rem; object-fit:cover; border-radius:8px; background:var(--chip); display:block }
+.cisrow small{ display:block; color:var(--muted); font-size:.82rem }
+.fphotos{ display:grid; grid-template-columns:repeat(auto-fill,minmax(5.2rem,1fr)); gap:.45rem }
+.fphotos figure{ position:relative; margin:0 } .fphotos img{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; display:block }
+.phdel{ position:absolute; top:.2rem; right:.2rem; width:1.8rem; height:1.8rem; border-radius:50%; border:0; background:rgba(0,0,0,.65); color:#fff; font-size:1.1rem; line-height:1; cursor:pointer }
+.phadd{ aspect-ratio:1; border:2px dashed var(--line); border-radius:10px; display:grid; place-content:center; text-align:center; color:var(--accent); font-weight:700; cursor:pointer; font-size:.85rem }
+.phadd span{ font-size:1.6rem; line-height:1 }
+.gps{ display:grid; gap:.35rem; background:var(--chip); border-radius:12px; padding:.7rem .8rem }
+.gps .acc{ font-size:1.8rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--accent) }
+.gps small{ color:var(--muted) }
+.loc{ display:grid; grid-template-columns:5.5rem minmax(0,1fr); gap:.7rem; align-items:center; font-size:.95rem; margin-bottom:.4rem }
+.loc small{ color:var(--muted) }
+.find .gal{ display:flex; gap:.5rem; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -16px; padding:0 16px }
+.find .gal img{ flex:0 0 86%; max-height:20rem; object-fit:cover; border-radius:12px; scroll-snap-align:center }
+.find textarea{ width:100%; border:1px solid var(--line); background:var(--bg); border-radius:10px; padding:.55rem .7rem; resize:vertical }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -1750,6 +1768,7 @@ function mapSVG(o={}){
     for(const t of TOWNS){ const [x,y]=MAP.cent[t]; const end=x>MAP.w-60; g+=`<circle cx="${x}" cy="${y}" r="2.2" fill="${nb?'#24263a':'var(--fg)'}"/><text x="${end?x-4:x+4}" y="${y-3}" text-anchor="${end?'end':'start'}" paint-order="stroke" stroke="${nb?'#efe5c9':'var(--surface)'}" stroke-width="3" stroke-linejoin="round">${t==='la Pobla de Lillet'?'la Pobla':t}</text>`; }
     g+=`</g>`;
   }
+  if(o.pt) g+=`<circle cx="${o.pt[0]}" cy="${o.pt[1]}" r="${mini?14:9}" fill="#bb2630" stroke="#fff" stroke-width="${mini?5:3}"/>`;
   const f=nb?' filter="url(#rough)"':'';
   return `<svg class="map ${mini?'mini':''}" viewBox="0 0 ${MAP.w} ${MAP.h}" role="${o.interactive?'group':'img'}" aria-label="Mapa de les zones del Berguedà"><g${f}>${g}</g></svg>`;
 }
@@ -1883,6 +1902,7 @@ function sheetStd(s){
    ${s.conf.length?`<section><h2>Es pot confondre amb</h2><div class="conf">${s.conf.map(c=>confHTML(c,false)).join('')}</div></section>`:''}
    ${testsHTML(s,false)}
    <section><h2>Curiositat</h2><p class="box" style="margin:0">${esc(s.cur)}</p></section>
+   <button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: afegeix-lo a la cistella</button>
    <section><h2>Les meves notes</h2><label for="nota" class="sr" style="font-size:.9rem;color:var(--muted)">Es guarden només en aquest dispositiu.</label><textarea id="nota" data-id="${s.id}" placeholder="On l’has trobat, data, olor, què et va dir l’expert…">${esc(getNote(s.id))}</textarea></section>
    <div class="links"><a class="btn" href="${commons(s)}" target="_blank" rel="noopener">Fotos lliures a Wikimedia ↗</a></div>
   </article>`;
@@ -1907,6 +1927,7 @@ function sheetNb(s){
    ${s.conf.length?`<div class="sticky">${confRisk(s)?`<h3>Compte! Es confon amb…</h3>`:RISK[s.cat]>=2?`<h3>Se sol confondre amb…</h3><p style="margin:0 0 .3rem">Qui el cull sovint es pensa que és un d’aquests.</p>`:`<h3>També pot ser…</h3>`}<ul>${s.conf.map(c=>confHTML(c,true)).join('')}</ul></div>`:''}
    ${testsHTML(s,true)}
    <h2>Curiositat</h2><p class="pencil" style="margin:0">${esc(s.cur)}</p>
+   <p><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: a la cistella</button></p>
    <h2>Els meus apunts</h2><label for="nota" style="font-family:var(--f-type);font-size:.78rem;color:var(--pencil)">(només es guarden en aquest dispositiu)</label>
    <textarea id="nota" data-id="${s.id}" placeholder="data, lloc, olor…">${esc(getNote(s.id))}</textarea>
    <div class="nlinks"><a href="${commons(s)}" target="_blank" rel="noopener">→ fotos lliures (Wikimedia)</a></div>
@@ -1925,7 +1946,7 @@ function openSheet(id){
   $('#back').focus({preventScroll:true});
   if(location.hash!=='#'+id) history.replaceState(null,'','#'+id);
 }
-function closeSheet(){ const el=$('#sheet'); if(IDK.from && el.dataset.view!=='key'){ IDK.from=false; openKey(); return; } el.hidden=true; el.innerHTML=''; el.dataset.view=''; document.body.style.overflow=''; history.replaceState(null,'','#'+state.tab); }
+function closeSheet(){ cisStopGps(); const el=$('#sheet'); if(IDK.from && el.dataset.view!=='key'){ IDK.from=false; openKey(); return; } el.hidden=true; el.innerHTML=''; el.dataset.view=''; document.body.style.overflow=''; history.replaceState(null,'','#'+state.tab); }
 
 // ---------- Reactius ----------
 function reagentsBody(){
@@ -2271,6 +2292,7 @@ function viewProfile(){
   return `<div class="view">
    <div class="panel me"><span class="av big" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
      <div style="min-width:0"><h1 style="font-size:1.4rem">El teu perfil</h1><p class="muted" style="margin:.15rem 0 0">Encara no cal compte: tot el que fas es guarda només en aquest mòbil.</p></div></div>
+   ${cisPanel()}
    <div class="panel"><h2>Els teus apunts</h2>
      ${notes.length?`<ul class="mynotes">${notes.map(s=>`<li><a href="#${s.id}" data-open="${s.id}"><b>${esc(s.ca)}</b></a> ${pill(s)}<br><small>${esc(getNote(s.id).trim().slice(0,120))}${getNote(s.id).trim().length>120?'…':''}</small></li>`).join('')}</ul>`
        :`<p class="muted">Encara no has escrit cap apunt. A cada fitxa hi ha un espai per apuntar on l’has trobat, amb quins arbres o com feia olor.</p>`}</div>
@@ -2285,6 +2307,148 @@ function viewProfile(){
      <p>${SPECIES.length} espècies del Berguedà i de Catalunya, comestibles i tòxiques. El grau de comestibilitat segueix el consens de la Societat Catalana de Micologia. Les fotos són de Wikimedia Commons, amb llicència lliure. Els esbossos són orientatius.</p>
      <ul class="src">${SPECIES.filter(ph).map(s=>`<li><i>${esc(s.sci)}</i>: ${by(ph(s))}, ${esc(ph(s).lic)}, <a href="${ph(s).page}" target="_blank" rel="noopener">Commons</a></li>`).join('')}</ul></div></details>
   </div>`;
+}
+
+
+// ---------- La meva cistella: troballes amb fotos i ubicació precisa ----------
+// Tot es guarda en aquest dispositiu (IndexedDB), fotos incloses. Res no s'envia enlloc.
+const CIS = { list:[], ready:false, off:false, draft:null, urls:{}, watch:null };
+const CIS_MAX=5;
+function cisDB(){ return new Promise((ok,ko)=>{ if(!window.indexedDB) return ko(new Error('idb')); const r=indexedDB.open('llibreta-cistella',1);
+  r.onupgradeneeded=()=>r.result.createObjectStore('troballes',{keyPath:'id'}); r.onsuccess=()=>ok(r.result); r.onerror=()=>ko(r.error); }); }
+async function cisTx(mode, fn){ const db=await cisDB(); return new Promise((ok,ko)=>{ const tx=db.transaction('troballes',mode); const req=fn(tx.objectStore('troballes'));
+  tx.oncomplete=()=>ok(req?req.result:undefined); tx.onerror=()=>ko(tx.error); }); }
+async function cisLoad(){
+  try{ CIS.list=(await cisTx('readonly',st=>st.getAll())).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }catch(e){ CIS.off=true; }
+  CIS.ready=true; if(state.tab==='perfil' && $('#cis-list')) $('#cis-list').innerHTML=cisListHTML();
+}
+const cisURL=(e,i)=> CIS.urls[e.id+':'+i] || (CIS.urls[e.id+':'+i]=URL.createObjectURL(e.photos[i]));
+function cisForget(id){ for(const k in CIS.urls) if(k.startsWith(id+':')){ URL.revokeObjectURL(CIS.urls[k]); delete CIS.urls[k]; } }
+const cisName = e => e.sp && BY_ID[e.sp] ? BY_ID[e.sp].ca : (e.name || 'Bolet sense identificar');
+const cisWhen = d => { try{ const x=new Date(d); const m=MESOS[x.getMonth()]; return `${x.getDate()} ${/^[aeiou]/.test(m)?'d’':'de '}${m} de ${x.getFullYear()}, ${String(x.getHours()).padStart(2,'0')}:${String(x.getMinutes()).padStart(2,'0')}`; }catch(e){ return d; } };
+const nowLocal = () => { const d=new Date(); return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16); };
+
+function cisPanel(){
+  return `<div class="panel"><div class="aihd"><h2>La meva cistella</h2>${CIS.list.length?`<span class="muted">${CIS.list.length} ${CIS.list.length===1?'troballa':'troballes'}</span>`:''}</div>
+   <p class="muted">Els bolets que has collit, amb fins a ${CIS_MAX} fotos i el lloc exacte on els has trobat. Es guarda només en aquest mòbil.</p>
+   <button class="btn solid" data-find="new">Afegeix una troballa</button>
+   <div id="cis-list">${cisListHTML()}</div></div>`;
+}
+function cisListHTML(){
+  if(CIS.off) return `<p class="warn-line">Aquest navegador no deixa guardar la cistella. Prova-ho amb l’app instal·lada o amb un altre navegador.</p>`;
+  if(!CIS.ready) return '';
+  return CIS.list.length ? `<div class="cis">${CIS.list.map(e=>{ const sp=BY_ID[e.sp];
+    const img = e.photos&&e.photos.length ? `<img src="${cisURL(e,0)}" alt="">` : sp&&ph(sp) ? `<img src="${ph(sp).src}" alt="">` : `<span class="noimg" aria-hidden="true"></span>`;
+    const z = e.loc ? zoneAt(e.loc.lat,e.loc.lon) : null;
+    return `<button class="cisrow" data-find-open="${e.id}">${img}<span><b>${esc(cisName(e))}</b> ${sp?pill(sp):''}<small>${cisWhen(e.date)}${z?` · ${ZONES[z].name}`:''}${e.photos&&e.photos.length?` · ${e.photos.length} ${e.photos.length===1?'foto':'fotos'}`:''}</small></span></button>`; }).join('')}</div>` : '';
+}
+
+function locHTML(l){
+  const z=zoneAt(l.lat,l.lon), q=l.acc<=10?'molt precisa':l.acc<=25?'bona':'poc precisa';
+  const ll=`${l.lat.toFixed(6)}, ${l.lon.toFixed(6)}`;
+  return `<div class="loc">${z||isInMap(l)?`<div class="locmap">${mapSVG({mini:true, hl:z?[+z]:[], pt:geoToMap(l.lat,l.lon)})}</div>`:''}
+   <div style="min-width:0"><span class="n" style="font-size:1.05rem;user-select:all">${ll}</span> <button class="copy" data-copy="${ll}">Copia</button>
+   <br><small>Precisió ±${l.acc} m (${q})${l.alt!=null?` · altitud ${l.alt} m`:''}${z?` · ${ZONES[z].name}`:''}</small>
+   <br><a href="https://www.google.com/maps/search/?api=1&query=${l.lat},${l.lon}" target="_blank" rel="noopener">Obre al mapa</a></div></div>`;
+}
+function isInMap(l){ const [x,y]=geoToMap(l.lat,l.lon); return x>0&&y>0&&x<MAP.w&&y<MAP.h; }
+
+// --- Formulari ---
+function openFind(id, sp){
+  const e = id ? CIS.list.find(x=>x.id===id) : null;
+  CIS.draft = e ? { ...e, photos:[...(e.photos||[])], gps:{} } : { id:null, sp:sp||'', name:'', date:nowLocal(), photos:[], loc:null, note:'', gps:{} };
+  const d=CIS.draft, el=$('#sheet');
+  const opts=[...SPECIES].sort((a,b)=>a.ca.localeCompare(b.ca,'ca')).map(x=>`<option value="${x.id}" ${d.sp===x.id?'selected':''}>${esc(x.ca)}</option>`).join('');
+  el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">La meva cistella</span></div>
+   <div class="body"><form class="xform find" id="f-form" novalidate>
+    <h1 id="sheet-title" style="font-size:1.5rem">${e?'Edita la troballa':'Nova troballa'}</h1>
+    <label for="f-sp">Quin bolet és?</label><select id="f-sp"><option value="">No ho sé, o no és a la llista</option>${opts}</select>
+    <div id="f-namewrap" ${d.sp?'hidden':''}><label for="f-name">Nom, si en saps algun</label><input id="f-name" maxlength="80" value="${esc(d.name)}" placeholder="p. ex. bolet blanc del prat"></div>
+    <label for="f-date">Quan</label><input type="datetime-local" id="f-date" value="${esc(d.date)}">
+    <label>Fotos <small class="muted">(fins a ${CIS_MAX})</small></label><div id="f-photos"></div>
+    <label>On l’has trobat</label><div id="f-gps"></div>
+    <label for="f-note">Notes</label><textarea id="f-note" rows="3" placeholder="Arbres del voltant, quantitat, olor, si el vas fer revisar…">${esc(d.note)}</textarea>
+    <p class="muted" style="font-size:.85rem">Que sigui a la cistella no vol dir que es pugui menjar.</p>
+    <p class="xmsg" id="f-msg" role="status"></p>
+    <div class="row"><button class="btn solid" type="submit">Desa a la cistella</button>${e?`<button class="btn danger" type="button" data-find-del="${e.id}">Esborra</button>`:''}</div>
+   </form></div>`;
+  el.dataset.view='find'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  $('#back').addEventListener('click',closeSheet);
+  $('#f-sp').addEventListener('change',ev=>{ d.sp=ev.target.value; $('#f-namewrap').hidden=!!d.sp; });
+  $('#f-name').addEventListener('input',ev=>d.name=ev.target.value);
+  $('#f-date').addEventListener('input',ev=>d.date=ev.target.value);
+  $('#f-note').addEventListener('input',ev=>d.note=ev.target.value);
+  $('#f-form').addEventListener('submit',ev=>{ ev.preventDefault(); cisSave(); });
+  paintPhotos(); paintGps();
+  if(!e) cisLocate(); // en una troballa nova, comença a buscar la posició de seguida
+}
+function draftURL(b){ return b._u || (b._u=URL.createObjectURL(b)); }
+function paintPhotos(){
+  const d=CIS.draft, w=$('#f-photos'); if(!w) return;
+  w.innerHTML=`<div class="fphotos">${d.photos.map((b,i)=>`<figure><img src="${draftURL(b)}" alt="Foto ${i+1}"><button type="button" class="phdel" data-ph-del="${i}" aria-label="Treu la foto ${i+1}">×</button></figure>`).join('')}
+   ${d.photos.length<CIS_MAX?`<label class="phadd" for="f-file"><span aria-hidden="true">+</span>Foto</label>`:''}</div>
+   <input type="file" id="f-file" accept="image/*" multiple hidden>
+   <p class="muted" style="font-size:.82rem;margin:.3rem 0 0">Mira «Com fer la foto» a Coneixements: de costat, per sota, la base i tallat.</p>`;
+  const f=$('#f-file'); if(f) f.addEventListener('change',async ev=>{ const files=[...ev.target.files].slice(0,CIS_MAX-d.photos.length);
+    for(const file of files){ try{ d.photos.push(await cisResize(file)); }catch(err){} } paintPhotos(); });
+}
+function cisResize(file){ return new Promise((ok,ko)=>{ const u=URL.createObjectURL(file), im=new Image();
+  im.onload=()=>{ const k=Math.min(1,1600/Math.max(im.width,im.height)), c=document.createElement('canvas'); c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u); c.toBlob(b=>b?ok(b):ko(new Error('img')),'image/jpeg',.82); };
+  im.onerror=()=>{ URL.revokeObjectURL(u); ko(new Error('img')); }; im.src=u; }); }
+
+// --- GPS precís: escolta el senyal uns segons i es queda la lectura més precisa ---
+function cisLocate(){
+  const d=CIS.draft; if(!d) return;
+  if(!navigator.geolocation){ d.gps={err:'Aquest navegador no pot donar la ubicació.'}; paintGps(); return; }
+  cisStopGps(); d.gps={busy:true, best:null, start:Date.now()}; paintGps();
+  CIS.watch=navigator.geolocation.watchPosition(p=>{
+    if(!d.gps.busy) return;
+    const c=p.coords, r={lat:c.latitude, lon:c.longitude, acc:Math.round(c.accuracy), alt:c.altitude!=null?Math.round(c.altitude):null, t:p.timestamp};
+    if(!d.gps.best || r.acc<=d.gps.best.acc) d.gps.best=r;
+    if(d.gps.best.acc<=5 || Date.now()-d.gps.start>90000) cisFixGps(); else paintGps();
+  }, err=>{ cisStopGps(); d.gps={err: err.code===1?'No has donat permís per saber la ubicació.':'No s’ha pogut saber la ubicació. Prova-ho en un lloc més obert.'}; paintGps(); },
+  { enableHighAccuracy:true, maximumAge:0, timeout:90000 });
+}
+function cisStopGps(){ if(CIS.watch!=null && navigator.geolocation) navigator.geolocation.clearWatch(CIS.watch); CIS.watch=null; }
+function cisFixGps(){ const d=CIS.draft; cisStopGps(); if(d && d.gps.best) d.loc=d.gps.best; if(d) d.gps={}; paintGps(); }
+function paintGps(){
+  const d=CIS.draft, w=$('#f-gps'); if(!w||!d) return; const g=d.gps||{};
+  if(g.busy){ const b=g.best;
+    w.innerHTML=`<div class="gps busy" role="status"><b>Buscant el senyal GPS…</b>
+      ${b?`<span class="acc">±${b.acc} m</span><small>Espera que el número baixi: com més petit, més precís. Al bosc pot trigar un minut; si pots, surt a una clariana.</small>`:`<small>Si el mòbil et demana permís per saber on ets, accepta’l.</small>`}
+      <div class="row">${b?`<button type="button" class="btn solid" data-gps-fix>Desa aquesta posició</button>`:''}<button type="button" class="btn" data-gps-stop>Atura</button></div></div>`; return; }
+  w.innerHTML = (g.err?`<p class="warn-line">${esc(g.err)}</p>`:'')
+    + (d.loc ? locHTML(d.loc)+`<button type="button" class="btn" data-gps>Torna a agafar la posició</button>` : `<button type="button" class="btn solid" data-gps>Agafa la posició d’ara</button><p class="muted" style="font-size:.82rem;margin:.3rem 0 0">Fes-ho al mateix lloc on l’has trobat. La ubicació no surt del mòbil.</p>`);
+}
+async function cisSave(){
+  const d=CIS.draft, msg=$('#f-msg');
+  if(!d.sp && !d.name.trim() && !d.photos.length){ msg.textContent='Tria el bolet, posa-hi un nom o afegeix-hi una foto.'; return; }
+  if(d.gps.busy) cisFixGps();
+  const rec={ id:d.id||('t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)), sp:d.sp, name:d.sp?'':d.name.trim(), date:d.date||nowLocal(), photos:d.photos, loc:d.loc, note:d.note.trim(), saved:new Date().toISOString() };
+  try{ await cisTx('readwrite',st=>st.put(rec)); }catch(e){ msg.textContent='No s’ha pogut desar. Pot ser que el mòbil no tingui espai.'; return; }
+  try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
+  cisForget(rec.id); await cisLoad(); openFindView(rec.id);
+}
+async function cisDelete(id){
+  if(!confirm('Vols esborrar aquesta troballa i les seves fotos? No es pot desfer.')) return;
+  try{ await cisTx('readwrite',st=>st.delete(id)); }catch(e){}
+  cisForget(id); await cisLoad(); closeSheet(); if(state.tab==='perfil') render();
+}
+function openFindView(id){
+  const e=CIS.list.find(x=>x.id===id); if(!e) return; const sp=BY_ID[e.sp], el=$('#sheet');
+  el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">La meva cistella</span></div>
+   <div class="body"><article class="std find">
+    ${e.photos&&e.photos.length?`<div class="gal">${e.photos.map((b,i)=>`<img src="${cisURL(e,i)}" alt="Foto ${i+1} de ${esc(cisName(e))}">`).join('')}</div>`:''}
+    <div><h1 id="sheet-title" style="font-size:1.6rem">${esc(cisName(e))}</h1>${sp?`<p style="margin:.2rem 0 0">${pill(sp)} <a href="#${sp.id}" data-open="${sp.id}">Veure la fitxa</a></p>`:''}
+     <p class="muted" style="margin:.3rem 0 0">${cisWhen(e.date)}</p></div>
+    ${sp&&['tox','mor'].includes(sp.cat)?`<div class="danger-line"><b>${sp.cat==='mor'?'Mortal':'Tòxic'}.</b> No el mengis, i renta’t les mans si l’has tocat.</div>`:''}
+    <section><h2>On l’has trobat</h2>${e.loc?locHTML(e.loc):`<p class="muted">No vas desar la ubicació.</p>`}</section>
+    ${e.note?`<section><h2>Notes</h2><p style="margin:0;white-space:pre-wrap">${esc(e.note)}</p></section>`:''}
+    <div class="row"><button class="btn solid" data-find-edit="${e.id}">Edita</button><button class="btn danger" data-find-del="${e.id}">Esborra</button></div>
+   </article></div>`;
+  el.dataset.view='findview'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='perfil') render(); });
 }
 
 // ---------- Experts (dades compartides, només amb consentiment) ----------
@@ -2423,6 +2587,14 @@ document.addEventListener('click',e=>{
   const zl=e.target.closest('[data-zonelist]'); if(zl){ state.zone=zl.dataset.zonelist; state.tab='bolets'; history.replaceState(null,'','#bolets'); render(); window.scrollTo(0,0); return; }
   const zg=e.target.closest('[data-zonego]'); if(zg){ e.preventDefault(); closeSheet(); state.areaZone=zg.dataset.zonego; goTab('bergueda'); render(); setTimeout(()=>$('#zones-panel')?.scrollIntoView({block:'start'}),30); return; }
   const rg=e.target.closest('[data-reag]'); if(rg){ e.preventDefault(); closeSheet(); goTab('coneixements'); render(); $('#k-reactius').open=true; const d=$('#r-'+rg.dataset.reag); if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({block:'start'}),30); } return; }
+  const fn=e.target.closest('[data-find]'); if(fn){ e.preventDefault(); openFind(null, fn.dataset.sp||''); return; }
+  const fo=e.target.closest('[data-find-open]'); if(fo){ openFindView(fo.dataset.findOpen); return; }
+  const fe=e.target.closest('[data-find-edit]'); if(fe){ openFind(fe.dataset.findEdit); return; }
+  const fd=e.target.closest('[data-find-del]'); if(fd){ e.preventDefault(); if(fd.dataset.findDel && CIS.list.some(x=>x.id===fd.dataset.findDel)) cisDelete(fd.dataset.findDel); return; }
+  const pd=e.target.closest('[data-ph-del]'); if(pd&&CIS.draft){ CIS.draft.photos.splice(+pd.dataset.phDel,1); paintPhotos(); return; }
+  if(e.target.closest('[data-gps]')){ cisLocate(); return; }
+  if(e.target.closest('[data-gps-fix]')){ cisFixGps(); return; }
+  if(e.target.closest('[data-gps-stop]')){ const d=CIS.draft; cisStopGps(); if(d) d.gps={}; paintGps(); return; }
   const ar=e.target.closest('[data-area]'); if(ar){ goTab(ar.dataset.area==='experts'?'experts':'bergueda'); render(); return; }
 },true);
 document.addEventListener('keydown',e=>{ const zp=e.target.closest&&e.target.closest('.zp'); if(zp && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); zp.dispatchEvent(new MouseEvent('click',{bubbles:true})); } });
@@ -2447,6 +2619,7 @@ if(BY_ID[h]) openSheet(h);
 if(h==='identifica') openKey();
 initSample();
 initExperts();
+cisLoad();
 })();
 
 </script>
