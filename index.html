@@ -436,6 +436,9 @@ details.know summary b{ font-size:1.08rem }
 .rlist{ list-style:none; margin:0; padding:0; display:grid; gap:.45rem }
 .rlist li{ display:grid; grid-template-columns:1.6rem auto 1fr auto; gap:.6rem; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:.35rem .9rem .35rem .6rem }
 .rlist .pos{ color:var(--muted); font-weight:700; text-align:center } .rlist b{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap } .rlist .sc{ font-weight:700; color:var(--accent) }
+.soilb{ display:inline-block; border-radius:999px; padding:.05rem .55rem; font-size:.8rem; font-weight:700; margin-right:.2rem; background:var(--chip); color:var(--fg) }
+.soilb.s-calcari{ background:#e8e2d0; color:#5a4a20 } .soilb.s-acid{ background:#e2dcef; color:#4a3a6a } .soilb.s-fusta{ background:#ead9c4; color:#5c3d1e } .soilb.s-nitrogenat{ background:#dceadb; color:#2f5a2c }
+.soil a,.pencil a[data-know]{ font-size:.85rem }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -1499,6 +1502,8 @@ const KEYQ = [
  {k:'olor', q:'A què fa olor?', help:'Ensuma les làmines i la carn tallada.', multi:true,
   o:[['farina','Farina fresca'],['afruitada','Afruitada (albercoc, fruita)'],['ametlla','Ametlla amarga'],['anis','Anís'],['rave','Rave'],['desagradable','Desagradable o podrit'],['cap','Res especial']]},
  {k:'tall', q:'Si talles la carn, canvia de color?', o:[['no','No canvia'],['blau','Blaveja'],['vermell','Enrogeix']]},
+ {k:'sol', q:'Com és el terreny?', help:'Si no ho saps, deixa-ho en blanc. A Coneixements, «Les pedres i el sòl» explica com saber-ho.',
+  o:[['calcari','Calcari: la pedra fa bombolles amb vinagre, hi ha boix'],['acid','Àcid: bruc, castanyer o falguera; la pedra no fa bombolles']]},
  {k:'esp', q:'De quin color és l’esporada?', help:'Deixa el barret unes hores sobre paper blanc i negre.', reag:'espora',
   o:[['clara','Blanca o crema'],['rosa','Rosa'],['rovell','Marró rovell'],['oliva','Bru oliva'],['porpra','Bru porpra o fosca']]},
  {k:'feso4', q:'Sulfat de ferro a la carn del peu', help:'Només per a rússules (làmines blanques i fràgils, sense làtex).', reag:'feso4',
@@ -1630,6 +1635,16 @@ const KNOW = [
 
  { id:'reactius', title:'El kit de reactius', sub:'Les ampolletes dels micòlegs', special:'reagents' }
 ];
+
+// Sòl preferit de cada espècie (es genera a partir de la recerca; vegeu fonts a SOIL_SOURCES).
+const SOILS = {
+  calcari:   {label:'Sòl calcari',          short:'Calcari'},
+  acid:      {label:'Sòl àcid (silícic)',   short:'Àcid'},
+  indiferent:{label:'Calcari o àcid',       short:'Indiferent'},
+  fusta:     {label:'Sobre fusta',          short:'Fusta'},
+  nitrogenat:{label:'Sòls rics en nitrogen',short:'Nitrogenat'}
+};
+const SOIL = {};
 
 // Configuració web del projecte de Firebase «Boletaire» (boletaire-c2dfd).
 // No és secreta: la protegeixen les regles de Firestore i els dominis autoritzats.
@@ -1861,6 +1876,14 @@ function testsHTML(s,nb){
   return `<section><h2>Proves que pots fer</h2><div class="box tests">${t.map(x=>`<div><b>${esc(x.k)}</b>${x.note?` <small>· ${x.note}</small>`:''}<br>${esc(x.what)}${x.reag?` <a href="#r-${x.reag}" data-reag="${x.reag}">Com es fa</a>`:''}</div>`).join('')}<p class="muted">Cap prova diu si un bolet es pot menjar.</p></div></section>`;
 }
 
+// ---------- Sòl ----------
+const soilOf = s => (typeof SOIL!=='undefined' && SOIL[s.id]) || null;
+function soilHTML(s, nb){
+  const o=soilOf(s); if(!o||!SOILS[o.sol]) return '';
+  const lab=SOILS[o.sol].label, more=`<a href="#coneixements" data-know="sol">Què vol dir?</a>`;
+  return nb ? `<p class="pencil" style="margin:0"><b>Sòl:</b> ${esc(lab.toLowerCase())}. ${esc(o.per||'')} ${more}</p>`
+            : `<p class="soil" style="margin:0"><span class="soilb s-${o.sol}">${SOILS[o.sol].short}</span> ${esc(o.per||'')} ${more}</p>`;
+}
 // ---------- Ajudants ----------
 function season(mes){
   if(mes.length===12) return 'tot l’any';
@@ -1883,7 +1906,7 @@ function confHTML(c, nb){
 const REAG = Object.fromEntries(REAGENTS.map(r=>[r.id,r]));
 
 // ---------- Vistes ----------
-const state = { tab:'bolets', q:'', cat:'tots', now:false, hab:'', zone:'', areaZone:'', areaTab:'zona', mine:false };
+const state = { tab:'bolets', q:'', cat:'tots', now:false, hab:'', soil:'', zone:'', areaZone:'', areaTab:'zona', mine:false };
 const TABS = [
   {id:'bolets', label:'Bolets', icon:'<path d="M4 12a8 7 0 0 1 16 0z"/><path d="M10 12v6a2 2 0 0 0 4 0v-6"/>'},
   {id:'coneixements', label:'Coneixements', icon:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M8 8h8M8 11.5h6"/>'},
@@ -1902,7 +1925,7 @@ function goTab(id){
   if(id==='experts') state.areaTab='experts';
   else if(id==='bergueda') state.areaTab='zona';
   state.tab = OLD_TABS[id]||id;
-  history.replaceState(null,'','#'+(id==='experts'?'experts':state.tab));
+  NAV.hash = '#'+(id==='experts'?'experts':state.tab); navSync();
 }
 function render(){
   renderTabs();
@@ -1923,6 +1946,7 @@ function filtered(){
     if(state.cat!=='tots' && state.cat!=='comestibles' && s.cat!==state.cat) return false;
     if(state.now && !inSeason(s)) return false;
     if(state.hab && !s.arb.includes(state.hab)) return false;
+    if(state.soil){ const o=soilOf(s); if(!o || !(o.sol===state.soil || o.sol==='indiferent')) return false; }
     if(state.zone && !s.z.includes(+state.zone)) return false;
     if(q){ const hay=[s.ca,...s.alt,s.sci,s.es].join(' ').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); if(!hay.includes(q)) return false; }
     return true; });
@@ -2082,6 +2106,7 @@ function viewList(){
    <div class="chips" role="group" aria-label="Comestibilitat">${chipsDef.map(([k,l])=>`<button class="chip" data-cat="${k}" aria-pressed="${state.cat===k}">${l}</button>`).join('')}</div>
    <div class="row"><label class="toggle" for="now"><input type="checkbox" id="now" ${state.now?'checked':''}> Només els que surten al ${MESOS[NOW-1]}</label>
      <select id="hab" aria-label="Hàbitat"><option value="">Tots els hàbitats</option>${Object.entries(HABITATS).map(([k,v])=>`<option value="${k}" ${state.hab===k?'selected':''}>${v}</option>`).join('')}</select>
+     <select id="sol" aria-label="Tipus de sòl"><option value="">Tots els sòls</option><option value="calcari" ${state.soil==='calcari'?'selected':''}>Sòl calcari</option><option value="acid" ${state.soil==='acid'?'selected':''}>Sòl àcid</option></select>
      <select id="zona" aria-label="Zona del Berguedà"><option value="">Tot el Berguedà</option>${Object.entries(ZONES).map(([k,v])=>`<option value="${k}" ${state.zone===k?'selected':''}>${v.name}</option>`).join('')}</select></div>
    <p class="count" id="count"></p>
    <div class="grid" id="grid"></div>
@@ -2092,6 +2117,7 @@ function bindList(){
   $('#q').addEventListener('input',e=>{ state.q=e.target.value; cards(); });
   $('#now').addEventListener('change',e=>{ state.now=e.target.checked; cards(); });
   $('#hab').addEventListener('change',e=>{ state.hab=e.target.value; cards(); });
+  $('#sol').addEventListener('change',e=>{ state.soil=e.target.value; cards(); });
   $('#zona').addEventListener('change',e=>{ state.zone=e.target.value; cards(); });
   document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{ state.cat=b.dataset.cat; document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b)); cards(); }));
 }
@@ -2109,7 +2135,7 @@ function sheetStd(s){
    <section><h2>Com reconèixer-lo</h2><dl class="box">
      <div><dt>Barret</dt><dd>${esc(s.f.barret)}</dd></div><div><dt>Làmines, porus o plecs</dt><dd>${esc(s.f.himeni)}</dd></div>
      <div><dt>Peu</dt><dd>${esc(s.f.peu)}</dd></div><div><dt>Carn, olor i làtex</dt><dd>${esc(s.f.carn)}</dd></div><div><dt>Esporada</dt><dd>${esc(s.f.espora)}</dd></div></dl></section>
-   <section><h2>On i quan</h2><div class="box" style="display:grid;gap:.6rem"><p style="margin:0">${esc(s.hab)}</p>
+   <section><h2>On i quan</h2><div class="box" style="display:grid;gap:.6rem"><p style="margin:0">${esc(s.hab)}</p>${soilHTML(s,false)}
      <div class="tags">${s.arb.map(a=>`<span>${HABITATS[a]}</span>`).join('')}</div>
      <div class="cal" aria-label="Temporada: ${season(s.mes)}">${INIT.map((l,i)=>`<span class="${s.mes.includes(i+1)?'on':''} ${i+1===NOW?'now':''}" title="${MESOS[i]}">${l}</span>`).join('')}</div>
      <p style="margin:0;font-size:.95rem;color:var(--muted)">Temporada: ${season(s.mes)}.</p>
@@ -2135,7 +2161,7 @@ function sheetNb(s){
    ${s.tox?`<div class="danger ${toxic?'':'care'}"><b>${toxic?'Alerta · toxicitat':'Abans de menjar-lo'}</b>${esc(s.tox)}</div>`:''}
    <h2>Com és</h2>
    <dl><dt>Barret</dt><dd>${esc(s.f.barret)}</dd><dt>Sota el barret</dt><dd>${esc(s.f.himeni)}</dd><dt>Peu</dt><dd>${esc(s.f.peu)}</dd><dt>Carn</dt><dd>${esc(s.f.carn)}</dd><dt>Esporada</dt><dd>${esc(s.f.espora)}</dd></dl>
-   <h2>On el trobo</h2><p style="margin:0">${esc(s.hab)}</p>
+   <h2>On el trobo</h2><p style="margin:0">${esc(s.hab)}</p>${soilHTML(s,true)}
    <div class="ncal" aria-label="Temporada: ${season(s.mes)}">${INIT.map((l,i)=>`<span class="${s.mes.includes(i+1)?'on':''} ${i+1===NOW?'now':''}" title="${MESOS[i]}">${l}</span>`).join('')}</div>
    <div class="nbmap">${mapSVG({hl:s.z,mini:true,nb:true})}<p class="pencil">${esc(zoneNames(s))}<br><a href="#bergueda" data-zonego="${s.z[0]}">→ veure el mapa</a></p></div>
    ${s.conf.length?`<div class="sticky">${confRisk(s)?`<h3>Compte! Es confon amb…</h3>`:RISK[s.cat]>=2?`<h3>Se sol confondre amb…</h3><p style="margin:0 0 .3rem">Qui el cull sovint es pensa que és un d’aquests.</p>`:`<h3>També pot ser…</h3>`}<ul>${s.conf.map(c=>confHTML(c,true)).join('')}</ul></div>`:''}
@@ -2156,9 +2182,30 @@ function openSheet(id){
   el.querySelectorAll('.skin-sw button').forEach(b=>b.addEventListener('click',()=>{ prefs.skin=b.dataset.skin; savePrefs(); openSheet(id); if(state.tab==='bolets') cards(); }));
   const ta=$('#nota'); ta.addEventListener('input',()=>setNote(id,ta.value));
   $('#back').focus({preventScroll:true});
-  if(location.hash!=='#'+id) history.replaceState(null,'','#'+id);
+  NAV.sheetHash='#'+id; navSync();
 }
-function closeSheet(){ cisStopGps(); const el=$('#sheet'); if(IDK.from && el.dataset.view!=='key'){ IDK.from=false; openKey(); return; } el.hidden=true; el.innerHTML=''; el.dataset.view=''; document.body.style.overflow=''; history.replaceState(null,'','#'+state.tab); }
+function closeSheet(){ cisStopGps(); const el=$('#sheet'); if(IDK.from && el.dataset.view!=='key'){ IDK.from=false; openKey(); return; } el.hidden=true; el.innerHTML=''; el.dataset.view=''; document.body.style.overflow=''; NAV.sheetHash=''; navSync(); }
+
+// ---------- Botó enrere del mòbil ----------
+// Quan no ets a la pantalla d'inici (Bolets sense cap fitxa oberta) hi ha una entrada «guarda» a l'historial.
+// En tirar enrere, l'app puja un nivell (tanca la fitxa, o torna a Bolets) en lloc de sortir.
+const NAV = { guard:false, ignore:0, hash:'#bolets', sheetHash:'', timer:null };
+const navRoot = () => $('#sheet').hidden && state.tab==='bolets';
+function navSync(){ clearTimeout(NAV.timer); NAV.timer=setTimeout(()=>{
+  const want=!navRoot(), url = (!$('#sheet').hidden && NAV.sheetHash) || ('#'+(state.tab==='bergueda'&&state.areaTab==='experts'?'experts':state.tab));
+  if(want && !NAV.guard){ history.pushState({boletaire:1},'',url); NAV.guard=true; }
+  else if(want) history.replaceState({boletaire:1},'',url);
+  else if(NAV.guard){ NAV.guard=false; NAV.ignore++; history.back(); }
+  else history.replaceState(null,'','#bolets');
+},0); }
+addEventListener('popstate',()=>{
+  if(NAV.ignore){ NAV.ignore--; return; }
+  NAV.guard=false;
+  const el=$('#sheet');
+  if(!el.hidden){ closeSheet(); if(state.tab==='perfil'||state.tab==='bolets') render(); }
+  else if(state.tab!=='bolets'){ state.tab='bolets'; render(); window.scrollTo(0,0); }
+  navSync();
+});
 
 // ---------- Reactius ----------
 function reagentsBody(){
@@ -2372,14 +2419,18 @@ Regles: com a màxim 3 candidats, ordenats de més a menys probable; inclou semp
   }
   aiAbort=null; openKey();
 }
-function tv(s,k){ const t=TRAITS[s.id]||{}; let v=t[k];
+// La pregunta del sòl només surt quan hi ha dades de sòl.
+const keyQs = () => KEYQ.filter(q=>q.k!=='sol' || Object.keys(SOIL).length);
+function tv(s,k){
+  if(k==='sol'){ const o=soilOf(s); if(!o||o.conf==='baixa') return undefined; return o.sol==='calcari'?['calcari']:o.sol==='acid'?['acid']:o.sol==='indiferent'?['calcari','acid']:undefined; }
+  const t=TRAITS[s.id]||{}; let v=t[k];
   if(v===undefined){ if(k==='olor') v=['cap']; else if(k==='lat'||k==='anell'||k==='volva') v='no'; }
   return v; }
 function scoreAll(){
   const res=[];
   for(const s of SPECIES){
     let m=0,x=0,hard=false; const bad=[];
-    for(const q of KEYQ){
+    for(const q of keyQs()){
       const a=IDK.ans[q.k]; if(!a||!a.length) continue;
       const v=tv(s,q.k); if(v===undefined) continue;
       const vs=Array.isArray(v)?v:[v];
@@ -2396,7 +2447,7 @@ function answeredCount(){ return Object.values(IDK.ans).filter(v=>v&&v.length).l
 function bestNext(cands){
   const top=cands.filter(c=>c.x===0).slice(0,12); if(top.length<2) return null;
   let best=null,bv=1;
-  for(const q of KEYQ){ if(IDK.ans[q.k]&&IDK.ans[q.k].length) continue;
+  for(const q of keyQs()){ if(IDK.ans[q.k]&&IDK.ans[q.k].length) continue;
     const vals=new Set(top.map(c=>{ const v=tv(c.s,q.k); return v===undefined?'?':[].concat(v).join('|'); }));
     vals.delete('?'); if(vals.size>bv){ bv=vals.size; best=q; } }
   return best;
@@ -2447,7 +2498,7 @@ function keyHTML(){
      ${IDK.geo&&IDK.geo!=='busy'?`<p class="muted" role="status">${esc(IDK.geo)}</p>`:''}
      <label class="klab" for="kmonth">Quan</label>
      <div class="row"><select id="kmonth"><option value="">Qualsevol mes</option>${MESOS.map((m,i)=>`<option value="${i+1}" ${IDK.month==String(i+1)?'selected':''}>${m}${i+1===NOW?' (aquest mes)':''}</option>`).join('')}</select></div></section>
-   ${KEYQ.map(q=>`<section class="kq ${nxt&&nxt.k===q.k?'next':''}" id="kq-${q.k}">${nxt&&nxt.k===q.k?'<span class="nexttag">La pregunta més útil ara</span>':''}<h2>${q.q}</h2>${q.help?`<p class="muted">${q.help}${q.reag?` <a href="#r-${q.reag}" data-reag="${q.reag}">Com es fa</a>`:''}</p>`:''}
+   ${keyQs().map(q=>`<section class="kq ${nxt&&nxt.k===q.k?'next':''}" id="kq-${q.k}">${nxt&&nxt.k===q.k?'<span class="nexttag">La pregunta més útil ara</span>':''}<h2>${q.q}</h2>${q.help?`<p class="muted">${q.help}${q.reag?` <a href="#r-${q.reag}" data-reag="${q.reag}">Com es fa</a>`:''}</p>`:''}
      <div class="kopts" role="group" aria-label="${esc(q.q)}">${q.o.map(([v,l])=>`<button class="chip" data-kq="${q.k}" data-kv="${v}" aria-pressed="${(IDK.ans[q.k]||[]).includes(v)}">${l}</button>`).join('')}</div></section>`).join('')}
    <section class="kres" id="kres"><h2>${ok.length?(ok.length===1?'1 candidat que encaixa amb tot':`${ok.length} candidats que encaixen amb tot`):'Cap espècie encaixa amb tot'}</h2>
      ${answeredCount()<3?`<p class="muted">Respon almenys tres preguntes perquè els resultats tinguin sentit.</p>`:''}
@@ -2480,7 +2531,7 @@ function openKey(scrollTo){
   const af=$('#aifile'); if(af) af.addEventListener('change',e=>{ const f=e.target.files[0]; if(f) runLive(f); });
   $('#kmonth').addEventListener('change',e=>{ IDK.month=e.target.value; openKey(); });
   el.scrollTop = scrollTo==='res' ? ($('#kres').offsetTop-60) : keep;
-  history.replaceState(null,'','#identifica');
+  NAV.sheetHash='#identifica'; navSync();
 }
 document.addEventListener('click',e=>{
   const kb=e.target.closest('[data-kq]'); if(kb){ const q=KEYQ.find(x=>x.k===kb.dataset.kq), v=kb.dataset.kv; let cur=IDK.ans[q.k]||[];
@@ -2982,7 +3033,7 @@ document.addEventListener('click',e=>{
 
 document.addEventListener('click',e=>{
   const zp=e.target.closest('.zp,.zchip'); if(zp){ state.areaZone = state.areaZone==zp.dataset.zone ? '' : zp.dataset.zone; paintZone(); return; }
-  const zl=e.target.closest('[data-zonelist]'); if(zl){ state.zone=zl.dataset.zonelist; state.tab='bolets'; history.replaceState(null,'','#bolets'); render(); window.scrollTo(0,0); return; }
+  const zl=e.target.closest('[data-zonelist]'); if(zl){ state.zone=zl.dataset.zonelist; state.tab='bolets'; render(); navSync(); window.scrollTo(0,0); return; }
   const zg=e.target.closest('[data-zonego]'); if(zg){ e.preventDefault(); closeSheet(); state.areaZone=zg.dataset.zonego; goTab('bergueda'); render(); setTimeout(()=>$('#zones-panel')?.scrollIntoView({block:'start'}),30); return; }
   const rg=e.target.closest('[data-reag]'); if(rg){ e.preventDefault(); closeSheet(); goTab('coneixements'); render(); $('#k-reactius').open=true; const d=$('#r-'+rg.dataset.reag); if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({block:'start'}),30); } return; }
   const fn=e.target.closest('[data-find]'); if(fn){ e.preventDefault(); openFind(null, fn.dataset.sp||''); return; }
@@ -2999,6 +3050,7 @@ document.addEventListener('click',e=>{
   const rk=e.target.closest('[data-rank]'); if(rk){ RANK.period=rk.dataset.rank; paintRanking(); return; }
   if(e.target.closest('[data-rank-out]')){ (async()=>{ if(!confirm('Vols treure’t del rànquing?')) return; const {F,db}=CLOUD.fb; try{ await F.deleteDoc(F.doc(db,'ranking',CLOUD.user.uid)); RANK.mine=null; }catch(err){} await rankLoad(); paintRanking(); })(); return; }
   const mn=e.target.closest('[data-mine]'); if(mn){ state.mine = mn.dataset.mine==='true'; cards(); return; }
+  const kn=e.target.closest('[data-know]'); if(kn){ e.preventDefault(); closeSheet(); goTab('coneixements'); render(); const d=$('#k-'+kn.dataset.know); if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({block:'start'}),30); } return; }
   const ar=e.target.closest('[data-area]'); if(ar){ goTab(ar.dataset.area==='experts'?'experts':'bergueda'); render(); return; }
 },true);
 document.addEventListener('keydown',e=>{ const zp=e.target.closest&&e.target.closest('.zp'); if(zp && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); zp.dispatchEvent(new MouseEvent('click',{bubbles:true})); } });
@@ -3019,6 +3071,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#sheet').hid
 
 applyPrefs();
 const h=location.hash.slice(1);
+history.replaceState(null,'','#bolets');
 if(TABS.some(t=>t.id===h&&!t.center) || OLD_TABS[h]) goTab(h);
 render();
 if(BY_ID[h]) openSheet(h);
