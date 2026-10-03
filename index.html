@@ -397,6 +397,8 @@ details.know summary b{ font-size:1.08rem }
 .nb .mynb .cisrow{ background:#fbf8ef; border-color:#d8ccaa; color:#2b2b2b; font-family:var(--f-ui) }
 .settings h3{ font-size:.95rem; margin-top:.4rem }
 .seg2{ grid-template-columns:repeat(auto-fit,minmax(5.2rem,1fr)) }
+@media (max-width:600px){ .seg2{ grid-template-columns:minmax(0,1fr) } }
+.settings-d .in{ gap:.7rem } .settings-d h3{ font-size:.95rem; margin:.2rem 0 0 }
 /* Compte */
 .acct{ gap:.7rem }
 .btn.gbtn{ justify-self:stretch; justify-content:center; padding:.65rem 1rem; font-size:1rem }
@@ -453,7 +455,7 @@ button.bdg{ background:none; border:0; padding:0; cursor:pointer; color:var(--fg
   -webkit-mask:radial-gradient(circle, #000 0, #000 18%, transparent 55%); mask:radial-gradient(circle, #000 0, #000 18%, transparent 55%);
   animation:celSpin 26s linear infinite, celFade .8s ease-out both }
 .cel-box{ position:relative; z-index:2; display:grid; justify-items:center; text-align:center; gap:.6rem; max-width:22rem }
-.cel-kick{ margin:0; text-transform:uppercase; letter-spacing:.18em; font-weight:700; font-size:.85rem; color:#ffd766; animation:celUp .5s .15s both }
+.cel-kick{ margin:0; padding-left:.18em; text-transform:uppercase; letter-spacing:.18em; font-weight:700; font-size:.85rem; color:#ffd766; animation:celUp .5s .15s both }
 .cel-badge{ position:relative; margin:.6rem 0 .4rem; animation:celPop .9s .25s cubic-bezier(.2,1.6,.35,1) both }
 .cel-badge .bc{ position:relative; width:9.5rem; height:9.5rem; border-radius:50%; display:grid; place-items:center; overflow:hidden; color:#3a2a00;
   background:radial-gradient(circle at 32% 26%, #fff3c4 0, #ffd766 28%, #d9a520 62%, #a77812 100%);
@@ -466,7 +468,7 @@ button.bdg{ background:none; border:0; padding:0; cursor:pointer; color:var(--fg
 .cel h2{ margin:0; font-family:var(--f-hand); font-size:2.6rem; line-height:1; color:#fff; animation:celUp .5s .7s both }
 .cel-desc{ margin:0; color:#d7e6d8; animation:celUp .5s .85s both }
 .cel .btn.cel-ok{ justify-self:center; margin-top:.8rem; background:#ffd766; color:#2b1d00; border-color:#ffd766; padding:.7rem 1.6rem; font-size:1.05rem; animation:celUp .5s 1s both }
-.cel-all{ color:#d7e6d8; animation:celUp .5s 1.1s both }
+.cel .cel-all{ justify-self:center; color:#d7e6d8; animation:celUp .5s 1.1s both }
 @keyframes celIn{ from{ opacity:0 } to{ opacity:1 } } @keyframes celOut{ to{ opacity:0; transform:scale(1.03) } }
 @keyframes celFade{ from{ opacity:0 } to{ opacity:1 } } @keyframes celSpin{ to{ transform:rotate(360deg) } }
 @keyframes celPop{ 0%{ transform:scale(0) rotate(-25deg); opacity:0 } 60%{ opacity:1 } 100%{ transform:scale(1) rotate(0) } }
@@ -2525,7 +2527,7 @@ function myNotebookHTML(s, nb){
   return `<section class="mynb"><h2>La meva llibreta</h2>
    <div class="mynb-finds" data-sp="${s.id}">${myFindsHTML(s)}</div>
    <div class="found"><button class="btn solid" data-find="new" data-sp="${s.id}">L’he trobat: registrar</button>
-     <small>Registra cada troballa amb fotos i el lloc exacte. Tot el que apuntis també ho trobaràs a <a href="#perfil" data-tab="perfil">Perfil › La meva llibreta</a>.</small></div>
+     <small>Registra cada troballa amb fotos i el lloc exacte. Les trobaràs totes a <a href="#bolets" data-goto-mine>Bolets › Els meus</a>.</small></div>
    <label for="nota" class="${nb?'nbl':'muted'}">${nb?'apunts (només en aquest mòbil)':'Apunts. Es guarden només en aquest mòbil.'}</label>
    <textarea id="nota" data-id="${s.id}" placeholder="${nb?'data, lloc, olor…':'On l’has trobat, data, olor, què et va dir l’expert…'}">${esc(getNote(s.id))}</textarea></section>`;
 }
@@ -2590,6 +2592,8 @@ function progressHTML(){
     <p class="muted" style="font-size:.9rem;margin:0">Comestibles: ${t.food} de ${foodTot} · Tòxics i mortals: ${t.bad} de ${tot-foodTot}${loose?` · ${loose} sense identificar`:''}${next?`. Et ${next[0]-t.n===1?'falta 1 espècie':`falten ${next[0]-t.n} espècies`} per a «${next[1]}».`:''}</p>
     <div class="progbtns"><button class="pbtn" data-game="badges"><span class="mini">${BADGES.filter(b=>b.ok(t)).slice(-3).map(b=>`<i>${badgeSVG(b.ic)}</i>`).join('')||`<i class="off">${badgeSVG('bolet')}</i>`}</span><b>Insígnies</b><small>${got} de ${BADGES.length}</small></button>
       <button class="pbtn" data-game="ranking"><span class="mini"><i class="gold"><svg viewBox="0 0 24 24" aria-hidden="true">${BI.corona}</svg></i></span><b>Rànquing</b><small>${CLOUD.user?'Compara’t':'Amb compte'}</small></button></div>
+    <button class="btn solid" data-find="new">Registra una troballa</button>
+    ${loose?`<h3 style="font-size:1rem;margin:.3rem 0 0">Sense identificar (${loose})</h3><div class="cis">${CIS.list.filter(e=>!e.sp||!BY_ID[e.sp]).map(cisRowHTML).join('')}</div>`:''}
     <p class="muted" style="font-size:.85rem;margin:0">Els tòxics i mortals compten igual amb una foto: no cal que els cullis.</p></div>`;
 }
 function gameSheet(inner, title){
@@ -3189,14 +3193,13 @@ function viewProfile(){
   const opt=(name,val,label,help)=>`<label for="${name}-${val}"><input type="radio" id="${name}-${val}" name="${name}" value="${val}" ${prefs[name]===val?'checked':''}><span><b>${label}</b>${help?`<small>${help}</small>`:''}</span></label>`;
   return `<div class="view">
    <div class="panel me" id="me">${meHTML()}</div>
-   ${cisPanel()}
-   <div class="panel settings"><h2>Ajustos</h2>
+   <details class="rg settings-d"><summary><span><b>Ajustos</b><small>Estil de les fitxes, mida del text i tema</small></span></summary><div class="in">
      <h3>Estil de les fitxes</h3><div class="opt" data-pref="skin">
      ${opt('skin','llibreta','Llibreta de camp','Paper antic, notes escrites a mà i esbossos a llapis.')}
      ${opt('skin','estandard','Estàndard','Lletra més llegible, contrast alt i colors del tema. Recomanat amb lectors de pantalla.')}</div>
      <h3>Mida del text</h3><div class="opt seg2" data-pref="size">${opt('size','normal','Normal')}${opt('size','gran','Gran')}</div>
      <h3>Tema</h3><div class="opt seg2" data-pref="theme">${opt('theme','sistema','Com el sistema')}${opt('theme','clar','Clar')}${opt('theme','fosc','Fosc')}</div>
-     <p class="muted" style="font-size:.85rem;margin:0">La fitxa de llibreta sempre es veu sobre paper.</p></div>
+     <p class="muted" style="font-size:.85rem;margin:0">La fitxa de llibreta sempre es veu sobre paper.</p></div></details>
    <div class="panel acct" id="acct">${acctHTML()}</div>
    <div class="panel"><h2>Versió de l’app</h2>
      <p class="muted" style="margin:0">${window.APP_VERSION?`Versió ${esc(window.APP_VERSION.slice(0,7))} · ${esc(window.APP_DATE||'')}`:'Versió de prova'}</p>
@@ -3694,6 +3697,7 @@ document.addEventListener('click',e=>{
   const gm=e.target.closest('[data-game]'); if(gm){ gm.dataset.game==='badges'?openBadges():openRanking(); return; }
   const rk=e.target.closest('[data-rank]'); if(rk){ RANK.period=rk.dataset.rank; paintRanking(); return; }
   if(e.target.closest('[data-rank-out]')){ (async()=>{ if(!confirm('Vols treure’t del rànquing?')) return; const {F,db}=CLOUD.fb; try{ await F.deleteDoc(F.doc(db,'ranking',CLOUD.user.uid)); RANK.mine=null; }catch(err){} await rankLoad(); paintRanking(); })(); return; }
+  if(e.target.closest('[data-goto-mine]')){ e.preventDefault(); closeSheet(); state.mine=true; goTab('bolets'); render(); window.scrollTo(0,0); return; }
   if(e.target.closest('[data-update]')){ checkUpdate(); return; }
   const mn=e.target.closest('[data-mine]'); if(mn){ state.mine = mn.dataset.mine==='true'; cards(); return; }
   const kn=e.target.closest('[data-know]'); if(kn){ e.preventDefault(); closeSheet(); goTab('coneixements'); render(); const d=$('#k-'+kn.dataset.know); if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({block:'start'}),30); } return; }
@@ -3728,7 +3732,7 @@ cisLoad().then(cloudInit);
 })();
 
 </script>
-<script>window.APP_VERSION="3823e02644"; window.APP_DATE="2026-10-04";</script>
+<script>window.APP_VERSION="c419b39e4c"; window.APP_DATE="2026-10-04";</script>
 <script>
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;
