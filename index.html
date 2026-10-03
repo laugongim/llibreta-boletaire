@@ -442,6 +442,39 @@ details.know summary b{ font-size:1.08rem }
 .soilcmp{ display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:.6rem }
 .soilcmp>div{ border-radius:12px; padding:.6rem .8rem } .soilcmp h4{ margin:0 0 .2rem } .soilcmp p{ margin:0; font-size:.93rem }
 .sc-calc{ background:#e8e2d0; color:#3d3215 } .sc-acid{ background:#e2dcef; color:#33264d }
+/* Celebració d'una insígnia nova */
+button.bdg{ background:none; border:0; padding:0; cursor:pointer; color:var(--fg); font:inherit }
+.cel{ position:fixed; inset:0; z-index:60; display:grid; place-items:center; overflow:hidden; color:#f4ecd8;
+  background:radial-gradient(circle at 50% 42%, #3d7a52 0, #1b3a26 38%, #0b140e 78%); padding:24px 16px env(safe-area-inset-bottom,16px) }
+.cel.in{ animation:celIn .35s ease-out both } .cel.out{ animation:celOut .25s ease-in both }
+.cel-conf{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:3 }
+.cel-rays{ position:absolute; left:50%; top:42%; width:180vmax; height:180vmax; margin:-90vmax 0 0 -90vmax; pointer-events:none;
+  background:repeating-conic-gradient(from 0deg, rgba(255,215,102,.14) 0 9deg, transparent 9deg 22deg);
+  -webkit-mask:radial-gradient(circle, #000 0, #000 18%, transparent 55%); mask:radial-gradient(circle, #000 0, #000 18%, transparent 55%);
+  animation:celSpin 26s linear infinite, celFade .8s ease-out both }
+.cel-box{ position:relative; z-index:2; display:grid; justify-items:center; text-align:center; gap:.6rem; max-width:22rem }
+.cel-kick{ margin:0; text-transform:uppercase; letter-spacing:.18em; font-weight:700; font-size:.85rem; color:#ffd766; animation:celUp .5s .15s both }
+.cel-badge{ position:relative; margin:.6rem 0 .4rem; animation:celPop .9s .25s cubic-bezier(.2,1.6,.35,1) both }
+.cel-badge .bc{ position:relative; width:9.5rem; height:9.5rem; border-radius:50%; display:grid; place-items:center; overflow:hidden; color:#3a2a00;
+  background:radial-gradient(circle at 32% 26%, #fff3c4 0, #ffd766 28%, #d9a520 62%, #a77812 100%);
+  box-shadow:0 0 0 6px rgba(255,215,102,.35), 0 0 0 14px rgba(255,215,102,.12), 0 18px 40px -10px rgba(0,0,0,.6); animation:celGlow 2.4s 1.2s ease-in-out infinite }
+.cel-badge .bc svg{ width:4.4rem; height:4.4rem; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.cel-badge .bc::after{ content:""; position:absolute; inset:-40%; background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.75) 50%, transparent 60%); transform:translateX(-120%); animation:celShine 1.1s 1s ease-in-out both }
+.cel-spark{ position:absolute; color:#fff3c4; font-size:1.4rem; opacity:0; animation:celTwinkle 1.6s ease-in-out infinite }
+.cel-spark.s1{ left:-1.4rem; top:1rem; animation-delay:.9s } .cel-spark.s2{ right:-1.2rem; top:.2rem; animation-delay:1.3s; font-size:1rem }
+.cel-spark.s3{ right:-1.6rem; bottom:1.4rem; animation-delay:1.1s } .cel-spark.s4{ left:-.6rem; bottom:-.4rem; animation-delay:1.6s; font-size:1rem }
+.cel h2{ margin:0; font-family:var(--f-hand); font-size:2.6rem; line-height:1; color:#fff; animation:celUp .5s .7s both }
+.cel-desc{ margin:0; color:#d7e6d8; animation:celUp .5s .85s both }
+.cel .btn.cel-ok{ justify-self:center; margin-top:.8rem; background:#ffd766; color:#2b1d00; border-color:#ffd766; padding:.7rem 1.6rem; font-size:1.05rem; animation:celUp .5s 1s both }
+.cel-all{ color:#d7e6d8; animation:celUp .5s 1.1s both }
+@keyframes celIn{ from{ opacity:0 } to{ opacity:1 } } @keyframes celOut{ to{ opacity:0; transform:scale(1.03) } }
+@keyframes celFade{ from{ opacity:0 } to{ opacity:1 } } @keyframes celSpin{ to{ transform:rotate(360deg) } }
+@keyframes celPop{ 0%{ transform:scale(0) rotate(-25deg); opacity:0 } 60%{ opacity:1 } 100%{ transform:scale(1) rotate(0) } }
+@keyframes celUp{ from{ opacity:0; transform:translateY(14px) } to{ opacity:1; transform:none } }
+@keyframes celShine{ to{ transform:translateX(120%) } }
+@keyframes celGlow{ 50%{ box-shadow:0 0 0 10px rgba(255,215,102,.3), 0 0 40px 18px rgba(255,215,102,.25), 0 18px 40px -10px rgba(0,0,0,.6) } }
+@keyframes celTwinkle{ 0%,100%{ opacity:0; transform:scale(.4) } 50%{ opacity:1; transform:scale(1.1) rotate(20deg) } }
+@media (prefers-reduced-motion: reduce){ .cel *, .cel{ animation:none !important } }
 /* Perfil */
 .me{ display:flex; gap:.9rem; align-items:center }
 .av.big{ width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:50%; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center }
@@ -2546,7 +2579,7 @@ function progressHTML(){
 function gameSheet(inner, title){
   const el=$('#sheet');
   el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Tornar</button><span class="muted" style="font-size:.85rem">${title}</span></div><div class="body game">${inner}</div>`;
-  el.dataset.view='game'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  el.dataset.view='game'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden'; NAV.sheetHash=''; navSync();
   $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='bolets') cards(); });
 }
 function meAvatar(big){
@@ -2556,7 +2589,59 @@ function meAvatar(big){
 function openBadges(){
   const t=myStats(), got=BADGES.filter(b=>b.ok(t));
   gameSheet(`<div class="ghead">${meAvatar(true)}<h1 id="sheet-title" style="font-size:1.5rem">${got.length} de ${BADGES.length} insígnies</h1><p class="muted">${t.n} ${t.n===1?'espècie trobada':'espècies trobades'}</p></div>
-    <div class="bgrid">${BADGES.map(b=>{ const on=b.ok(t); return `<div class="bdg ${on?'on':''}"><span class="bc">${badgeSVG(b.ic)}</span><b>${b.name}</b><small>${b.desc}</small></div>`; }).join('')}</div>`, 'Insígnies');
+    <div class="bgrid">${BADGES.map(b=>{ const on=b.ok(t); return on ? `<button class="bdg on" data-cel-replay="${b.id}" aria-label="${b.name}: torna a veure l’animació"><span class="bc">${badgeSVG(b.ic)}</span><b>${b.name}</b><small>${b.desc}</small></button>` : `<div class="bdg"><span class="bc">${badgeSVG(b.ic)}</span><b>${b.name}</b><small>${b.desc}</small></div>`; }).join('')}</div>`, 'Insígnies');
+}
+
+// ---------- Celebració d'una insígnia nova (pantalla completa) ----------
+const SEEN_KEY = KEY+':insignies';
+const badgesEarned = () => { const t=myStats(); return BADGES.filter(b=>b.ok(t)).map(b=>b.id); };
+function badgesSeen(){ try{ return JSON.parse(localStorage.getItem(SEEN_KEY)||'null'); }catch(e){ return null; } }
+function badgesMark(ids){ try{ localStorage.setItem(SEEN_KEY, JSON.stringify([...new Set(ids)])); }catch(e){} }
+// celebrate=false: només apunta les guanyades (primer cop, o el que arriba del núvol) sense festa
+function badgesCheck(celebrate){
+  const now=badgesEarned(), seen=badgesSeen();
+  if(!seen || !celebrate){ badgesMark([...(seen||[]), ...now]); return; }
+  const fresh=now.filter(id=>!seen.includes(id)); badgesMark([...seen, ...now]);
+  if(fresh.length) celebrate_(fresh);
+}
+const CEL = { queue:[], raf:0, replay:false };
+function celebrate_(ids, replay){ CEL.replay=!!replay; CEL.queue.push(...ids); if(!$('#cel')) celShow(); }
+function celShow(){
+  const id=CEL.queue.shift(), b=BADGES.find(x=>x.id===id); if(!b){ celClose(); return; }
+  let el=$('#cel'); const fresh=!el;
+  if(fresh){ el=document.createElement('div'); el.id='cel'; el.className='cel'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-labelledby','cel-t'); document.body.appendChild(el); }
+  const more=CEL.queue.length;
+  el.innerHTML=`<canvas class="cel-conf" aria-hidden="true"></canvas><div class="cel-rays" aria-hidden="true"></div>
+   <div class="cel-box"><p class="cel-kick">${CEL.replay?'La teva insígnia':'Insígnia nova!'}</p>
+    <div class="cel-badge"><span class="cel-spark s1">✦</span><span class="cel-spark s2">✦</span><span class="cel-spark s3">✦</span><span class="cel-spark s4">✦</span><span class="bc">${badgeSVG(b.ic)}</span></div>
+    <h2 id="cel-t">${b.name}</h2><p class="cel-desc">${b.desc}</p>
+    <button class="btn solid cel-ok" data-cel-ok>${more?`Següent (${more} més)`:CEL.replay?'Tanca':'Genial!'}</button>
+    ${more||CEL.replay?'':`<button class="linkbtn cel-all" data-cel-all>Veure totes les insígnies</button>`}</div>`;
+  el.classList.remove('in'); void el.offsetWidth; el.classList.add('in');
+  document.body.style.overflow='hidden';
+  try{ navigator.vibrate && navigator.vibrate([40,60,40,60,90]); }catch(e){}
+  setTimeout(()=>el.querySelector('[data-cel-ok]')?.focus({preventScroll:true}),400);
+  celConfetti(el.querySelector('.cel-conf'));
+}
+function celClose(){ cancelAnimationFrame(CEL.raf); const el=$('#cel'); if(el){ el.classList.add('out'); setTimeout(()=>el.remove(),250); } if($('#sheet').hidden) document.body.style.overflow=''; }
+function celConfetti(cv){
+  cancelAnimationFrame(CEL.raf);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const dpr=Math.min(2,devicePixelRatio||1), W=cv.width=innerWidth*dpr, H=cv.height=innerHeight*dpr, g=cv.getContext('2d');
+  const cols=['#ffd766','#d9a520','#f4ecd8','#8cc49a','#5d9a6c','#c9743a','#8a5530'];
+  const P=[...Array(160)].map((_,i)=>{ const a=-Math.PI/2+(Math.random()-.5)*1.9, v=(9+Math.random()*12)*dpr;
+    return { x:W/2, y:H*.42, vx:Math.cos(a)*v, vy:Math.sin(a)*v, r:(3+Math.random()*5)*dpr, c:cols[i%cols.length], rot:Math.random()*6, vr:(Math.random()-.5)*.4, shape:i%3, delay:i<80?0:12+Math.random()*20 }; });
+  let t=0;
+  const step=()=>{ t++; g.clearRect(0,0,W,H); let alive=0;
+    for(const p of P){ if(t<p.delay) { alive++; continue; }
+      p.vy+=.32*dpr; p.vx*=.985; p.vy*=.985; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      if(p.y<H+20*dpr){ alive++; g.save(); g.translate(p.x,p.y); g.rotate(p.rot); g.fillStyle=p.c;
+        if(p.shape===0) g.fillRect(-p.r,-p.r*.45,p.r*2,p.r*.9);
+        else if(p.shape===1){ g.beginPath(); g.arc(0,0,p.r*.6,0,7); g.fill(); }
+        else { g.beginPath(); g.ellipse(0,0,p.r*1.1,p.r*.45,0,0,7); g.fill(); }
+        g.restore(); } }
+    if(alive && t<420) CEL.raf=requestAnimationFrame(step); else g.clearRect(0,0,W,H); };
+  CEL.raf=requestAnimationFrame(step);
 }
 
 // Rànquing: només amb compte i si la persona ho activa. Es publica un àlies i el nombre d'espècies, mai ubicacions.
@@ -2711,6 +2796,7 @@ function navSync(){ clearTimeout(NAV.timer); NAV.timer=setTimeout(()=>{
 addEventListener('popstate',()=>{
   if(NAV.ignore){ NAV.ignore--; return; }
   NAV.guard=false;
+  if($('#cel')){ CEL.queue.length=0; celClose(); navSync(); return; }
   const el=$('#sheet');
   if(!el.hidden){ closeSheet(); if(state.tab==='perfil'||state.tab==='bolets') render(); }
   else if(state.tab!=='bolets'){ state.tab='bolets'; render(); window.scrollTo(0,0); }
@@ -3089,7 +3175,8 @@ async function cisTx(mode, fn){ const db=await cisDB(); return new Promise((ok,k
   tx.oncomplete=()=>ok(req?req.result:undefined); tx.onerror=()=>ko(tx.error); }); }
 async function cisLoad(){
   try{ CIS.list=(await cisTx('readonly',st=>st.getAll())).filter(r=>!r.deleted).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }catch(e){ CIS.off=true; }
-  CIS.ready=true; if(state.tab==='perfil' && $('#cis-list')){ $('#cis-list').innerHTML=cisListHTML(); $('#cis-count').textContent=cisCountText(); } if(state.tab==='bolets' && $('#grid')) cards();
+  CIS.ready=true; if(!CIS.off && badgesSeen()===null) badgesCheck(false);
+  if(state.tab==='perfil' && $('#cis-list')){ $('#cis-list').innerHTML=cisListHTML(); $('#cis-count').textContent=cisCountText(); } if(state.tab==='bolets' && $('#grid')) cards();
   const mf=$('#sheet .mynb-finds'); if(mf && BY_ID[mf.dataset.sp]) mf.innerHTML=myFindsHTML(BY_ID[mf.dataset.sp]);
 }
 const cisURL=(e,i)=> CIS.urls[e.id+':'+i] || (CIS.urls[e.id+':'+i]=URL.createObjectURL(e.photos[i]));
@@ -3158,7 +3245,7 @@ function openFind(id, sp){
     <p class="xmsg" id="f-msg" role="status"></p>
     <div class="row"><button class="btn solid" type="submit">Desa a la llibreta</button>${e?`<button class="btn danger" type="button" data-find-del="${e.id}">Esborra</button>`:''}</div>
    </form></div>`;
-  el.dataset.view='find'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  el.dataset.view='find'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden'; NAV.sheetHash=''; navSync();
   $('#back').addEventListener('click',closeSheet);
   const spWarn=()=>{ const x=BY_ID[d.sp]; $('#f-warn').innerHTML = x&&['tox','mor'].includes(x.cat) ? `<div class="danger-line"><b>${x.cat==='mor'?'Mortal':'Tòxic'}.</b> N’hi ha prou amb les fotos: no cal que el cullis. Si l’has tocat, renta’t les mans.</div>` : ''; };
   $('#f-sp').addEventListener('change',ev=>{ d.sp=ev.target.value; $('#f-namewrap').hidden=!!d.sp; spWarn(); });
@@ -3215,7 +3302,7 @@ async function cisSave(){
   const rec={ id:d.id||('t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)), sp:d.sp, name:d.sp?'':d.name.trim(), date:d.date||nowLocal(), photos:d.photos, loc:d.loc, note:d.note.trim(), saved:new Date().toISOString(), upd:Date.now() };
   try{ await cisTx('readwrite',st=>st.put(rec)); }catch(e){ msg.textContent='No s’ha pogut desar. Pot ser que el mòbil no tingui espai.'; return; }
   try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
-  cisForget(rec.id); await cisLoad(); openFindView(rec.id);
+  cisForget(rec.id); await cisLoad(); openFindView(rec.id); badgesCheck(true);
   cloudSync();
 }
 async function cisDelete(id){
@@ -3236,7 +3323,7 @@ function openFindView(id){
     ${e.note?`<section><h2>Notes</h2><p style="margin:0;white-space:pre-wrap">${esc(e.note)}</p></section>`:''}
     <div class="row"><button class="btn solid" data-find-edit="${e.id}">Edita</button><button class="btn danger" data-find-del="${e.id}">Esborra</button></div>
    </article></div>`;
-  el.dataset.view='findview'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  el.dataset.view='findview'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden'; NAV.sheetHash=''; navSync();
   $('#back').addEventListener('click',()=>{ closeSheet(); if(state.tab==='perfil') render(); });
 }
 
@@ -3379,7 +3466,7 @@ async function cloudSync(){
     CLOUD.last=Date.now(); CLOUD.err='';
     await rankLoad(); await rankPush();
   }catch(e){ CLOUD.err = e&&e.code==='unavailable' ? 'Sense connexió: es sincronitzarà quan en tornis a tenir.' : `No s’ha pogut sincronitzar (${e&&(e.code||e.message)}).`; }
-  CLOUD.busy=false; await cisLoad(); paintAccount();
+  CLOUD.busy=false; await cisLoad(); badgesCheck(false); paintAccount();
   if(CLOUD.again){ CLOUD.again=false; cloudSync(); }
 }
 async function cloudPush(r, prevN){
@@ -3556,6 +3643,9 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-gps-stop]')){ const d=CIS.draft; cisStopGps(); if(d) d.gps={}; paintGps(); return; }
   const ac=e.target.closest('[data-acct]'); if(ac){ e.preventDefault(); if(CLOUD.ok) acctDo(ac.dataset.acct); return; }
   const am=e.target.closest('[data-acct-mode]'); if(am){ CLOUD.mode=am.dataset.acctMode; CLOUD.err=''; CLOUD.msg=''; paintAccount(); return; }
+  if(e.target.closest('[data-cel-ok]')){ CEL.queue.length ? celShow() : celClose(); return; }
+  if(e.target.closest('[data-cel-all]')){ celClose(); openBadges(); return; }
+  const cr=e.target.closest('[data-cel-replay]'); if(cr){ celebrate_([cr.dataset.celReplay], true); return; }
   const gm=e.target.closest('[data-game]'); if(gm){ gm.dataset.game==='badges'?openBadges():openRanking(); return; }
   const rk=e.target.closest('[data-rank]'); if(rk){ RANK.period=rk.dataset.rank; paintRanking(); return; }
   if(e.target.closest('[data-rank-out]')){ (async()=>{ if(!confirm('Vols treure’t del rànquing?')) return; const {F,db}=CLOUD.fb; try{ await F.deleteDoc(F.doc(db,'ranking',CLOUD.user.uid)); RANK.mine=null; }catch(err){} await rankLoad(); paintRanking(); })(); return; }
@@ -3577,7 +3667,7 @@ document.addEventListener('submit',e=>{ if(e.target.id==='rk-form'){ e.preventDe
 document.addEventListener('change',e=>{
   const g=e.target.closest('[data-pref]'); if(g && e.target.name){ prefs[e.target.name]=e.target.value; savePrefs(); }
 });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#sheet').hidden) closeSheet(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && $('#cel')){ CEL.queue.length=0; celClose(); return; } if(e.key==='Escape' && !$('#sheet').hidden) closeSheet(); });
 
 applyPrefs();
 const h=location.hash.slice(1);
