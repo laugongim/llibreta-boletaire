@@ -1,0 +1,29 @@
+{
+ "name": "Llibreta Boletaire",
+ "short_name": "Boletaire",
+ "lang": "ca",
+ "description": "Aprèn a reconèixer els bolets del Berguedà.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#efe5c9",
+ "theme_color": "#2e5a3a",
+ "icons": [
+  {
+   "src": "icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icons/icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
