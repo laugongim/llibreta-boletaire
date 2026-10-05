@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Kalam:wght@300;400;700&family=Special+Elite&display=swap">
 <style>
-/* Layout: app de mòbil amb barra inferior; la fitxa s'obre a pantalla completa.
+/* Layout: app de mòbil amb barra inferior; la fitxa s'obre a pantalla completa. A pantalla gran, menú lateral i columnes (al final).
    Xassís estàndard (accessible) + dues pells de fitxa: llibreta de camp i estàndard. */
 :root{
   --bg:#f2f3ee; --surface:#ffffff; --fg:#1b2119; --muted:#58614f; --line:#d5d9cc; --accent:#2e5a3a; --accent-fg:#ffffff;
@@ -528,6 +528,107 @@ button.bdg{ background:none; border:0; padding:0; cursor:pointer; color:var(--fg
 .nb .calkey{ font-family:var(--f-hand); font-size:1.1rem; color:var(--pencil) }
 .nb .calkey .k.on::before{ background:rgba(246,208,40,.85); border:2px solid var(--ink); border-radius:2px }
 .nb .calkey .k.now::before{ background:var(--red-ink) }
+
+/* ---------- Pantalla gran: ordinador i tauleta apaïsada ----------
+   Menú lateral en lloc de la barra inferior i seccions en columnes.
+   Els contenidors de columnes (.col, .pg, .bside…) al mòbil són display:contents: no hi canvien res. */
+.std.two>.col, .nb.two>.pg, .blist, .bside, .bmain, .kmain, .kside, .pcol, .zbody, .zmap, .kgrid{ display:contents }
+@media (hover:hover){
+  .card{ transition:transform .15s ease, box-shadow .15s ease }
+  .card:hover{ transform:translateY(-3px); box-shadow:0 12px 24px -14px rgba(0,0,0,.4) }
+  body[data-skin="llibreta"] .card:hover{ transform:translateY(-3px) rotate(0); box-shadow:0 1px 0 rgba(0,0,0,.08), 0 14px 22px -10px rgba(40,30,10,.5) }
+  details.rg>summary:hover b, .cisrow:hover b{ color:var(--accent) }
+}
+@media (min-width:48rem){
+  .wrap, .top .in{ max-width:60rem }
+  .grid{ grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr)); gap:1rem }
+}
+/* Ha de coincidir amb WIDE a app.js */
+@media (min-width:64rem){
+  :root{ --side:15.5rem }
+  body{ padding-left:var(--side) }
+  .wrap{ max-width:84rem; padding:1.4rem 2.5rem 3rem }
+  .view{ padding-top:0; gap:1.2rem }
+  .view>.seg{ max-width:26rem }
+
+  /* la marca, a dalt del menú lateral */
+  .top{ position:fixed; top:0; left:0; width:var(--side); z-index:7; background:transparent; border:0 }
+  .top .in{ flex-direction:column; align-items:flex-start; gap:.4rem; padding:1.5rem 1.3rem 1rem }
+  .brand{ font-size:2.2rem } .brand .mono{ width:2.3rem; height:2.3rem }
+  /* menú lateral: «Identifica» primer, com a botó principal */
+  .tabs{ top:0; right:auto; width:var(--side); border-top:0; border-right:1px solid var(--line); padding:7.4rem .85rem 1.2rem }
+  .tabs .in{ display:flex; flex-direction:column; gap:.2rem; max-width:none }
+  .tab{ flex-direction:row; justify-content:flex-start; gap:.8rem; font-size:1rem; padding:.65rem .9rem; min-height:2.9rem; border-radius:12px; text-align:left }
+  .tab:hover{ background:var(--chip); color:var(--fg) }
+  .tab[aria-current="page"]{ background:color-mix(in srgb,var(--accent) 14%,transparent); color:var(--accent) }
+  .tab.idf{ order:-1; margin-bottom:1rem; background:var(--accent); color:var(--accent-fg); box-shadow:0 6px 14px -8px rgba(0,0,0,.45) }
+  .tab.idf:hover{ background:color-mix(in srgb,var(--accent) 86%,#000); color:var(--accent-fg) }
+  .tab.idf .fab{ width:auto; height:auto; margin:0; border:0; border-radius:0; box-shadow:none; background:none; color:inherit }
+  .tab.idf .fab svg{ width:1.45rem; height:1.45rem }
+
+  /* fitxes i pantalles a sobre: el menú lateral continua visible */
+  .sheet{ left:var(--side) }
+  .sheet .bar{ padding:.6rem 1.5rem }
+  .sheet .body{ padding:1.6rem 2rem 3rem }
+  .sheet[data-view="sp"] .body{ max-width:78rem }
+  .sheet[data-view="key"] .body{ max-width:80rem }
+
+  /* Bolets: filtres a l'esquerra, graella a la dreta */
+  .blist{ display:grid; grid-template-columns:18rem minmax(0,1fr); gap:1.8rem; align-items:start }
+  .bside{ display:grid; gap:.9rem; position:sticky; top:1.4rem; max-height:calc(100vh - 2.8rem); overflow-y:auto; padding:3px; margin:-3px; scrollbar-width:thin }
+  .bmain{ display:grid; gap:.8rem; min-width:0 }
+  .bside .chips{ flex-wrap:wrap; overflow:visible }
+  .bside .row{ flex-direction:column; align-items:stretch }
+  .bside .row select, .bside .toggle{ flex:0 0 auto }
+  .bside .progbtns{ grid-template-columns:minmax(0,1fr) }
+  .grid{ grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr)); gap:1.2rem }
+
+  /* Fitxa estàndard: dues columnes */
+  .std.two{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:2.4rem; align-items:start }
+  .std.two>.banner{ grid-column:1/-1 }
+  .std.two>.col{ display:grid; gap:1.1rem; min-width:0 }
+  .std .sph img{ max-height:28rem }
+
+  /* Fitxa de llibreta: la llibreta oberta, dues pàgines amb el llom al mig */
+  .nb.two{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:5rem; align-items:start; padding:2.2rem 3rem 2.4rem 3.2rem;
+    background-image:
+     linear-gradient(to right, transparent calc(50% - 2.4rem), rgba(70,45,10,.10) calc(50% - .5rem), rgba(70,45,10,.32) 50%, rgba(70,45,10,.10) calc(50% + .5rem), transparent calc(50% + 2.4rem)),
+     radial-gradient(ellipse 120px 110px at 95% 6%, transparent 62%, rgba(120,80,30,.13) 64%, rgba(120,80,30,.06) 70%, transparent 72%),
+     radial-gradient(ellipse at 5% 95%, rgba(140,100,40,.10), transparent 40%),
+     linear-gradient(to bottom, transparent calc(1.9rem - 1px), var(--rule) 1.9rem);
+    background-size:100% 100%, 100% 100%, 100% 100%, 100% 1.9rem }
+  .nb.two>.pg{ display:block; position:relative; min-width:0 }
+  .nb.two>.pg+.pg::before{ content:""; position:absolute; top:-2.2rem; bottom:-2.4rem; left:-1.3rem; width:2px; background:var(--margin) }
+  .nb.two .stamp{ top:-.6rem; right:0 }
+  .nb.two>.pg+.pg>h2:first-child{ margin-top:.3rem }
+  .nb.two .plate.photo{ width:min(22rem,88%) }
+
+  /* Clau guiada: preguntes a l'esquerra, candidats sempre a la vista a la dreta */
+  .key{ grid-template-columns:minmax(0,1fr) 25rem; gap:1.8rem; align-items:start; padding-bottom:2rem }
+  .kmain{ display:grid; gap:1rem; min-width:0 }
+  .kside{ display:grid; gap:1rem; position:sticky; top:4.6rem; max-height:calc(100vh - 6rem); overflow-y:auto; padding:3px; margin:-3px; scrollbar-width:thin }
+  .kres{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:.9rem }
+  .kside .kcand{ background:var(--bg) }
+  .kbar{ display:none }
+
+  /* Coneixements: els temes en fitxes; el que s'obre ocupa tota l'amplada */
+  .kgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(21rem,1fr)); gap:.9rem; align-items:start }
+  .kgrid>details[open]{ grid-column:1/-1 }
+  .kgrid .in p, .kgrid .in li, .kgrid .in dd{ max-width:75ch }
+
+  /* Berguedà: panells en dues columnes; el mapa al costat de la informació de la zona */
+  .area{ grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-flow:row dense; align-items:start }
+  .area>h1, .area>.seg, .area>#zones-panel, .area>.foot{ grid-column:1/-1 }
+  .zbody{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:2rem; align-items:start }
+  .zmap{ display:grid; gap:.8rem; position:sticky; top:1.4rem }
+  .area .mapwrap{ max-width:30rem }
+  .zmap .chips{ flex-wrap:wrap; overflow:visible }
+  #zoneinfo .zinfo{ border-top:0; padding-top:0 }
+
+  /* Perfil: dues columnes */
+  .prof{ grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start }
+  .pcol{ display:grid; gap:1.2rem; min-width:0 }
+}
 </style>
 </head>
 <body>
@@ -3134,6 +3235,9 @@ const NOW = new Date().getMonth()+1;
 const BY_ID = Object.fromEntries(SPECIES.map(s=>[s.id,s]));
 const $ = (s,el=document)=>el.querySelector(s);
 const esc = t => String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// Pantalla gran (ordinador, tauleta apaïsada): menú lateral i filtres sempre oberts. Ha de coincidir amb el @media de la plantilla.
+const WIDE = matchMedia('(min-width: 64rem)');
+WIDE.addEventListener('change', e=>{ const f=$('#filt'); if(f && e.matches) f.open=true; });
 
 // ---------- Preferències (només en aquest dispositiu) ----------
 const KEY='llibreta-boletaire-v1';
@@ -3635,18 +3739,21 @@ function viewList(){
   const chipsDef=[['tots',tr('Tots')],['comestibles',tr('Comestibles')],['pre',tr('Precaució')],['reb',tr('A rebutjar')],['tox',tr('Tòxics')],['mor',tr('Mortals')]];
   return `<div class="view">
    <div class="safety" role="note"><span class="ic" aria-hidden="true">!</span><span><b>${tr('Aquesta app serveix per aprendre, no per decidir què et menges.')}</b> ${tr('Si tens el més mínim dubte, no el mengis i fes-lo revisar per una {link}.',{link:`<a href="#experts" data-tab="experts">${tr('persona experta')}</a>`})}</span></div>
+   <div class="blist"><div class="bside">
    <div class="seg" role="tablist" aria-label="${tr('Quins bolets')}" id="segmine"></div>
    <div id="progress"></div>
    <label class="search" for="q"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="${tr('Cerca: rovelló, Boletus, níscalo…')}" value="${esc(state.q)}" autocomplete="off"></label>
    <div class="chips" role="group" aria-label="${tr('Comestibilitat')}">${chipsDef.map(([k,l])=>`<button class="chip" data-cat="${k}" aria-pressed="${state.cat===k}">${l}</button>`).join('')}</div>
-   <details class="filt" id="filt" ${nFilt()?'open':''}><summary><b>${tr('Filtres')}</b><span class="fcount" id="fcount">${filtLabel()}</span></summary>
+   <details class="filt" id="filt" ${nFilt()||WIDE.matches?'open':''}><summary><b>${tr('Filtres')}</b><span class="fcount" id="fcount">${filtLabel()}</span></summary>
    <div class="row"><label class="toggle" for="now"><input type="checkbox" id="now" ${state.now?'checked':''}> ${tr('Només els que surten al {m}',{m:MESOS[NOW-1]})}</label>
      <select id="hab" aria-label="${tr('Hàbitat')}"><option value="">${tr('Tots els hàbitats')}</option>${Object.entries(HABITATS).map(([k,v])=>`<option value="${k}" ${state.hab===k?'selected':''}>${v}</option>`).join('')}</select>
      <select id="sol" aria-label="${tr('Tipus de sòl')}"><option value="">${tr('Tots els sòls')}</option><option value="calcari" ${state.soil==='calcari'?'selected':''}>${tr('Sòl calcari')}</option><option value="acid" ${state.soil==='acid'?'selected':''}>${tr('Sòl àcid')}</option></select>
      <select id="zona" aria-label="${tr('Zona del Berguedà')}"><option value="">${tr('Tot el Berguedà')}</option>${Object.entries(ZONES).map(([k,v])=>`<option value="${k}" ${state.zone===k?'selected':''}>${v.name}</option>`).join('')}</select></div>
    <button type="button" class="linkbtn" data-filt-clear id="fclear" ${nFilt()?'':'hidden'}>${tr('Treu els filtres')}</button></details>
+   </div><div class="bmain">
    <p class="count" id="count"></p>
    <div class="grid" id="grid"></div>
+   </div></div>
   </div>`;
 }
 function bindList(){
@@ -3663,8 +3770,9 @@ function bindList(){
 function sheetStd(s){
   const c=CATS[s.cat], color = {exc:'ok',com:'ok',pre:'warn',reb:'acrid',tox:'toxcat',mor:'mortal'}[s.cat];
   const toxic=['tox','mor','reb'].includes(s.cat);
-  return `<article class="std">
+  return `<article class="std two">
    <div class="banner" style="background:var(--${color}-bg);color:var(--${color})"><span class="ic" aria-hidden="true"><span>${c.icon}</span></span>${c.label}${s.q?` · ${s.q}`:''}</div>
+   <div class="col">
    <div class="hd"><div style="min-width:0"><h1 id="sheet-title">${esc(s.ca)}</h1><p class="sci">${esc(s.sci)}</p>
      <p class="oth">${s.alt.length?`${tr('També:')} ${esc(s.alt.join(', '))}. `:''}${s.es?`${tr('Castellà:')} ${esc(s.es)}.`:''}${s.desc?' '+tr('Sense nom popular establert.'):''}</p></div>${sketch(s,false)}</div>
    ${ph(s)?`<figure class="sph">${photoImg(s,'')}<figcaption>${creditLine(s)}</figcaption></figure>`:''}
@@ -3672,6 +3780,7 @@ function sheetStd(s){
    <section><h2>${tr('Com reconèixer-lo')}</h2><dl class="box">
      <div><dt>${tr('Barret')}</dt><dd>${esc(s.f.barret)}</dd></div><div><dt>${tr('Làmines, porus o plecs')}</dt><dd>${esc(s.f.himeni)}</dd></div>
      <div><dt>${tr('Peu')}</dt><dd>${esc(s.f.peu)}</dd></div><div><dt>${tr('Carn, olor i làtex')}</dt><dd>${esc(s.f.carn)}</dd></div><div><dt>${tr('Esporada')}</dt><dd>${esc(s.f.espora)}</dd></div></dl></section>
+   </div><div class="col">
    <section><h2>${tr('On i quan')}</h2><div class="box" style="display:grid;gap:.6rem"><p style="margin:0">${esc(s.hab)}</p>${soilHTML(s,false)}
      <div class="tags">${s.arb.map(a=>`<span>${HABITATS[a]}</span>`).join('')}</div>
      ${calHTML(s,'cal')}
@@ -3682,12 +3791,14 @@ function sheetStd(s){
    <section><h2>${tr('Curiositat')}</h2><p class="box" style="margin:0">${esc(s.cur)}</p></section>
    ${myNotebookHTML(s,false)}
    <div class="links"><a class="btn" href="${commons(s)}" target="_blank" rel="noopener">${tr('Fotos lliures a Wikimedia ↗')}</a></div>
+   </div>
   </article>`;
 }
 function sheetNb(s){
   const c=CATS[s.cat]; const toxic=['tox','mor','reb'].includes(s.cat);
   const arrow='<svg viewBox="0 0 40 30" aria-hidden="true"><path d="M3 5 C 14 4, 24 10, 30 22 M30 22 l-8 -2 M30 22 l1 -8"/></svg>';
-  return `<article class="nb"><span class="holes" aria-hidden="true"></span>
+  return `<article class="nb two"><span class="holes" aria-hidden="true"></span>
+   <div class="pg">
    <span class="stamp s-${s.cat}">${s.cat==='mor'?'☠ ':''}${c.short}${s.q&&!toxic?`<br><small style="font-size:.7rem">${s.q}</small>`:''}</span>
    <h1 id="sheet-title">${esc(s.ca)}</h1>
    <span class="label">${esc(s.sci)}</span>
@@ -3698,6 +3809,7 @@ function sheetNb(s){
    ${s.tox?`<div class="danger ${toxic?'':'care'}"><b>${toxic?tr('Alerta · toxicitat'):tr('Abans de menjar-lo')}</b>${esc(s.tox)}</div>`:''}
    <h2>${tr('Com és')}</h2>
    <dl><dt>${tr('Barret')}</dt><dd>${esc(s.f.barret)}</dd><dt>${tr('Sota el barret')}</dt><dd>${esc(s.f.himeni)}</dd><dt>${tr('Peu')}</dt><dd>${esc(s.f.peu)}</dd><dt>${tr('Carn')}</dt><dd>${esc(s.f.carn)}</dd><dt>${tr('Esporada')}</dt><dd>${esc(s.f.espora)}</dd></dl>
+   </div><div class="pg">
    <h2>${tr('On el trobo')}</h2><p style="margin:0">${esc(s.hab)}</p>${soilHTML(s,true)}
    ${calHTML(s,'ncal')}
    <div class="nbmap">${mapSVG({hl:s.z,mini:true,nb:true})}<p class="pencil">${esc(zoneNames(s))}<br><a href="#bergueda" data-zonego="${s.z[0]}">${tr('→ veure el mapa')}</a></p></div>
@@ -3706,6 +3818,7 @@ function sheetNb(s){
    <h2>${tr('Curiositat')}</h2><p class="pencil" style="margin:0">${esc(s.cur)}</p>
    ${myNotebookHTML(s,true)}
    <div class="nlinks"><a href="${commons(s)}" target="_blank" rel="noopener">${tr('→ fotos lliures (Wikimedia)')}</a></div>
+   </div>
   </article>`;
 }
 function openSheet(id){
@@ -3797,7 +3910,7 @@ function viewKnow(){
   const body = k => k.special==='reagents' ? reagentsBody() : k.special==='photo' ? photoGuideBody() : k.body;
   return `<div class="view"><h1 style="font-size:1.6rem">${tr('Coneixements')}</h1>
    <p class="lead">${tr('El que convé saber per començar a buscar bolets. Toca un tema per obrir-lo.')}</p>
-   ${KNOW.map(k=>`<details class="rg know" id="k-${k.id}"><summary><span><b>${k.title}</b><small>${k.sub}</small></span></summary><div class="in">${body(k)}</div></details>`).join('')}
+   <div class="kgrid">${KNOW.map(k=>`<details class="rg know" id="k-${k.id}"><summary><span><b>${k.title}</b><small>${k.sub}</small></span></summary><div class="in">${body(k)}</div></details>`).join('')}</div>
   </div>`;
 }
 
@@ -3813,7 +3926,7 @@ function viewArea(){
    [tr('3a setmana d’oct.'),tr('Festes del Bolet'),tr('Guardiola de Berguedà i Cal Rosal.')]];
   const seg = `<div class="seg" role="tablist" aria-label="${tr('Berguedà')}">${[['zona',tr('La zona')],['experts',tr('Experts')]].map(([k,l])=>`<button role="tab" data-area="${k}" aria-selected="${state.areaTab===k}">${l}</button>`).join('')}</div>`;
   if(state.areaTab==='experts') return `<div class="view"><h1 style="font-size:1.6rem">${tr('El Berguedà')}</h1>${seg}${viewExperts()}</div>`;
-  return `<div class="view">
+  return `<div class="view area">
    <h1 style="font-size:1.6rem">${tr('El Berguedà')}</h1>${seg}
    <div class="panel" style="border-color:var(--tox)"><h2 style="color:var(--tox)">${tr('Si creus que t’has intoxicat')}</h2>
      <div class="kv"><div class="tel"><span class="lb">${tr('Emergències')}</span><a class="n" href="tel:112">112</a><a class="btn call" href="tel:112">${CALL_IC}${tr('Truca')}</a></div>
@@ -3821,9 +3934,9 @@ function viewArea(){
      <ul><li>${tr('Ves a urgències encara que et trobis bé: els bolets més perillosos triguen hores o dies a donar símptomes.')}</li>
      <li>${tr('Porta les restes dels bolets, crus o cuinats, i fotos.')}</li><li>${tr('Avisa tothom que n’hagi menjat.')}</li></ul></div>
    <div class="panel" id="zones-panel"><h2>${tr('Què trobaràs a cada zona')}</h2><p class="lead" style="font-size:.92rem">${tr('Toca una zona del mapa. És orientatiu: depèn de l’hàbitat i de l’altitud, i els bolets no entenen de límits.')}</p>
-     <div class="mapwrap" id="mapwrap"></div>
-     <div class="chips" role="group" aria-label="${tr('Zones')}">${Object.keys(ZONES).map(z=>`<button class="chip zchip" data-zone="${z}" aria-pressed="${state.areaZone==z}"><i class="sw" style="background:var(--z${z})"></i>${ZONES[z].name}</button>`).join('')}</div>
-     <div id="zoneinfo"></div>
+     <div class="zbody"><div class="zmap"><div class="mapwrap" id="mapwrap"></div>
+     <div class="chips" role="group" aria-label="${tr('Zones')}">${Object.keys(ZONES).map(z=>`<button class="chip zchip" data-zone="${z}" aria-pressed="${state.areaZone==z}"><i class="sw" style="background:var(--z${z})"></i>${ZONES[z].name}</button>`).join('')}</div></div>
+     <div id="zoneinfo"></div></div>
      <p class="foot" style="text-align:left">${tr('Límits municipals: © col·laboradors d’OpenStreetMap (ODbL).')}</p></div>
    <div class="panel"><h2>${tr('Normes i bon comportament')}</h2><ul>
      <li>${tr('Catalunya no té una regulació general de la collita de bolets. La llei forestal diu que cal permís de la propietat per collir productes del bosc.')}</li>
@@ -4043,7 +4156,7 @@ function photoGuideBody(){
 }
 function keyHTML(){
   const cands=scoreAll(), ok=cands.filter(c=>c.x===0), nxt=bestNext(cands);
-  return `<article class="key">
+  return `<article class="key"><div class="kmain">
    <h1 id="sheet-title" style="font-size:1.6rem">${tr('Identifica’l pas a pas')}</h1>
    <p class="lead">${tr('Respon el que puguis. Cada resposta descarta espècies. Si no ho saps, deixa-ho en blanc.')}</p>
    <div class="danger-line"><b>${tr('Això és una pista, no una identificació.')}</b> ${tr('Abans de menjar-te’l, fes-lo revisar per una persona experta.')}</div>
@@ -4064,6 +4177,7 @@ function keyHTML(){
      <div class="row"><select id="kmonth"><option value="">${tr('Qualsevol mes')}</option>${MESOS.map((m,i)=>`<option value="${i+1}" ${IDK.month==String(i+1)?'selected':''}>${m}${i+1===NOW?' '+tr('(aquest mes)'):''}</option>`).join('')}</select></div></section>
    ${keyQs().map(q=>`<section class="kq ${nxt&&nxt.k===q.k?'next':''}" id="kq-${q.k}">${nxt&&nxt.k===q.k?`<span class="nexttag">${tr('La pregunta més útil ara')}</span>`:''}<h2>${q.q}</h2>${q.help?`<p class="muted">${q.help}${q.reag?` <a href="#r-${q.reag}" data-reag="${q.reag}">${tr('Com es fa')}</a>`:''}</p>`:''}
      <div class="kopts" role="group" aria-label="${esc(q.q)}">${q.o.map(([v,l])=>`<button class="chip" data-kq="${q.k}" data-kv="${v}" aria-pressed="${(IDK.ans[q.k]||[]).includes(v)}">${l}</button>`).join('')}</div></section>`).join('')}
+   </div><div class="kside">
    <section class="kres" id="kres"><h2>${ok.length?(ok.length===1?tr('1 candidat que encaixa amb tot'):tr('{n} candidats que encaixen amb tot',{n:ok.length})):tr('Cap espècie encaixa amb tot')}</h2>
      ${answeredCount()<3?`<p class="muted">${tr('Respon almenys tres preguntes perquè els resultats tinguin sentit.')}</p>`:''}
      ${!ok.length&&answeredCount()>=3?`<div class="warn-line knone"><p><b>${tr('Potser aquest bolet no és a l’app.')}</b> ${tr('Els de sota són els que s’hi assemblen més, però cap encaixa amb tot. Guarda’l a la llibreta com a troballa sense identificar i ensenya’l a una persona experta.')}</p><button class="btn" data-find="new">${tr('Registra’l sense identificar')}</button></div>`:''}
@@ -4072,6 +4186,7 @@ function keyHTML(){
      ${!ok.length&&answeredCount()<3?`<p class="muted">${tr('Pot ser una espècie que encara no és a l’app. Porta-la a una exposició micològica o a un expert.')}</p>`:''}
      <button class="btn" data-key="reset">${tr('Torna a començar')}</button></section>
    ${window.claude?'':`<details class="rg kai" data-aiopen ${IDK.aiOpen?'open':''}><summary><span><b>${tr('Reconeixement per foto amb IA')}</b><small>${tr('Funciona dins de Claude. Aquí en pots veure 10 exemples.')}</small></span></summary><div class="in">${aiDemoHTML()}</div></details>`}
+   </div>
    <div class="kbar"><span><b>${ok.length}</b> ${ok.length===1?tr('candidat'):tr('candidats')} · ${tr(answeredCount()===1?'{n} resposta':'{n} respostes',{n:answeredCount()})}</span><a href="#kres" class="btn solid" data-key="results">${tr('Veure resultats')}</a></div>
   </article>`;
 }
@@ -4106,7 +4221,10 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-filt-clear]')){ e.preventDefault(); Object.assign(state,{now:false,hab:'',soil:'',zone:'',cat:'tots'}); keepScroll(render); return; }
   if(e.target.closest('[data-q-clear]')){ e.preventDefault(); state.q=''; keepScroll(render); return; }
   const kk=e.target.closest('[data-key]'); if(kk){ e.preventDefault(); const a=kk.dataset.key;
-    if(a==='open') openKey(); if(a==='reset'){ IDK.ans={}; IDK.zone=''; IDK.month=String(NOW); IDK.photo=null; IDK.geo=''; openKey(); $('#sheet').scrollTop=0; }
+    if(a==='open'){ // des del menú lateral es pot obrir amb una troballa a mig fer
+      if(findDirty() && !confirm(tr('Encara no has desat aquesta troballa. Vols sortir i perdre-la?'))) return;
+      cisStopGps(); IDK.from=false; openKey(); }
+    if(a==='reset'){ IDK.ans={}; IDK.zone=''; IDK.month=String(NOW); IDK.photo=null; IDK.geo=''; openKey(); $('#sheet').scrollTop=0; }
     if(a==='results') openKey('res'); return; }
   const lf=e.target.closest('[data-livefill]'); if(lf&&LIVE.res){ IDK.ans=JSON.parse(JSON.stringify(LIVE.res.pre)); IDK.photo=LIVE.img; openKey(); $('#sheet').scrollTop=$('#kphoto').offsetTop-60; return; }
   const pg=e.target.closest('[data-photoguide]'); if(pg){ e.preventDefault(); const g=$('#kguide'); g.open=true; IDK.guide=true; $('#sheet').scrollTop=g.offsetTop-60; return; }
@@ -4120,9 +4238,9 @@ document.addEventListener('click',e=>{
 const CALL_IC='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5l2.6 3.4-1.7 2.3a12 12 0 0 0 7.3 7.3l2.3-1.7 3.4 2.6-1.6 3.1C11.7 20.2 3.8 12.3 3.5 5.1z"/></svg>';
 function viewProfile(){
   const opt=(name,val,label,help)=>`<label for="${name}-${val}"><input type="radio" id="${name}-${val}" name="${name}" value="${val}" ${prefs[name]===val?'checked':''}><span><b>${label}</b>${help?`<small>${help}</small>`:''}</span></label>`;
-  return `<div class="view">
+  return `<div class="view prof"><div class="pcol">
    <div class="panel me" id="me">${meHTML()}</div>
-   <details class="rg settings-d"><summary><span><b>${tr('Ajustos')}</b><small>${tr('Idioma, estil de les fitxes, mida del text i tema')}</small></span></summary><div class="in">
+   <details class="rg settings-d" ${WIDE.matches?'open':''}><summary><span><b>${tr('Ajustos')}</b><small>${tr('Idioma, estil de les fitxes, mida del text i tema')}</small></span></summary><div class="in">
      <h3>Idioma</h3><div class="opt seg2" data-pref="lang">${opt('lang','ca','Català')}${opt('lang','es','Castellano')}</div>
      <h3>${tr('Estil de les fitxes')}</h3><div class="opt" data-pref="skin">
      ${opt('skin','llibreta',tr('Llibreta de camp'),tr('Paper antic, notes escrites a mà i esbossos a llapis.'))}
@@ -4130,6 +4248,7 @@ function viewProfile(){
      <h3>${tr('Mida del text')}</h3><div class="opt seg2" data-pref="size">${opt('size','normal',tr('Normal'))}${opt('size','gran',tr('Gran'))}</div>
      <h3>${tr('Tema')}</h3><div class="opt seg2" data-pref="theme">${opt('theme','sistema',tr('Com el sistema'))}${opt('theme','clar',tr('Clar'))}${opt('theme','fosc',tr('Fosc'))}</div>
      <p class="muted" style="font-size:.85rem;margin:0">${tr('La fitxa de llibreta sempre es veu sobre paper.')}</p></div></details>
+   </div><div class="pcol">
    <div class="panel acct" id="acct">${acctHTML()}</div>
    <div class="panel"><h2>${tr('Versió de l’app')}</h2>
      <p class="muted" style="margin:0">${window.APP_VERSION?`${tr('Versió')} ${esc(window.APP_VERSION.slice(0,7))} · ${esc(window.APP_DATE||'')}`:tr('Versió de prova')}</p>
@@ -4137,7 +4256,7 @@ function viewProfile(){
    <details class="rg"><summary><span><b>${tr('Sobre les dades i les fotos')}</b><small>${tr('{n} espècies · crèdits de Wikimedia Commons',{n:SPECIES.length})}</small></span></summary><div class="in">
      <p>${tr('{n} espècies del Berguedà i de Catalunya, comestibles i tòxiques.',{n:SPECIES.length})} ${tr('El grau de comestibilitat segueix el consens de la Societat Catalana de Micologia. Les fotos són de Wikimedia Commons, amb llicència lliure. Els esbossos són orientatius.')}</p>
      <ul class="src">${SPECIES.filter(ph).map(s=>`<li><i>${esc(s.sci)}</i>: ${by(ph(s))}, ${esc(ph(s).lic)}, <a href="${ph(s).page}" target="_blank" rel="noopener">Commons</a></li>`).join('')}</ul></div></details>
-  </div>`;
+  </div></div>`;
 }
 
 
@@ -4638,7 +4757,10 @@ document.addEventListener('keydown',e=>{ const zp=e.target.closest&&e.target.clo
 
 // ---------- Esdeveniments ----------
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab]'); if(t){ e.preventDefault(); goTab(t.dataset.tab); if(!$('#sheet').hidden) closeSheet(); render(); window.scrollTo(0,0); return; }
+  const t=e.target.closest('[data-tab]'); if(t){ e.preventDefault();
+    // a la pantalla gran el menú lateral es veu amb una fitxa oberta: es tanca la fitxa (si no hi ha res per desar) i es va a la secció
+    const sh=$('#sheet'); if(!sh.hidden){ IDK.from=false; closeSheet(); if(!sh.hidden) return; }
+    goTab(t.dataset.tab); render(); window.scrollTo(0,0); return; }
   const o=e.target.closest('[data-open]'); if(o){ e.preventDefault(); openSheet(o.dataset.open); return; }
   const c=e.target.closest('[data-copy]'); if(c){ const v=c.dataset.copy; const done=()=>{ c.textContent=tr('Copiat'); setTimeout(()=>c.textContent=tr('Copia'),1500); };
     try{ navigator.clipboard.writeText(v).then(done).catch(()=>{ c.textContent=v; }); }catch(err){ c.textContent=v; } }
@@ -4663,7 +4785,7 @@ cisLoad().then(cloudInit);
 })();
 
 </script>
-<script>window.APP_VERSION="604b25a9a6"; window.APP_DATE="2026-10-04";</script>
+<script>window.APP_VERSION="3cd9d60d4e"; window.APP_DATE="2026-10-05";</script>
 <script>
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;
