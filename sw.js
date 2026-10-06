@@ -1,5 +1,5 @@
-// Generat per build_pwa.py. Versió b33fc7b7bd
-const CACHE='boletaire-b33fc7b7bd', FONTS='boletaire-fonts', PHOTOS='boletaire-fotos-4d84fc7414', PHOTOS_FILE="fotos-4d84fc7414.js", BIG="boletaire-grans-5763252711";
+// Generat per build_pwa.py. Versió 1926543121
+const CACHE='boletaire-1926543121', FONTS='boletaire-fonts', PHOTOS='boletaire-fotos-4d84fc7414', PHOTOS_FILE="fotos-4d84fc7414.js", BIG="boletaire-grans-5763252711";
 const FILES=["./", "index.html", "privacitat.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/icon.svg"];
 self.addEventListener('install', e=>{
   e.waitUntil((async()=>{
