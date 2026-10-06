@@ -1,5 +1,5 @@
-// Generat per build_pwa.py. Versió e852dfad38
-const CACHE='boletaire-e852dfad38', FONTS='boletaire-fonts', PHOTOS='boletaire-fotos-4d84fc7414', PHOTOS_FILE="fotos-4d84fc7414.js";
+// Generat per build_pwa.py. Versió b33fc7b7bd
+const CACHE='boletaire-b33fc7b7bd', FONTS='boletaire-fonts', PHOTOS='boletaire-fotos-4d84fc7414', PHOTOS_FILE="fotos-4d84fc7414.js", BIG="boletaire-grans-5763252711";
 const FILES=["./", "index.html", "privacitat.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/icon.svg"];
 self.addEventListener('install', e=>{
   e.waitUntil((async()=>{
@@ -12,7 +12,7 @@ self.addEventListener('install', e=>{
 self.addEventListener('message', e=>{ if(e.data==='skip') self.skipWaiting(); });
 self.addEventListener('activate', e=>{
   e.waitUntil((async()=>{
-    for(const k of await caches.keys()) if(k!==CACHE && k!==FONTS && k!==PHOTOS) await caches.delete(k);
+    for(const k of await caches.keys()) if(k!==CACHE && k!==FONTS && k!==PHOTOS && k!==BIG) await caches.delete(k);
     await self.clients.claim();
   })());
 });
@@ -26,6 +26,12 @@ self.addEventListener('fetch', e=>{
     return;
   }
   if(u.origin!==location.origin) return;
+  // fotos grans de les fitxes: es guarden el primer cop que s'obren
+  if(u.pathname.includes('/fotos/')){
+    e.respondWith(caches.open(BIG).then(async c=>{ const hit=await c.match(r); if(hit) return hit;
+      const res=await fetch(r); if(res.ok) c.put(r,res.clone()); return res; }));
+    return;
+  }
   e.respondWith((async()=>{
     const c=await caches.open(CACHE);
     const hit=await c.match(r,{ignoreSearch:true}) || await (await caches.open(PHOTOS)).match(r,{ignoreSearch:true}); if(hit) return hit;

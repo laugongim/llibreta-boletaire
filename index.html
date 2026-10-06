@@ -664,6 +664,7 @@ button.bdg{ background:none; border:0; padding:0; cursor:pointer; color:var(--fg
 <nav class="tabs" aria-label="Seccions"><div class="in" id="tabs"></div></nav>
 <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title"></div>
 
+<script>window.FOTOS_GRANS=true;</script>
 <script src="fotos-4d84fc7414.js"></script>
 <script>
 // Dades d'espècies. Grau de comestibilitat segons el consens de la Societat Catalana de Micologia
@@ -4050,7 +4051,11 @@ function sketch(sp, nb){
 // ---------- Fotos ----------
 const ph = s => (typeof PHOTOS!=='undefined' && PHOTOS[s.sci]) || null;
 const by = p => p.author ? esc(p.author) : tr('autor a Commons');
-function photoImg(s, cls){ const p=ph(s); return p ? `<img class="${cls}" src="${p.src}" alt="${tr('Foto de {name} ({sci})',{name:esc(s.ca),sci:esc(s.sci)})}" loading="lazy">` : sketch(s, prefs.skin==='llibreta'); }
+// big: a la fitxa i a la comparació. A l'app instal·lable hi ha una foto gran (fotos/<nom>.webp): es mostra primer
+// la miniatura i, quan la gran ha carregat, es canvia (sense connexió i sense la gran a la memòria cau, es queda la miniatura).
+const bigPhoto = s => window.FOTOS_GRANS ? 'fotos/'+s.sci.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.webp' : '';
+function photoImg(s, cls, big){ const p=ph(s); return p ? `<img class="${cls}" src="${p.src}" ${big&&bigPhoto(s)?`data-big="${bigPhoto(s)}"`:''} alt="${tr('Foto de {name} ({sci})',{name:esc(s.ca),sci:esc(s.sci)})}" ${big?'':'loading="lazy"'}>` : sketch(s, prefs.skin==='llibreta'); }
+function upgradePhotos(root){ root.querySelectorAll('img[data-big]').forEach(img=>{ const b=new Image(); b.onload=()=>{ img.src=b.src; img.classList.add('big'); }; b.src=img.dataset.big; img.removeAttribute('data-big'); }); }
 function creditLine(s){ const p=ph(s); return p ? `${tr('Foto:')} ${by(p)} · ${esc(p.lic)} · <a href="${p.page}" target="_blank" rel="noopener">Wikimedia Commons</a>` : ''; }
 
 // ---------- Mapa ----------
@@ -4374,7 +4379,7 @@ function sheetStd(s){
    <div class="col">
    <div class="hd"><div style="min-width:0"><h1 id="sheet-title">${esc(s.ca)}</h1><p class="sci">${esc(s.sci)}</p>
      <p class="oth">${s.alt.length?`${tr('També:')} ${esc(s.alt.join(', '))}. `:''}${s.es?`${tr('Castellà:')} ${esc(s.es)}.`:''}${s.desc?' '+tr('Sense nom popular establert.'):''}</p></div>${sketch(s,false)}</div>
-   ${ph(s)?`<figure class="sph">${photoImg(s,'')}<figcaption>${creditLine(s)}</figcaption></figure>`:''}
+   ${ph(s)?`<figure class="sph">${photoImg(s,'',true)}<figcaption>${creditLine(s)}</figcaption></figure>`:''}
    ${s.tox?`<div class="box alert ${toxic?'':'care'}"><b>${toxic?tr('Toxicitat'):tr('Abans de menjar-lo')}</b><br>${esc(s.tox)}</div>`:''}
    <section><h2>${tr('Com reconèixer-lo')}</h2><dl class="box">
      <div><dt>${tr('Barret')}</dt><dd>${esc(s.f.barret)}</dd></div><div><dt>${tr('Làmines, porus o plecs')}</dt><dd>${esc(s.f.himeni)}</dd></div>
@@ -4402,7 +4407,7 @@ function sheetNb(s){
    <h1 id="sheet-title">${esc(s.ca)}</h1>
    <span class="label">${esc(s.sci)}</span>
    <p class="oth">${s.alt.length?`${tr('també')} ${esc(s.alt.join(', '))} · `:''}${s.es?`${tr('cast.')} ${esc(s.es)}`:''}${s.desc?' · '+tr('(nom descriptiu)'):''}</p>
-   ${ph(s)?`<figure class="plate photo">${photoImg(s,'')}<figcaption>${tr('foto')} · ${by(ph(s))}</figcaption></figure><p class="credit">${creditLine(s)}</p>`:''}
+   ${ph(s)?`<figure class="plate photo">${photoImg(s,'',true)}<figcaption>${tr('foto')} · ${by(ph(s))}</figcaption></figure><p class="credit">${creditLine(s)}</p>`:''}
    <figure class="plate ${ph(s)?'mini':''}">${sketch(s,true)}<figcaption>${tr('esbós')} · ${esc(s.ca.toLowerCase())}</figcaption></figure>
    <p class="margin-note">${arrow}<span>${esc(s.note)}</span></p>
    ${s.tox?`<div class="danger ${toxic?'':'care'}"><b>${toxic?tr('Alerta · toxicitat'):tr('Abans de menjar-lo')}</b>${esc(s.tox)}</div>`:''}
@@ -4427,7 +4432,7 @@ function openSheet(id){
   el.innerHTML = `<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>${tr('Tornar')}</button>
     <div class="skin-sw" role="group" aria-label="${tr('Estil de la fitxa')}"><button data-skin="llibreta" aria-pressed="${prefs.skin==='llibreta'}">${tr('Llibreta')}</button><button data-skin="estandard" aria-pressed="${prefs.skin==='estandard'}">${tr('Estàndard')}</button></div></div>
     <div class="body">${prefs.skin==='llibreta'?sheetNb(s):sheetStd(s)}</div>`;
-  el.dataset.view='sp'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  el.dataset.view='sp'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden'; upgradePhotos(el);
   $('#back').addEventListener('click',closeSheet);
   el.querySelectorAll('.skin-sw button').forEach(b=>b.addEventListener('click',()=>{ prefs.skin=b.dataset.skin; savePrefs(); openSheet(id); if(state.tab==='bolets') cards(); }));
   const ta=$('#nota'); ta.addEventListener('input',()=>setNote(id,ta.value));
@@ -4456,7 +4461,7 @@ function openCompare(aId, bId){
   keys.sort((x,y)=>differs(y)-differs(x)); // les diferències clares, primer
   const nd=keys.filter(differs).length;
   const row=(lb,x,y,cls='')=>`<div class="cmp-tr ${cls}"><span class="lb">${lb}${cls.includes('diff')?` <i>${tr('diferent')}</i>`:''}</span><span class="ca"><b class="who">${esc(A.ca)}</b>${x}</span><span class="cb"><b class="who">${esc(B.ca)}</b>${y}</span></div>`;
-  const head=s=>`<figure class="cmp-sp">${photoImg(s,'')}<figcaption><b>${esc(s.ca)}</b><i>${esc(s.sci)}</i>${pill(s)}<a href="#${s.id}" data-open="${s.id}">${tr('Obre la fitxa')}</a></figcaption></figure>`;
+  const head=s=>`<figure class="cmp-sp">${photoImg(s,'',true)}<figcaption><b>${esc(s.ca)}</b><i>${esc(s.sci)}</i>${pill(s)}<a href="#${s.id}" data-open="${s.id}">${tr('Obre la fitxa')}</a></figcaption></figure>`;
   const edib=s=>{ const l=`${CATS[s.cat].label}${s.q?` · ${s.q}`:''}`; return s.tox ? (s.tox.toLowerCase().startsWith(CATS[s.cat].label.toLowerCase()) ? esc(s.tox) : `${l}. ${esc(s.tox)}`) : l; };
   el.innerHTML=`<div class="bar"><button class="back" id="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>${tr('Tornar')}</button><span class="muted" style="font-size:.85rem">${tr('Comparació')}</span></div>
    <div class="body"><article class="cmp">
@@ -4474,7 +4479,7 @@ function openCompare(aId, bId){
      ${row(tr('Comestibilitat'),edib(A),edib(B),'edib')}</div></section>
     <p class="danger-line" style="margin:0"><b>${tr('Si tens el més mínim dubte entre tots dos, no el mengis.')}</b> ${tr('Porta’l sencer a una persona experta.')}</p>
    </article></div>`;
-  el.dataset.view='cmp'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden';
+  el.dataset.view='cmp'; el.hidden=false; el.scrollTop=0; document.body.style.overflow='hidden'; upgradePhotos(el);
   $('#back').addEventListener('click',closeSheet); $('#back').focus({preventScroll:true});
   $('.cmp-names').style.top=$('#sheet .bar').offsetHeight+'px'; // els noms queden fixos sota la barra
   NAV.sheetHash=CMP.key?'#identifica':'#'+(CMP.back||aId); navSync();
@@ -5244,7 +5249,7 @@ cisLoad().then(cloudInit);
 })();
 
 </script>
-<script>window.APP_VERSION="e852dfad38"; window.APP_DATE="2026-10-06";</script>
+<script>window.APP_VERSION="b33fc7b7bd"; window.APP_DATE="2026-10-06";</script>
 <script>
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;
