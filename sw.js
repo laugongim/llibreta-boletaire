@@ -1,9 +1,10 @@
-// Generat per build_pwa.py. Versió bfd3631152
-const CACHE='boletaire-bfd3631152', FONTS='boletaire-fonts';
+// Generat per build_pwa.py. Versió e852dfad38
+const CACHE='boletaire-e852dfad38', FONTS='boletaire-fonts', PHOTOS='boletaire-fotos-4d84fc7414', PHOTOS_FILE="fotos-4d84fc7414.js";
 const FILES=["./", "index.html", "privacitat.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/icon.svg"];
 self.addEventListener('install', e=>{
   e.waitUntil((async()=>{
     const c=await caches.open(CACHE); await c.addAll(FILES);
+    const p=await caches.open(PHOTOS); if(!(await p.match(PHOTOS_FILE))) await p.add(PHOTOS_FILE);
     try{ const f=await caches.open(FONTS); if(!(await f.match("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Kalam:wght@300;400;700&family=Special+Elite&display=swap"))) await f.add("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Kalam:wght@300;400;700&family=Special+Elite&display=swap"); }catch(err){}
     self.skipWaiting();
   })());
@@ -11,7 +12,7 @@ self.addEventListener('install', e=>{
 self.addEventListener('message', e=>{ if(e.data==='skip') self.skipWaiting(); });
 self.addEventListener('activate', e=>{
   e.waitUntil((async()=>{
-    for(const k of await caches.keys()) if(k!==CACHE && k!==FONTS) await caches.delete(k);
+    for(const k of await caches.keys()) if(k!==CACHE && k!==FONTS && k!==PHOTOS) await caches.delete(k);
     await self.clients.claim();
   })());
 });
@@ -27,7 +28,7 @@ self.addEventListener('fetch', e=>{
   if(u.origin!==location.origin) return;
   e.respondWith((async()=>{
     const c=await caches.open(CACHE);
-    const hit=await c.match(r,{ignoreSearch:true}); if(hit) return hit;
+    const hit=await c.match(r,{ignoreSearch:true}) || await (await caches.open(PHOTOS)).match(r,{ignoreSearch:true}); if(hit) return hit;
     // pàgines que no són a la memòria cau (p. ex. presentacio.html): de la xarxa; sense connexió, l'app
     try{ return await fetch(r); }catch(err){ if(r.mode==='navigate') return c.match('index.html'); throw err; }
   })());
