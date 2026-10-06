@@ -3,8 +3,11 @@ const CACHE='boletaire-1926543121', FONTS='boletaire-fonts', PHOTOS='boletaire-f
 const FILES=["./", "index.html", "privacitat.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/icon.svg"];
 self.addEventListener('install', e=>{
   e.waitUntil((async()=>{
-    const c=await caches.open(CACHE); await c.addAll(FILES);
-    const p=await caches.open(PHOTOS); if(!(await p.match(PHOTOS_FILE))) await p.add(PHOTOS_FILE);
+    // cache:'reload': sempre del servidor, mai de la memòria del navegador (GitHub Pages la guarda 10 minuts
+    // i, si no, es podia desar la pàgina antiga dins de la versió nova)
+    const fresh=f=>new Request(f,{cache:'reload'});
+    const c=await caches.open(CACHE); await c.addAll(FILES.map(fresh));
+    const p=await caches.open(PHOTOS); if(!(await p.match(PHOTOS_FILE))) await p.add(fresh(PHOTOS_FILE));
     try{ const f=await caches.open(FONTS); if(!(await f.match("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Kalam:wght@300;400;700&family=Special+Elite&display=swap"))) await f.add("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Kalam:wght@300;400;700&family=Special+Elite&display=swap"); }catch(err){}
     self.skipWaiting();
   })());
